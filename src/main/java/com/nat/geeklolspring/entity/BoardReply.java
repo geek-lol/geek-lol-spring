@@ -26,7 +26,7 @@ public class BoardReply {
     @Column(name = " board_reply_date")
     private LocalDateTime boardReplyDate;
 
-    @Column(name = "reply_text")
+    @Column(name = "reply_text", nullable = false)
     private String replyText;
 
     @Column(name = "board_reply_modify")

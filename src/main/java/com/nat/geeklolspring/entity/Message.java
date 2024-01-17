@@ -18,10 +18,10 @@ import java.time.LocalDateTime;
 @Entity
 public class Message {
 
-    @Column(name = "message_content")
+    @Column(name = "message_content", nullable = false)
     private String messageContent;
 
-    @Column(name = "message_title")
+    @Column(name = "message_title", nullable = false)
     private String messageTitle;
 
     @CreationTimestamp
@@ -39,7 +39,7 @@ public class Message {
     @Column(name = "sender_id")
     private String senderId;
 
-    @Column(name = "receiver_id")
+    @Column(name = "receiver_id", nullable = false)
     private long receiverId;
 
 

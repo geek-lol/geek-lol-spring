@@ -20,10 +20,10 @@ public class Report {
     @Column(name = "report_number")
     private int reportNumber;
 
-    @Column(name = "report_title")
+    @Column(name = "report_title", nullable = false)
     private String reportTitle;
 
-    @Column(name = "report_content")
+    @Column(name = "report_content", nullable = false)
     private String reportContent;
 
 

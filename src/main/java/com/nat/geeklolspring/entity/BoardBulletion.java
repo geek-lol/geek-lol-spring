@@ -25,10 +25,10 @@ public class BoardBulletion {
     @Column(name = "board_date")
     private LocalDateTime boardDate;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "board_content")
+    @Column(name = "board_content", nullable = false)
     private String boardContent;
 
     @Column(name = "board_media")

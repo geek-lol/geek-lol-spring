@@ -3,8 +3,7 @@ package com.nat.geeklolspring.entity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Setter
@@ -17,6 +16,11 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Message {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "message_id")
+    private int messageId;
 
     @Column(name = "message_content", nullable = false)
     private String messageContent;
@@ -35,12 +39,12 @@ public class Message {
     private int receiverDelete;
 
 
+    @Column(name = "receiver_id", nullable = false)
+    private long receiverId;
+
     //----------------------------------------
     @Column(name = "sender_id")
     private String senderId;
-
-    @Column(name = "receiver_id", nullable = false)
-    private long receiverId;
 
 
 }

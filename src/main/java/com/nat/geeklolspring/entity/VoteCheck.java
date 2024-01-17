@@ -2,9 +2,7 @@ package com.nat.geeklolspring.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Setter
 @Getter
@@ -17,6 +15,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "vote_check")
 public class VoteCheck {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "vote_id")
+    private int voteId;
 
     @Builder.Default
     @Column(name = "vote_up")

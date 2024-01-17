@@ -27,9 +27,12 @@ public class User {
     @Column(name = "user_name", length = 40, nullable = false)
     private String userName;
 
+    @Column(name = "profile_image")
+    private String profileImage;
+
     @CreationTimestamp
-    @Column(name = "user_create_date", updatable = false)
-    private LocalDateTime createdDate;
+    @Column(updatable = false)
+    private LocalDateTime joinMembershipDate;
 
     @Builder.Default
     @Column(name = "user_report_count")

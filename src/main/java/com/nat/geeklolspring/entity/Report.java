@@ -1,0 +1,38 @@
+package com.nat.geeklolspring.entity;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@Setter
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+@Builder
+
+@Entity
+public class Report {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "report_number")
+    private int reportNumber;
+
+    @Column(name = "report_title")
+    private String reportTitle;
+
+    @Column(name = "report_content")
+    private String reportContent;
+
+
+    //--------------------------
+    @Column(name = "report_user_id")
+    private String reportUserId;
+
+    @Column(name = "report_link")
+    private String reportLink;
+
+
+}

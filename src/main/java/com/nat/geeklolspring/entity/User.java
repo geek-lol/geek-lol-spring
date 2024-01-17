@@ -18,6 +18,7 @@ import static com.nat.geeklolspring.entity.Auth.COMMON;
 @Entity
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private String id;
 

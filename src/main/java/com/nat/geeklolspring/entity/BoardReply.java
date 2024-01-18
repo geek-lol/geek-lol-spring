@@ -35,11 +35,14 @@ public class BoardReply {
 
 
     //----------------------------------------
-    @Column(name = "reply_writer")
-    private String replyWriter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_writer")
+    private User replyWriter;
 
-    @Column(name = "bulletion_id")
-    private long bulletionId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bulletion_id")
+    private BoardBulletion bulletionId;
 
 
 }

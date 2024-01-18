@@ -5,6 +5,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
 @ToString
@@ -41,11 +44,16 @@ public class BoardBulletion {
 
 
     //----------------------------------------
-    @Column(name = "poster_id")
-    private String posterId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id")
+    private User posterId;
 
 
 
+    //----------------------------------------
+
+    @OneToMany(mappedBy = "bulletionId")
+    private List<BoardReply> boardReply = new ArrayList<>();
 
 
 }

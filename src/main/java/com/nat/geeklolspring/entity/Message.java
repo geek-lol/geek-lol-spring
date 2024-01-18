@@ -39,12 +39,12 @@ public class Message {
     private int receiverDelete;
 
 
-    @Column(name = "receiver_id", nullable = false)
-    private long receiverId;
-
     //----------------------------------------
-    @Column(name = "sender_id")
-    private String senderId;
-
+//    @Column(name = "sender_id")
+//    private String senderId;
+//
+//    @Column(name = "receiver_id", nullable = false)
+//    private long receiverId;
+//
 
 }

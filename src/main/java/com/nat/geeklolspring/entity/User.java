@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.nat.geeklolspring.entity.Auth.COMMON;
 
@@ -45,16 +47,21 @@ public class User {
     private Auth auth = COMMON;
 
 
+//-----------------------------------------
+    @OneToMany(mappedBy = "sender")
+    private List<MessageMiddlePoint> sentMessages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "receiver")
+    private List<MessageMiddlePoint> receivedMessages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reportUserId")
+    private List<Report> reportUser = new ArrayList<>();
 
+    @OneToMany(mappedBy = "posterId")
+    private List<BoardBulletion> poster = new ArrayList<>();
 
-
-
-
-
-
-
+    @OneToMany(mappedBy = "replyWriter")
+    private List<BoardReply> replyWriter = new ArrayList<>();
 
 
 }

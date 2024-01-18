@@ -27,12 +27,14 @@ public class Report {
     private String reportContent;
 
 
-    //--------------------------
-    @Column(name = "report_user_id")
-    private String reportUserId;
-
     @Column(name = "report_link")
     private String reportLink;
+
+    //---------------------------------------
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_user_id")
+    private User reportUserId;
 
 
 }

@@ -2,6 +2,7 @@ package com.nat.geeklolspring.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -20,7 +21,8 @@ import static com.nat.geeklolspring.entity.Auth.COMMON;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uid")
+    @GenericGenerator(strategy = "uuid", name = "uid")
     @Column(name = "user_id")
     private String id;
 

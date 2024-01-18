@@ -22,7 +22,7 @@ public class BoardShorts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shorts_id")
-    private String id;
+    private Long shortsId;
 
     @Column(name = "shorts_link")
     private String videoLink;
@@ -55,9 +55,9 @@ public class BoardShorts {
     @JoinColumn(name = "user_id")
     private User uploaderId;
 
-    @OneToMany(mappedBy = "shortsReplyId")
+    @OneToMany(mappedBy = "shortsId")
     private List<ShortsReply> shortsReplyId = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shortsVoteId")
+    @OneToMany(mappedBy = "shortsId")
     private List<VoteCheck> shortsVoteId = new ArrayList<>();
 }

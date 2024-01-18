@@ -12,10 +12,11 @@ import java.util.List;
 
 import static com.nat.geeklolspring.entity.Auth.COMMON;
 
-@Setter @Getter @ToString
+@Setter @Getter
+@ToString(exclude = {"MessageMiddlePoint", "Report", "BoardBulletion", "BoardReply", "BoardShorts", "ShortsReply", "VoteCheck"})
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @Builder
 
 @Entity
@@ -65,14 +66,14 @@ public class User {
     @OneToMany(mappedBy = "replyWriter")
     private List<BoardReply> replyWriter = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shortsWriter")
-    private List<BoardShorts> shortsWriter = new ArrayList<>();
+    @OneToMany(mappedBy = "uploaderId")
+    private List<BoardShorts> uploaderId = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shortsReplyWriter")
-    private List<ShortsReply> shortsReplyWriter = new ArrayList<>();
+    @OneToMany(mappedBy = "writerId")
+    private List<ShortsReply> writerId = new ArrayList<>();
 
-    @OneToMany(mappedBy = "voteReceiver")
-    private List<VoteCheck> voteReceiver = new ArrayList<>();
+    @OneToMany(mappedBy = "receiver")
+    private List<VoteCheck> receiver = new ArrayList<>();
 
 
 }

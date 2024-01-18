@@ -21,7 +21,7 @@ public class ShortsReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
-    private String id;
+    private Long id;
 
     @Column(name = "reply_text")
     private String context;

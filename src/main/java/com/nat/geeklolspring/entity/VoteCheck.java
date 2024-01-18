@@ -18,7 +18,7 @@ public class VoteCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vote_id")
-    private int voteId;
+    private Long voteId;
 
     @Builder.Default
     @Column(name = "vote_up")

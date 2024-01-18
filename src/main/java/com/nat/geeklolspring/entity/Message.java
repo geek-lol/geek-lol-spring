@@ -5,6 +5,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -45,6 +47,10 @@ public class Message {
 //
 //    @Column(name = "receiver_id", nullable = false)
 //    private long receiverId;
-//
+
+
+    @OneToMany(mappedBy = "message")
+    private List<MessageMiddlePoint> messageMiddlePoint = new ArrayList<>();
+
 
 }

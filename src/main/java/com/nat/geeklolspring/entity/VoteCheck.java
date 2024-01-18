@@ -33,9 +33,11 @@ public class VoteCheck {
 
 
     // fk가 필요한 곳
-    @Column(name = "receiver_id")
-    private String receiver;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User receiver;
 
-    @Column(name = "shorts_id")
-    private String shortsId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shorts_id")
+    private BoardShorts shortsId;
 }

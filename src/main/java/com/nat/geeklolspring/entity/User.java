@@ -63,5 +63,14 @@ public class User {
     @OneToMany(mappedBy = "replyWriter")
     private List<BoardReply> replyWriter = new ArrayList<>();
 
+    @OneToMany(mappedBy = "shortsWriter")
+    private List<BoardShorts> shortsWriter = new ArrayList<>();
+
+    @OneToMany(mappedBy = "shortsReplyWriter")
+    private List<ShortsReply> shortsReplyWriter = new ArrayList<>();
+
+    @OneToMany(mappedBy = "voteReceiver")
+    private List<VoteCheck> voteReceiver = new ArrayList<>();
+
 
 }

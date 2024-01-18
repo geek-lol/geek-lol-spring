@@ -5,6 +5,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -49,6 +51,13 @@ public class BoardShorts {
 
 
     // fk가 필요한 곳
-    @Column(name = "poster_id")
-    private String uploaderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User uploaderId;
+
+    @OneToMany(mappedBy = "shortsReplyId")
+    private List<ShortsReply> shortsReplyId = new ArrayList<>();
+
+    @OneToMany(mappedBy = "shortsVoteId")
+    private List<VoteCheck> shortsVoteId = new ArrayList<>();
 }

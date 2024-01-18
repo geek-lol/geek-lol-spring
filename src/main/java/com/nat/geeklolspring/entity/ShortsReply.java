@@ -39,9 +39,11 @@ public class ShortsReply {
 
 
     // fk가 필요한 곳
-    @Column(name = "reply_writer")
-    private String writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User writerId;
 
-    @Column(name = "shorts_id")
-    private String shortsId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shorts_id")
+    private BoardShorts shortsId;
 }

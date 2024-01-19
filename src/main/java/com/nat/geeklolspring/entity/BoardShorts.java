@@ -39,10 +39,6 @@ public class BoardShorts {
     private int upCount = 0;
 
     @Builder.Default
-    @Column(name = "vote_down")
-    private int downCount = 0;
-
-    @Builder.Default
     @Column(name = "shorts_report_count")
     private int reportCount = 0;
 

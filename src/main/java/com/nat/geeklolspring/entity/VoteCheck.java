@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"user", "boardShorts"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -31,10 +31,6 @@ public class VoteCheck {
     @Builder.Default
     @Column(name = "vote_up")
     private int up = 0;
-
-    @Builder.Default
-    @Column(name = "vote_down")
-    private int down = 0;
 
 
 

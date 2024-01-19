@@ -12,10 +12,8 @@ import lombok.*;
 @Builder
 public class VoteResponseDTO {
     private int up;
-    private int down;
 
     public VoteResponseDTO(VoteCheck dto) {
         this.up = dto.getUp();
-        this.down = dto.getDown();
     }
 }

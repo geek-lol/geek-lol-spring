@@ -12,7 +12,7 @@ import java.util.List;
 import static com.nat.geeklolspring.entity.Auth.COMMON;
 
 @Setter @Getter
-@ToString(exclude = {"MessageMiddlePoint", "Report", "BoardBulletion", "BoardReply", "BoardShorts", "ShortsReply", "VoteCheck"})
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -28,7 +28,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "user_name", length = 40, nullable = false)
+    @Column(name = "user_name", length = 15, nullable = false)
     private String userName;
 
     @Column(name = "profile_image")

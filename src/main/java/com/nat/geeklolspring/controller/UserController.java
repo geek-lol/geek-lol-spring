@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000","",""})
 @RequestMapping("/user/sign_up")
 public class UserController {
 

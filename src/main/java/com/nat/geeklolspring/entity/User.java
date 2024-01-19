@@ -50,17 +50,14 @@ public class User {
 
 
 //-----------------------------------------
-    @OneToMany(mappedBy = "sender")
-    private List<MessageMiddlePoint> sentMessages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "receiver")
-    private List<MessageMiddlePoint> receivedMessages = new ArrayList<>();
-
     @OneToMany(mappedBy = "reportUserId")
     private List<Report> reportUser = new ArrayList<>();
 
     @OneToMany(mappedBy = "posterId")
     private List<BoardBulletion> poster = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bulletionCheckerId")
+    private List<BulletionCheck> bulletionChecker = new ArrayList<>();
 
     @OneToMany(mappedBy = "replyWriter")
     private List<BoardReply> replyWriter = new ArrayList<>();

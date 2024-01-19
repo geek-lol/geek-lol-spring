@@ -55,4 +55,8 @@ public class BoardBulletion {
     private List<BoardReply> boardReply = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "BoardBulletionId")
+    private List<BulletionCheck> BoardBulletionId = new ArrayList<>();
+
+
 }

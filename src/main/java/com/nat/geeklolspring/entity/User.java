@@ -21,10 +21,9 @@ import static com.nat.geeklolspring.entity.Auth.COMMON;
 
 @Entity
 public class User {
+
     @Id
-    @GeneratedValue(generator = "uid")
-    @GenericGenerator(strategy = "uuid", name = "uid")
-    @Column(name = "user_id")
+    @Column(name = "user_id",unique = true,nullable = false)
     private String id;
 
     @Column(nullable = false)

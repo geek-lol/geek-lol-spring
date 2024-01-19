@@ -27,6 +27,7 @@ public class Report {
     private String reportContent;
 
 
+
     @Column(name = "report_link")
     private String reportLink;
 

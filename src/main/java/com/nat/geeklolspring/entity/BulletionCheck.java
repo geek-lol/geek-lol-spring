@@ -26,7 +26,7 @@ public class BulletionCheck {
 
     // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bulletion_check_id")
+    @JoinColumn(name = "bulletion_checker_id")
     private User bulletionCheckerId;
 
     @ManyToOne(fetch = FetchType.LAZY)

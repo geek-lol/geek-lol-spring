@@ -57,7 +57,7 @@ public class User {
     private List<BoardBulletion> poster = new ArrayList<>();
 
     @OneToMany(mappedBy = "bulletionCheckerId")
-    private List<BulletionCheck> bulletionChecker = new ArrayList<>();
+    private List<BulletionCheck> bulletionCheckerId = new ArrayList<>();
 
     @OneToMany(mappedBy = "replyWriter")
     private List<BoardReply> replyWriter = new ArrayList<>();
@@ -81,6 +81,6 @@ public class User {
     private List<RulingReply> rulingWriter = new ArrayList<>();
 
     @OneToMany(mappedBy = "applyPosterId")
-    private List<BoardRuling> applyPoster = new ArrayList<>();
+    private List<BoardApply> applyPosterId = new ArrayList<>();
 
 }

@@ -42,7 +42,6 @@ public class BoardBulletion {
 
 
 
-
     //----------------------------------------
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poster_id")

@@ -23,6 +23,12 @@ public class ShortsReply {
     @Column(name = "reply_id")
     private Long id;
 
+    @Column(name = "user_id")
+    private String writerId;
+
+    @Column(name = "shorts_id")
+    private Long shortsId;
+
     @Column(name = "reply_text")
     private String context;
 
@@ -40,10 +46,10 @@ public class ShortsReply {
 
     // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User writerId;
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shorts_id")
-    private BoardShorts shortsId;
+    @JoinColumn(name = "shorts_id", insertable = false, updatable = false)
+    private BoardShorts boardShorts;
 }

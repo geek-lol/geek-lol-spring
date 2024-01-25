@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.vote.dto.response;
+package com.nat.geeklolspring.shorts.vote.dto.response;
 
 import com.nat.geeklolspring.entity.VoteCheck;
 import lombok.*;

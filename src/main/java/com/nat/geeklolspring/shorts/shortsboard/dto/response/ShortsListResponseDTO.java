@@ -1,6 +1,5 @@
-package com.nat.geeklolspring.shorts.dto.response;
+package com.nat.geeklolspring.shorts.shortsboard.dto.response;
 
-import com.nat.geeklolspring.entity.BoardShorts;
 import lombok.*;
 
 import java.util.List;

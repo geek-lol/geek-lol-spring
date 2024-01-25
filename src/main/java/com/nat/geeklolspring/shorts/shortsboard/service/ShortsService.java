@@ -1,11 +1,11 @@
-package com.nat.geeklolspring.shorts.service;
+package com.nat.geeklolspring.shorts.shortsboard.service;
 
 import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.repository.UserRepository;
-import com.nat.geeklolspring.shorts.dto.request.ShortsPostRequestDTO;
-import com.nat.geeklolspring.shorts.dto.response.ShortsDetailResponseDTO;
-import com.nat.geeklolspring.shorts.dto.response.ShortsListResponseDTO;
-import com.nat.geeklolspring.shorts.repository.ShortsRepository;
+import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
+import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
+import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
+import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

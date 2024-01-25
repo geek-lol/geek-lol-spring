@@ -1,17 +1,15 @@
-package com.nat.geeklolspring.shorts.controller;
+package com.nat.geeklolspring.shorts.shortsboard.controller;
 
 import com.nat.geeklolspring.exception.NoUserInfoFoundException;
-import com.nat.geeklolspring.shorts.dto.request.ShortsPostRequestDTO;
-import com.nat.geeklolspring.shorts.dto.response.ShortsListResponseDTO;
-import com.nat.geeklolspring.shorts.service.ShortsService;
+import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
+import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
+import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
 import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

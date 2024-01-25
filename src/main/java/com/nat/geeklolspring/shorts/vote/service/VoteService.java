@@ -1,16 +1,13 @@
-package com.nat.geeklolspring.vote.service;
+package com.nat.geeklolspring.shorts.vote.service;
 
 import com.nat.geeklolspring.exception.NoUserInfoFoundException;
-import com.nat.geeklolspring.vote.dto.request.VotePatchRequestDTO;
-import com.nat.geeklolspring.vote.dto.request.VotePostRequestDTO;
-import com.nat.geeklolspring.vote.dto.response.VoteResponseDTO;
+import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
+import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
 import com.nat.geeklolspring.entity.VoteCheck;
-import com.nat.geeklolspring.vote.repository.VoteCheckRepository;
+import com.nat.geeklolspring.shorts.vote.repository.VoteCheckRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @Slf4j

@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.shorts.dto.request;
+package com.nat.geeklolspring.shorts.shortsboard.dto.request;
 
 import com.nat.geeklolspring.entity.BoardShorts;
 import lombok.*;

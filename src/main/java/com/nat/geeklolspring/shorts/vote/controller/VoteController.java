@@ -1,12 +1,12 @@
-package com.nat.geeklolspring.vote.controller;
+package com.nat.geeklolspring.shorts.vote.controller;
 
 import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.exception.DuplicatedVoteException;
 import com.nat.geeklolspring.exception.NoUserInfoFoundException;
-import com.nat.geeklolspring.vote.dto.request.VotePatchRequestDTO;
-import com.nat.geeklolspring.vote.dto.request.VotePostRequestDTO;
-import com.nat.geeklolspring.vote.dto.response.VoteResponseDTO;
-import com.nat.geeklolspring.vote.service.VoteService;
+import com.nat.geeklolspring.shorts.vote.dto.request.VotePatchRequestDTO;
+import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
+import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
+import com.nat.geeklolspring.shorts.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;

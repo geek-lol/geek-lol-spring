@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.vote.dto.request;
+package com.nat.geeklolspring.shorts.vote.dto.request;
 
 import lombok.*;
 

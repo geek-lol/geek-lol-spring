@@ -1,9 +1,12 @@
-package com.nat.geeklolspring.service;
+package com.nat.geeklolspring.user.service;
 
-import com.nat.geeklolspring.dto.request.UserSignUpRequestDTO;
-import com.nat.geeklolspring.dto.response.UserSignUpResponseDTO;
+import com.nat.geeklolspring.auth.TokenProvider;
+import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
+import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
+import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
 import com.nat.geeklolspring.entity.User;
-import com.nat.geeklolspring.repository.UserRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
 
     public UserSignUpResponseDTO create(UserSignUpRequestDTO dto) {
 
@@ -41,5 +45,23 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
+    public LoginResponseDTO authenticate(final LoginRequestDTO dto){
+
+        User user = userRepository.findById(dto.getId())
+                .orElseThrow(
+                        () -> new RuntimeException("가입된 회원이 아닙니다.")
+                );
+
+        String inputPassword = dto.getPassword();
+        String encodedPassword = user.getPassword();
+
+        if (!passwordEncoder.matches(inputPassword,encodedPassword)){
+            throw new RuntimeException("비밀번호가 틀렸습니다");
+        }
+
+        String token = tokenProvider.createToken(user);
+
+        return new LoginResponseDTO(user,token);
+    }
 
 }

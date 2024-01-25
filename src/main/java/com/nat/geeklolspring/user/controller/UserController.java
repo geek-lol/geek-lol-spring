@@ -1,8 +1,10 @@
-package com.nat.geeklolspring.controller;
+package com.nat.geeklolspring.user.controller;
 
-import com.nat.geeklolspring.dto.request.UserSignUpRequestDTO;
-import com.nat.geeklolspring.dto.response.UserSignUpResponseDTO;
-import com.nat.geeklolspring.service.UserService;
+import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
+import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
+import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
+import com.nat.geeklolspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000","",""})
-@RequestMapping("/user/sign_up")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/sign_up")
     public ResponseEntity<?> signUp(
             @Validated @RequestBody UserSignUpRequestDTO dto,
             BindingResult result
@@ -49,6 +50,20 @@ public class UserController {
         log.debug("{} 중복 - {}",id,flag);
 
         return ResponseEntity.badRequest().body(flag);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> signin(
+            @Validated @RequestBody LoginRequestDTO dto
+            )
+        {try {
+            LoginResponseDTO responseDTO = userService.authenticate(dto);
+            log.info("login success by {}",responseDTO.getUserName());
+            return ResponseEntity.ok().body(responseDTO);
+        }catch (RuntimeException e){
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 

@@ -1,7 +1,8 @@
 package com.nat.geeklolspring.service;
 
-import com.nat.geeklolspring.dto.request.UserSignUpRequestDTO;
-import com.nat.geeklolspring.dto.response.UserSignUpResponseDTO;
+import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
+import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
+import com.nat.geeklolspring.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

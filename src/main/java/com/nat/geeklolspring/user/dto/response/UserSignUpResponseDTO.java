@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.dto.response;
+package com.nat.geeklolspring.user.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

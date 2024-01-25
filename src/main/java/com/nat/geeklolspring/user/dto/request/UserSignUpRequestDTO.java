@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.dto.request;
+package com.nat.geeklolspring.user.dto.request;
 
 
 import com.nat.geeklolspring.entity.Auth;

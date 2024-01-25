@@ -42,9 +42,6 @@ public class BoardRuling {
     private int upCount = 0;
 
     @Builder.Default
-    @Column(name = "vote_two")
-    private int downCount = 0;
-
     @Column(name = "ruling_status")
     private int status = 0;
 

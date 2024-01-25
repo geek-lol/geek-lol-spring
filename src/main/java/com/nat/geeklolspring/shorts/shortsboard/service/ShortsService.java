@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.shorts.shortsboard.service;
 
 import com.nat.geeklolspring.entity.BoardShorts;
-import com.nat.geeklolspring.repository.UserRepository;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;

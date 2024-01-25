@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nat.geeklolspring.entity.Auth.COMMON;
+import static com.nat.geeklolspring.entity.Role.COMMON;
 
 @Setter @Getter
 @ToString(exclude = {"MessageMiddlePoint", "Report", "BoardBulletion", "BoardReply", "BoardShorts", "ShortsReply", "VoteCheck"})
@@ -45,7 +45,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Auth auth = COMMON;
+    private Role role = COMMON;
 
 
 //-----------------------------------------

@@ -1,16 +1,12 @@
 package com.nat.geeklolspring.user.dto.request;
 
 
-import com.nat.geeklolspring.entity.Auth;
 import com.nat.geeklolspring.entity.User;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
-import static com.nat.geeklolspring.entity.Auth.COMMON;
 
 @Setter
 @Getter

@@ -32,7 +32,7 @@ public class TokenProvider {
         // 추가 클레임 정의
         Map<String, Object> claims = new HashMap<>();
         claims.put("user-id", userEntity.getId());
-        claims.put("user-auth",userEntity.getAuth());
+        claims.put("user-auth",userEntity.getRole());
 
 
         return Jwts.builder()

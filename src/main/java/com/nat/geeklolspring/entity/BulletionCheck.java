@@ -31,5 +31,5 @@ public class BulletionCheck {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bulletion_id")
-    private BoardBulletion BoardBulletionId;
+    private BoardBulletin boardBulletinId;
 }

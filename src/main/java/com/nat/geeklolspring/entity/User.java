@@ -53,7 +53,7 @@ public class User {
     private List<Report> reportUser = new ArrayList<>();
 
     @OneToMany(mappedBy = "posterId")
-    private List<BoardBulletion> poster = new ArrayList<>();
+    private List<BoardBulletin> poster = new ArrayList<>();
 
     @OneToMany(mappedBy = "bulletionCheckerId")
     private List<BulletionCheck> bulletionCheckerId = new ArrayList<>();

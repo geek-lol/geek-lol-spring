@@ -42,7 +42,7 @@ public class BoardReply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bulletion_id")
-    private BoardBulletion bulletionId;
+    private BoardBulletin bulletionId;
 
 
 }

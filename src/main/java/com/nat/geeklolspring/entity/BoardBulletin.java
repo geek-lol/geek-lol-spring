@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 
 @Entity
-public class BoardBulletion {
+public class BoardBulletin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

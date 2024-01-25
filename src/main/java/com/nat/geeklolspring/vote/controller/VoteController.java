@@ -66,7 +66,7 @@ public class VoteController {
             log.warn("flag : {}", flag);
 
             if (!flag) {
-                VoteResponseDTO vote = voteService.create(dto);
+                VoteResponseDTO vote = voteService.createVote(dto);
                 return ResponseEntity.ok().body(vote);
             }
 

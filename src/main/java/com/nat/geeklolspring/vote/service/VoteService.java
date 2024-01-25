@@ -18,8 +18,8 @@ import java.util.Optional;
 public class VoteService {
     private final VoteCheckRepository voteCheckRepository;
 
-    public VoteResponseDTO create(VotePostRequestDTO dto) {
-        log.debug("vote save service execute!");
+    public VoteResponseDTO createVote(VotePostRequestDTO dto) {
+        log.debug("좋아요 저장 서비스 실행!");
 
         if (dto == null) {
             throw new NoUserInfoFoundException("필요한 정보가 입력되지 않았습니다.");

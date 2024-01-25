@@ -55,8 +55,8 @@ public class User {
     @OneToMany(mappedBy = "posterId")
     private List<BoardBulletin> poster = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bulletionCheckerId")
-    private List<BulletionCheck> bulletionCheckerId = new ArrayList<>();
+    @OneToMany(mappedBy = "bulletinCheckerId")
+    private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
 
     @OneToMany(mappedBy = "replyWriter")
     private List<BoardReply> replyWriter = new ArrayList<>();

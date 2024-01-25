@@ -12,12 +12,12 @@ import javax.persistence.*;
 @Builder
 
 @Entity
-@Table(name = "bulletion_check")
-public class BulletionCheck {
+@Table(name = "bulletin_check")
+public class BulletinCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bulletion_check_id")
-    private Long bulletionId;
+    @Column(name = "bulletin_check_id")
+    private Long bulletinId;
 
     @Builder.Default
     @Column(name = "check_good")
@@ -26,10 +26,10 @@ public class BulletionCheck {
 
     // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bulletion_checker_id")
-    private User bulletionCheckerId;
+    @JoinColumn(name = "bulletin_checker_id")
+    private User bulletinCheckerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bulletion_id")
+    @JoinColumn(name = "bulletin_id")
     private BoardBulletin boardBulletinId;
 }

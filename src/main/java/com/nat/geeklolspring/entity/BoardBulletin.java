@@ -21,8 +21,8 @@ public class BoardBulletin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bulletion_id")
-    private long bulletionId;
+    @Column(name = "bulletin_id")
+    private long bulletinId;
 
     @CreationTimestamp
     @Column(name = "board_date")
@@ -51,12 +51,12 @@ public class BoardBulletin {
 
     //----------------------------------------
 
-    @OneToMany(mappedBy = "bulletionId")
+    @OneToMany(mappedBy = "bulletinId")
     private List<BoardReply> boardReply = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "BoardBulletionId")
-    private List<BulletionCheck> BoardBulletionId = new ArrayList<>();
+    @OneToMany(mappedBy = "boardBulletinId")
+    private List<BulletinCheck> boardBulletinId = new ArrayList<>();
 
 
 }

@@ -14,14 +14,12 @@ public class VotePostRequestDTO {
     private String receiver;
     private Long shortsId;
     private int up;
-    private int down;
 
     public VoteCheck toEntity(VotePostRequestDTO dto) {
         return VoteCheck.builder()
                 .receiver(dto.receiver)
                 .shortsId(dto.shortsId)
                 .up(this.up)
-                .down(this.down)
                 .build();
     }
 }

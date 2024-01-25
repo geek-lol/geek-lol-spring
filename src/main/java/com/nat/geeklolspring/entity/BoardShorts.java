@@ -24,6 +24,9 @@ public class BoardShorts {
     @Column(name = "shorts_id")
     private Long shortsId;
 
+    @Column(name = "poster_id")
+    private String uploaderId;
+
     @Column(name = "shorts_link")
     private String videoLink;
 
@@ -35,12 +38,12 @@ public class BoardShorts {
     private String title;
 
     @Builder.Default
-    @Column(name = "vote_up")
-    private int upCount = 0;
+    @Column(name = "view_count")
+    private int viewCount = 0;
 
     @Builder.Default
-    @Column(name = "vote_down")
-    private int downCount = 0;
+    @Column(name = "vote_up")
+    private int upCount = 0;
 
     @Builder.Default
     @Column(name = "shorts_report_count")
@@ -51,10 +54,6 @@ public class BoardShorts {
 
 
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User uploaderId;
-
     @OneToMany(mappedBy = "shortsId")
     private List<ShortsReply> shortsReplyId = new ArrayList<>();
 

@@ -29,6 +29,32 @@ public class ShortsController {
 
     private final ShortsService shortsService;
 
+    @GetMapping()
+    public ResponseEntity<?> shortsList() {
+        log.info("/api/shorts : Get!");
+
+        try {
+            ShortsListResponseDTO shortsList = shortsService.retrieve();
+
+            if(shortsList.getShorts().isEmpty()) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(ShortsListResponseDTO
+                                .builder()
+                                .error("아직 업로드된 동영상이 없습니다!")
+                                .build());
+            }
+
+            return ResponseEntity.ok().body(shortsList);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(ShortsListResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
+        }
+    }
+
     // 쇼츠 생성
     @PostMapping()
     public ResponseEntity<?> addShorts(

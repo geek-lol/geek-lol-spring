@@ -54,10 +54,6 @@ public class BoardShorts {
 
 
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
-
     @OneToMany(mappedBy = "shortsId")
     private List<ShortsReply> shortsReplyId = new ArrayList<>();
 

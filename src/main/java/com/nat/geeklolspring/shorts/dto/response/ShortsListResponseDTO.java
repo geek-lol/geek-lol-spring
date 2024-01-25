@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ShortsListResponseDTO {
-    private String error;
-    private List<ShortsDetailResponseDTO> shorts;
+    private String error; // 에러 발생 시 에러로그가 전달되는 곳
+    private List<ShortsDetailResponseDTO> shorts; // Shorts 전체 리스트
 }

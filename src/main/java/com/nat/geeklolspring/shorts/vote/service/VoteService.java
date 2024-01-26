@@ -18,7 +18,7 @@ public class VoteService {
     public VoteResponseDTO createVote(VotePostRequestDTO dto) {
         log.debug("좋아요 저장 서비스 실행!");
 
-        if (dto == null) {
+        if (dto.getShortsId() == null || dto.getReceiver().isEmpty()) {
             throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
         }
 

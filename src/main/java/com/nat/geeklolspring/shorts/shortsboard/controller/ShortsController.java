@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
 import com.nat.geeklolspring.exception.DTONotFoundException;
+import com.nat.geeklolspring.exception.IdNotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
@@ -22,8 +23,11 @@ import java.util.Map;
 @RequestMapping("/api/shorts")
 public class ShortsController {
     // 업로드한 shorts를 저장할 로컬 위치
-    @Value("D:/geek-lol/upload/shorts/")
+    @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;
+
+    @Value("D/geek-lol/upload/shorts/thumbnail")
+    private String rootThumbnailPath;
 
     private final ShortsService shortsService;
 
@@ -57,7 +61,8 @@ public class ShortsController {
     @PostMapping()
     public ResponseEntity<?> addShorts(
             @RequestPart ShortsPostRequestDTO dto,
-            @RequestPart("videoUrl") MultipartFile file,
+            @RequestPart("videoUrl") MultipartFile fileUrl,
+            @RequestPart("thumbnail")MultipartFile thumbnail,
             BindingResult result
     ) {
         // 입력값 검증에 걸리면 400번 코드와 함께 메시지를 클라이언트에 전송
@@ -71,16 +76,18 @@ public class ShortsController {
         log.info("/api/shorts : POST");
         log.warn("request parameter : {}", dto);
 
+        dto.setVideoLink(fileUrl);
+        dto.setVideoThumbnail(thumbnail);
+
         try {
-            if (dto == null)
+            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty() || dto.getUploaderId().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
-            dto.setVideoLink(file);
-
-            Map<String, String> videoMap = FileUtil.uploadVideo(file, rootShortsPath);
+            Map<String, String> videoMap = FileUtil.uploadVideo(fileUrl, thumbnail, rootShortsPath, rootThumbnailPath);
             String videoPath = videoMap.get("videoPath");
+            String thumbnailPath = videoMap.get("thumbnailPath");
 
-            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath);
+            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath);
             return ResponseEntity.ok().body(shortsList);
 
         } catch (DTONotFoundException e) {
@@ -112,10 +119,11 @@ public class ShortsController {
             return ResponseEntity.ok().body(shortsList);
         } catch (Exception e) {
             return ResponseEntity
-                    .internalServerError()
+                    .badRequest()
                     .body(ShortsListResponseDTO
                             .builder()
-                            .error(e.getMessage()));
+                            .error(e.getMessage())
+                            .build());
         }
     }
 }

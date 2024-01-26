@@ -27,15 +27,21 @@ public class BoardShorts {
     @Column(name = "poster_id")
     private String uploaderId;
 
-    @Column(name = "shorts_link")
-    private String videoLink;
-
     @CreationTimestamp
     @Column(name = "shorts_date", updatable = false)
     private LocalDateTime uploadDate;
 
-    @Column(name = "shorts_title")
+    @Column(name = "shorts_title", length = 50)
     private String title;
+
+    @Column(name = "shorts_context", length = 100)
+    private String context;
+
+    @Column(name = "shorts_link")
+    private String videoLink;
+
+    @Column(name = "shorts_thumbnail_image")
+    private String thumbnailImage;
 
     @Builder.Default
     @Column(name = "view_count")

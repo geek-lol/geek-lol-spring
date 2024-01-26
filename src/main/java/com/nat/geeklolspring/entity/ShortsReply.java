@@ -33,7 +33,7 @@ public class ShortsReply {
     private String context;
 
     @CreationTimestamp
-    @Column(name = "shorts_reply_date", updatable = false)
+    @Column(name = "shorts_reply_date")
     private LocalDateTime replyDate;
 
     @Builder.Default

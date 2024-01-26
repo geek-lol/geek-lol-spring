@@ -2,7 +2,7 @@ package com.nat.geeklolspring.shorts.vote.controller;
 
 import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.exception.DuplicatedVoteException;
-import com.nat.geeklolspring.exception.NoUserInfoFoundException;
+import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.shorts.vote.dto.request.VotePatchRequestDTO;
 import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
 import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
@@ -71,7 +71,7 @@ public class VoteController {
 
             throw new DuplicatedVoteException("이미 좋아요가 저장되어 있습니다!");
 
-        } catch (NoUserInfoFoundException e) {
+        } catch (DTONotFoundException e) {
             log.warn("유저 정보를 전달받지 못했습니다.");
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (DuplicatedVoteException e) {

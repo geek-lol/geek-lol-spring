@@ -1,6 +1,6 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
-import com.nat.geeklolspring.exception.NoUserInfoFoundException;
+import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000","",""})
+//@CrossOrigin(origins = {"http://localhost:3000","",""})
 @RequestMapping("/api/shorts")
 public class ShortsController {
     // 업로드한 shorts를 저장할 로컬 위치
@@ -73,7 +73,7 @@ public class ShortsController {
 
         try {
             if (dto == null)
-                throw new NoUserInfoFoundException("필요한 정보가 입력되지 않았습니다.");
+                throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             dto.setVideoLink(file);
 
@@ -83,8 +83,11 @@ public class ShortsController {
             ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath);
             return ResponseEntity.ok().body(shortsList);
 
-        } catch (NoUserInfoFoundException e) {
+        } catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

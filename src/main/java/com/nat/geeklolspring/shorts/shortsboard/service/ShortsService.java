@@ -42,14 +42,14 @@ public class ShortsService {
     }
 
     public ShortsListResponseDTO retrieve() {
-        List<BoardShorts> allShorts = shortsRepository.findAll();
+        List<BoardShorts> shortsList = shortsRepository.findAll();
 
-        List<ShortsDetailResponseDTO> shortsList = allShorts.stream()
+        List<ShortsDetailResponseDTO> allShorts = shortsList.stream()
                 .map(ShortsDetailResponseDTO::new)
                 .collect(Collectors.toList());
 
         return ShortsListResponseDTO.builder()
-                .shorts(shortsList)
+                .shorts(allShorts)
                 .build();
     }
 }

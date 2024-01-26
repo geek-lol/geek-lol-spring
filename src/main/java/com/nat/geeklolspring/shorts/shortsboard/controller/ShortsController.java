@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
 import com.nat.geeklolspring.exception.DTONotFoundException;
-import com.nat.geeklolspring.exception.IdNotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;

@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.shorts.shortsreply.dto.response;
 
 import com.nat.geeklolspring.entity.ShortsReply;
-import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
 import lombok.*;
 
 import java.time.LocalDateTime;

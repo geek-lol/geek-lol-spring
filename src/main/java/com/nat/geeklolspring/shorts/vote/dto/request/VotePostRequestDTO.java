@@ -3,7 +3,6 @@ package com.nat.geeklolspring.shorts.vote.dto.request;
 import com.nat.geeklolspring.entity.VoteCheck;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Setter

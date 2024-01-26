@@ -1,8 +1,6 @@
 package com.nat.geeklolspring.utils.upload;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;

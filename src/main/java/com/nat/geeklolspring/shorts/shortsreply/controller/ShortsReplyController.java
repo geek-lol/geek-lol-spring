@@ -1,15 +1,18 @@
 package com.nat.geeklolspring.shorts.shortsreply.controller;
 
 import com.nat.geeklolspring.exception.DTONotFoundException;
-import com.nat.geeklolspring.exception.IdNotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
+import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @Slf4j
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ShortsReplyController {
     private final ShortsReplyService shortsReplyService;
 
+    // 해당 쇼츠의 댓글 정보를 가져오는 부분
     @GetMapping("/{shortsId}")
     public ResponseEntity<?> replyList(@PathVariable Long shortsId) {
         log.info("/api/shorts/reply/{} : Get!", shortsId);
@@ -45,6 +49,7 @@ public class ShortsReplyController {
         }
     }
 
+    // 해당 쇼츠에 댓글을 등록하는 부분
     @PostMapping("/{shortsId}")
     public ResponseEntity<?> addReply(
             @PathVariable Long shortsId,
@@ -69,6 +74,7 @@ public class ShortsReplyController {
         }
     }
 
+    // 해당 쇼츠의 댓글을 삭제하는 부분
     @DeleteMapping("/{shortsId}/{replyId}")
     public ResponseEntity<?> deleteReply(@PathVariable Long shortsId,
                                          @PathVariable Long replyId) {
@@ -95,8 +101,21 @@ public class ShortsReplyController {
                             .error(e.getMessage())
                             .build());
         }
+    }
 
+    @RequestMapping(method = {PUT, PATCH})
+    public ResponseEntity<?> updateShortsReply(@RequestBody ShortsUpdateRequestDTO dto) {
+        log.info("api/shorts/reply : PATCH");
+        log.debug("서버에서 받은 값 : {}", dto);
 
+        try {
+            ShortsReplyListResponseDTO replyList = shortsReplyService.updateReply(dto);
 
+            return ResponseEntity.ok().body(replyList);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(ShortsListResponseDTO.builder().error(e.getMessage()));
+        }
     }
 }

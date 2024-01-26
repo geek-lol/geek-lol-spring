@@ -26,7 +26,7 @@ public class ShortsController {
     @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;
 
-    @Value("D/geek-lol/upload/shorts/thumbnail")
+    @Value("D:/geek-lol/upload/shorts/thumbnail")
     private String rootThumbnailPath;
 
     private final ShortsService shortsService;
@@ -83,9 +83,9 @@ public class ShortsController {
             if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty() || dto.getUploaderId().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
-            Map<String, String> videoMap = FileUtil.uploadVideo(fileUrl, thumbnail, rootShortsPath, rootThumbnailPath);
-            String videoPath = videoMap.get("videoPath");
-            String thumbnailPath = videoMap.get("thumbnailPath");
+            Map<String, String> map = FileUtil.uploadVideo(fileUrl, thumbnail, rootShortsPath, rootThumbnailPath);
+            String videoPath = map.get("videoPath");
+            String thumbnailPath = map.get("thumbnailPath");
 
             ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath);
             return ResponseEntity.ok().body(shortsList);

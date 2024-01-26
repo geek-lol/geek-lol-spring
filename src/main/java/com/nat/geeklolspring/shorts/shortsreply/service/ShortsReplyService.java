@@ -3,6 +3,7 @@ package com.nat.geeklolspring.shorts.shortsreply.service;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.IdNotFoundException;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
+import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,5 +56,18 @@ public class ShortsReplyService {
             log.error("삭제에 실패했습니다. - ID: {}, Error: {}", replyId, e.getMessage());
             throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
         }
+    }
+
+    public ShortsReplyListResponseDTO updateReply(ShortsUpdateRequestDTO dto) {
+        Optional<ShortsReply> target = shortsReplyRepository.findById(dto.getReplyId());
+
+        target.ifPresent(reply -> {
+            reply.setContext(dto.getContext());
+            reply.setModify(reply.getModify()+1);
+            shortsReplyRepository.save(reply);
+        });
+
+
+        return retrieve(dto.getShortsId());
     }
 }

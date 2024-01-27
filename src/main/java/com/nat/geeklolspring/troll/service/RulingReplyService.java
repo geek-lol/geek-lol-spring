@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.troll.service;
 
+import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.RulingReply;
 import com.nat.geeklolspring.troll.repository.RulingReplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +28,15 @@ public class RulingReplyService {
         }
     }
 
-    //댓글 전체 조회
-    public List<RulingReply> rulingReplyAll(){
-         return rrr.findAll();
+    //특정 게시물의 댓글 전체 조회
+    public List<RulingReply> rulingReplyAll(BoardRuling br){
+        return rrr.findAllByRulingId(br);
     }
 
     //댓글 삭제
     public List<RulingReply> rulingReplyDelete(Long id){
+        RulingReply rulingReply = rrr.findById(id).orElseThrow();
         rrr.deleteById(id);
-        return rulingReplyAll();
+        return rulingReplyAll(rulingReply.getRulingId());
     }
 }

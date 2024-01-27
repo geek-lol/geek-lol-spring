@@ -52,9 +52,9 @@ class RulingReplyServiceTest {
     @DisplayName("모든 댓글을 조회하면 1개가 나온다")
     void findAllTest() {
         //given
-
+        BoardRuling br = boardRulingRepository.findById(2L).orElseThrow();
         //when
-        List<RulingReply> rulingReplies = rulingReplyService.rulingReplyAll();
+        List<RulingReply> rulingReplies = rulingReplyService.rulingReplyAll(br);
         //then
         assertEquals(1,rulingReplies.size());
     }

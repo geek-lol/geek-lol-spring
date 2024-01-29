@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @Slf4j
@@ -22,7 +25,8 @@ public class UserController {
 
     @PostMapping("/sign_up")
     public ResponseEntity<?> signUp(
-            @Validated @RequestBody UserSignUpRequestDTO dto,
+            @Validated @RequestPart("user") UserSignUpRequestDTO dto,
+            @RequestPart("profileImage") MultipartFile profileImg,
             BindingResult result
             ){
         log.info("/api/auth/ POST - {}",dto);
@@ -35,7 +39,12 @@ public class UserController {
         }
 
         try {
-            UserSignUpResponseDTO responseDTO = userService.create(dto);
+            String uploadProfileImagepath = null;
+            if (profileImg != null){
+                log.info("file-name :{}",profileImg.getOriginalFilename());
+                uploadProfileImagepath = userService.uploadProfileImage(profileImg);
+            }
+            UserSignUpResponseDTO responseDTO = userService.create(dto,uploadProfileImagepath);
             return ResponseEntity.ok().body(responseDTO);
         }catch (Exception e){
             log.warn("문제 발생");

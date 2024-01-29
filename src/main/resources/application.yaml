@@ -26,3 +26,7 @@ lol.app-key: RGAPI-8fd9c9c2-e192-4a44-a11c-5464565b046e
 
 jwt:
   secret: Gt9jGFwmCAjnUG64pitfmWSm8v/0c1uNjYvTWxCUWpY8jNbUmgfXWk9h4CaA6UFC7kQtbjF4iqNtX2hkRaAe4w==
+
+upload:
+  path: D:\upload
+

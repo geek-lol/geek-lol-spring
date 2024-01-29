@@ -17,6 +17,7 @@ public class LoginResponseDTO {
     private String id;
     private String userName;
     private String profileImage;
+    private String role;
     /*
     private List<BoardBulletion> poster; // 자갤
     private List<BoardShorts> uploaderId; // 쇼츠
@@ -33,6 +34,7 @@ public class LoginResponseDTO {
         this.uploaderId = user.getUploaderId();
         this.rulingPoster = user.getRulingPoster();
          */
+        this.role = user.getRole().toString();
         this.token = token;
     }
 

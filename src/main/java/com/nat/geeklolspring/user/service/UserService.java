@@ -9,19 +9,28 @@ import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
+    @Value("${upload.path}")
+    private String rootPath;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-    public UserSignUpResponseDTO create(UserSignUpRequestDTO dto) {
+    public UserSignUpResponseDTO create(UserSignUpRequestDTO dto,String profilePath) {
 
         if (dto == null) {
             throw new RuntimeException("회원가입 입력정보가 없습니다!");
@@ -33,7 +42,7 @@ public class UserService {
             throw new RuntimeException("중복된 아이디입니다!!");
         }
 
-        User saved = userRepository.save(dto.toEntity(passwordEncoder));
+        User saved = userRepository.save(dto.toEntity(passwordEncoder,profilePath));
 
         log.info("회원가입 성공!! saved user - {}", saved);
 
@@ -63,5 +72,24 @@ public class UserService {
 
         return new LoginResponseDTO(user,token);
     }
+
+
+
+    public String uploadProfileImage(MultipartFile originalFile) throws IOException {
+
+        // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다
+        File rootDir = new File(rootPath);
+        if (!rootDir.exists()) rootDir.mkdirs();
+
+        // 파일명을 유니크하게 변경
+        String uniqueFileName = UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
+
+        // 파일을 서버에 저장
+        File uploadFile = new File(rootPath + "/" + uniqueFileName);
+        originalFile.transferTo(uploadFile);
+
+        return uniqueFileName;
+    }
+
 
 }

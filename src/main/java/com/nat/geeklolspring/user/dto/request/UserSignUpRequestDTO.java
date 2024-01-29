@@ -30,10 +30,10 @@ public class UserSignUpRequestDTO {
 
     private String profileIamge;
 
-    public User toEntity(PasswordEncoder encoder){
+    public User toEntity(PasswordEncoder encoder,String profileIamge){
         return User.builder()
                 .id(this.id)
-                .profileImage(this.profileIamge)
+                .profileImage(profileIamge)
                 .password(encoder.encode(this.password))
                 .userName(this.userName)
                 .build();

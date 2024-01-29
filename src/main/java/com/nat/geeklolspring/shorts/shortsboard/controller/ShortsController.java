@@ -59,7 +59,7 @@ public class ShortsController {
     // 쇼츠 생성
     @PostMapping()
     public ResponseEntity<?> addShorts(
-            @RequestPart ShortsPostRequestDTO dto,
+            @RequestPart("videoInfo") ShortsPostRequestDTO dto,
             @RequestPart("videoUrl") MultipartFile fileUrl,
             @RequestPart("thumbnail")MultipartFile thumbnail,
             BindingResult result
@@ -82,9 +82,10 @@ public class ShortsController {
             if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty() || dto.getUploaderId().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
-            Map<String, String> map = FileUtil.uploadVideo(fileUrl, thumbnail, rootShortsPath, rootThumbnailPath);
-            String videoPath = map.get("videoPath");
-            String thumbnailPath = map.get("thumbnailPath");
+            Map<String, String> videoMap = FileUtil.uploadVideo(fileUrl, rootShortsPath);
+            String videoPath = videoMap.get("filePath");
+            Map<String, String> profileImgMap = FileUtil.uploadVideo(thumbnail, rootThumbnailPath);
+            String thumbnailPath = profileImgMap.get("filePath");
 
             ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath);
             return ResponseEntity.ok().body(shortsList);

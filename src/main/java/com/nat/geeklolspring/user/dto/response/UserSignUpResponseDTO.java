@@ -40,4 +40,5 @@ public class UserSignUpResponseDTO {
         this.userName = user.getUserName();
         this.joinDate = user.getJoinMembershipDate();
     }
+
 }

@@ -30,7 +30,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-    public UserSignUpResponseDTO create(UserSignUpRequestDTO dto,String profilePath) {
+    public UserSignUpResponseDTO create(UserSignUpRequestDTO dto) {
 
         if (dto == null) {
             throw new RuntimeException("회원가입 입력정보가 없습니다!");
@@ -42,7 +42,7 @@ public class UserService {
             throw new RuntimeException("중복된 아이디입니다!!");
         }
 
-        User saved = userRepository.save(dto.toEntity(passwordEncoder,profilePath));
+        User saved = userRepository.save(dto.toEntity(passwordEncoder));
 
         log.info("회원가입 성공!! saved user - {}", saved);
 
@@ -71,6 +71,20 @@ public class UserService {
         String token = tokenProvider.createToken(user);
 
         return new LoginResponseDTO(user,token);
+    }
+
+    public UserSignUpResponseDTO modify(String id,UserSignUpRequestDTO dto, String profilePath) {
+
+        if (dto == null) {
+            throw new RuntimeException("회원가입 입력정보가 없습니다!");
+        }
+
+        User saved = userRepository.save(dto.toEntity(passwordEncoder,profilePath));
+
+        log.info("회원정보 수정 성공!! saved user - {}", saved);
+
+        return new UserSignUpResponseDTO(saved);
+
     }
 
 

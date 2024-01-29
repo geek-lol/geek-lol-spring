@@ -1,6 +1,5 @@
 package com.nat.geeklolspring.user.dto.request;
 
-
 import com.nat.geeklolspring.entity.User;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,8 +14,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserSignUpRequestDTO {
-
+public class ModifyRequestDTO {
 
     @NotBlank
     private String id;
@@ -30,22 +28,21 @@ public class UserSignUpRequestDTO {
 
     private String profileIamge = null;
 
-    public User toEntity(PasswordEncoder encoder){
+
+
+    public User toEntity(String profileIamge){
         return User.builder()
-                .id(this.id)
-                .profileImage(this.profileIamge)
-                .password(encoder.encode(this.password))
+                .profileImage(profileIamge)
                 .userName(this.userName)
                 .build();
     }
-
     public User toEntity(PasswordEncoder encoder,String profileIamge){
         return User.builder()
+                .id(this.id)
                 .profileImage(profileIamge)
                 .password(encoder.encode(this.password))
                 .userName(this.userName)
                 .build();
     }
-
 
 }

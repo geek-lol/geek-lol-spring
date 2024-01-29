@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.user.service;
 
 import com.nat.geeklolspring.auth.TokenProvider;
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
@@ -73,17 +74,19 @@ public class UserService {
         return new LoginResponseDTO(user,token);
     }
 
-    public UserSignUpResponseDTO modify(String id,UserSignUpRequestDTO dto, String profilePath) {
+    public LoginResponseDTO modify(TokenUserInfo userInfo, UserSignUpRequestDTO dto, String profilePath) {
 
         if (dto == null) {
             throw new RuntimeException("회원가입 입력정보가 없습니다!");
         }
 
-        User saved = userRepository.save(dto.toEntity(passwordEncoder,profilePath));
+        User saved = userRepository.save(dto.toEntity(userInfo.getUserId(),passwordEncoder,profilePath));
+
+        String token = tokenProvider.createToken(saved);
 
         log.info("회원정보 수정 성공!! saved user - {}", saved);
 
-        return new UserSignUpResponseDTO(saved);
+        return new LoginResponseDTO(saved,token);
 
     }
 

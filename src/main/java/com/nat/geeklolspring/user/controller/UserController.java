@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.user.controller;
 
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
@@ -69,42 +70,9 @@ public class UserController {
         }
     }
 
-    /*
-
-
     @PostMapping("/modify")
     public ResponseEntity<?> modify(
-            @Validated @RequestPart("user") UserSignUpRequestDTO dto,
-            @RequestPart("profileImage") MultipartFile profileImg,
-            BindingResult result
-    ) {
-        log.info("/api/auth/ POST - {}", dto);
-
-        if (result.hasErrors()) {
-            log.warn(result.toString());
-            return ResponseEntity
-                    .badRequest()
-                    .body(result.getFieldError());
-        }
-
-        try {
-            String uploadProfileImagepath = null;
-            if (profileImg != null) {
-                log.info("file-name :{}", profileImg.getOriginalFilename());
-                uploadProfileImagepath = userService.uploadProfileImage(profileImg);
-            }
-            UserSignUpResponseDTO responseDTO = userService.modify(dto, uploadProfileImagepath);
-            return ResponseEntity.ok().body(responseDTO);
-        } catch (Exception e) {
-            log.warn("문제 발생");
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-*/
-
-    @PostMapping("/modify")
-    public ResponseEntity<?> modify(
-            @RequestHeader("Authorization") String token,
+            TokenUserInfo userInfo,
             @Validated @RequestPart("user")UserSignUpRequestDTO dto,
             @RequestPart("profileImage") MultipartFile profileImg,
             BindingResult result
@@ -118,23 +86,18 @@ public class UserController {
         }
 
         try {
-            String userId = extractUserIdFromToken(token);
 
             String uploadProfileImagePath = null;
             if (profileImg != null) {
                 log.info("file-name: {}", profileImg.getOriginalFilename());
                 uploadProfileImagePath = userService.uploadProfileImage(profileImg);
             }
-            UserSignUpResponseDTO responseDTO = userService.modify(userId, dto, uploadProfileImagePath);
+            LoginResponseDTO responseDTO = userService.modify(userInfo,dto, uploadProfileImagePath);
             return ResponseEntity.ok().body(responseDTO);
         } catch (Exception e) {
             log.warn("문제 발생");
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    private String extractUserIdFromToken(String token) {
-        return token;
     }
 
 }

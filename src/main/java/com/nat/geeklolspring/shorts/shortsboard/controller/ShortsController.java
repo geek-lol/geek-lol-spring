@@ -1,6 +1,6 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
-import com.nat.geeklolspring.exception.NoUserInfoFoundException;
+import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
@@ -18,12 +18,15 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000","",""})
+//@CrossOrigin(origins = {"http://localhost:3000","",""})
 @RequestMapping("/api/shorts")
 public class ShortsController {
     // 업로드한 shorts를 저장할 로컬 위치
-    @Value("D:/geek-lol/upload/shorts/")
+    @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;
+
+    @Value("D:/geek-lol/upload/shorts/thumbnail")
+    private String rootThumbnailPath;
 
     private final ShortsService shortsService;
 
@@ -56,8 +59,9 @@ public class ShortsController {
     // 쇼츠 생성
     @PostMapping()
     public ResponseEntity<?> addShorts(
-            @RequestPart ShortsPostRequestDTO dto,
-            @RequestPart("videoUrl") MultipartFile file,
+            @RequestPart("videoInfo") ShortsPostRequestDTO dto,
+            @RequestPart("videoUrl") MultipartFile fileUrl,
+            @RequestPart("thumbnail")MultipartFile thumbnail,
             BindingResult result
     ) {
         // 입력값 검증에 걸리면 400번 코드와 함께 메시지를 클라이언트에 전송
@@ -71,20 +75,26 @@ public class ShortsController {
         log.info("/api/shorts : POST");
         log.warn("request parameter : {}", dto);
 
+        dto.setVideoLink(fileUrl);
+        dto.setVideoThumbnail(thumbnail);
+
         try {
-            if (dto == null)
-                throw new NoUserInfoFoundException("필요한 정보가 입력되지 않았습니다.");
+            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty() || dto.getUploaderId().isEmpty())
+                throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
-            dto.setVideoLink(file);
+            Map<String, String> videoMap = FileUtil.uploadVideo(fileUrl, rootShortsPath);
+            String videoPath = videoMap.get("filePath");
+            Map<String, String> profileImgMap = FileUtil.uploadVideo(thumbnail, rootThumbnailPath);
+            String thumbnailPath = profileImgMap.get("filePath");
 
-            Map<String, String> videoMap = FileUtil.uploadVideo(file, rootShortsPath);
-            String videoPath = videoMap.get("videoPath");
-
-            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath);
+            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath);
             return ResponseEntity.ok().body(shortsList);
 
-        } catch (NoUserInfoFoundException e) {
+        } catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -109,10 +119,11 @@ public class ShortsController {
             return ResponseEntity.ok().body(shortsList);
         } catch (Exception e) {
             return ResponseEntity
-                    .internalServerError()
+                    .badRequest()
                     .body(ShortsListResponseDTO
                             .builder()
-                            .error(e.getMessage()));
+                            .error(e.getMessage())
+                            .build());
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.nat.geeklolspring.entity;
 
-import com.nat.geeklolspring.entity.BoardShorts;
-import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,7 +28,7 @@ public class VoteCheck {
 
     @Builder.Default
     @Column(name = "vote_up")
-    private int up = 0;
+    private int up = 1;
 
 
 

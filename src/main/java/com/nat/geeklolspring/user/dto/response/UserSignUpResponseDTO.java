@@ -22,7 +22,7 @@ public class UserSignUpResponseDTO {
 
     private String id;
     private String userName;
-    private String profileIamge;
+    private String profileImage;
     private int reportCount;
     private Role role = COMMON;
 
@@ -36,7 +36,7 @@ public class UserSignUpResponseDTO {
     public UserSignUpResponseDTO(User user) {
         this.id = user.getId();
         this.role = user.getRole();
-        this.profileIamge = user.getProfileImage();
+        this.profileImage = user.getProfileImage();
         this.userName = user.getUserName();
         this.joinDate = user.getJoinMembershipDate();
     }

@@ -1,8 +1,6 @@
 package com.nat.geeklolspring.utils.upload;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -30,27 +28,27 @@ public class FileUtil {
         return "/" + newFileName;
     }
 
-    public static Map<String, String> uploadVideo(MultipartFile video,String rootVideoPath) {
+    public static Map<String, String> uploadVideo(MultipartFile file, String rootFilePath) {
         Map<String, String> uploadedPaths = new HashMap<>();
 
         // 원본 파일을 중복이 없는 랜덤 이름으로 변경
-        String newVideoName = UUID.randomUUID() + "_" + video.getOriginalFilename();
+        String newVideoName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         // 이 파일을 날짜별로 관리하기 위해 날짜별 폴더를 생성
-        String newVideoPath = makeDateFormatDirectory(rootVideoPath);
+        String newVideoPath = makeDateFormatDirectory(rootFilePath);
 
         // 파일의 풀 경로를 생성
         String fullVideoPath = newVideoPath + "/" + newVideoName;
 
         // 파일 업로드 수행
         try {
-            video.transferTo(new File(newVideoPath, newVideoName));
+            file.transferTo(new File(newVideoPath, newVideoName));
         } catch (IOException e) {
             e.printStackTrace();
         }
         // full-path : D:/abc/upload/2024/01/02/dwdqwdqqw-dwdq-frww_고양이.jpg
 
-        uploadedPaths.put("videoPath", fullVideoPath.substring(rootVideoPath.length()));
+        uploadedPaths.put("filePath", fullVideoPath.substring(rootFilePath.length()));
 
         return uploadedPaths;
     }
@@ -79,5 +77,3 @@ public class FileUtil {
         return new DecimalFormat("00").format(n);
     }
 }
-
-

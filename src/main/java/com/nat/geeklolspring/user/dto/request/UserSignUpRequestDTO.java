@@ -33,7 +33,7 @@ public class UserSignUpRequestDTO {
     public User toEntity(PasswordEncoder encoder){
         return User.builder()
                 .id(this.id)
-                .profileImage(this.profileIamge)
+                .profileImage(this.profileImage)
                 .password(encoder.encode(this.password))
                 .userName(this.userName)
                 .build();

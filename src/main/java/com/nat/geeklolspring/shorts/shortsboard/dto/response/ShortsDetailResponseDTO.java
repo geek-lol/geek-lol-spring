@@ -19,6 +19,7 @@ public class ShortsDetailResponseDTO {
     private int viewCount;
     private int upCount;
     private String videoLink;
+    private String thumbnail;
     private LocalDateTime uploadDate;
 
     public ShortsDetailResponseDTO(BoardShorts shorts) {
@@ -28,6 +29,7 @@ public class ShortsDetailResponseDTO {
         this.viewCount = shorts.getViewCount();
         this.upCount = shorts.getUpCount();
         this.videoLink = shorts.getVideoLink();
+        this.thumbnail = shorts.getThumbnailImage();
         this.uploadDate = shorts.getUploadDate();
     }
 }

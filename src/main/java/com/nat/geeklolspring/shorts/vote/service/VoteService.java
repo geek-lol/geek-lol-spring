@@ -1,6 +1,6 @@
 package com.nat.geeklolspring.shorts.vote.service;
 
-import com.nat.geeklolspring.exception.NoUserInfoFoundException;
+import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
 import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
 import com.nat.geeklolspring.entity.VoteCheck;
@@ -18,8 +18,8 @@ public class VoteService {
     public VoteResponseDTO createVote(VotePostRequestDTO dto) {
         log.debug("좋아요 저장 서비스 실행!");
 
-        if (dto == null) {
-            throw new NoUserInfoFoundException("필요한 정보가 입력되지 않았습니다.");
+        if (dto.getShortsId() == null || dto.getReceiver().isEmpty()) {
+            throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
         }
 
         VoteCheck saved = voteCheckRepository.save(dto.toEntity(dto));

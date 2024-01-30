@@ -3,6 +3,7 @@ package com.nat.geeklolspring.user.service;
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
 import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
@@ -51,6 +52,17 @@ public class UserService {
 
     }
 
+    public void delete(User user) {
+
+        if (!userRepository.existsById(user.getId())) {
+            log.warn("삭제할 회원이 없습니다!! - {}", user.getId());
+            throw new RuntimeException("중복된 아이디입니다!!");
+        }
+
+        userRepository.delete(user);
+
+    }
+
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);
     }
@@ -74,13 +86,26 @@ public class UserService {
         return new LoginResponseDTO(user,token);
     }
 
-    public LoginResponseDTO modify(TokenUserInfo userInfo, UserSignUpRequestDTO dto, String profilePath) {
+
+
+    public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
 
         if (dto == null) {
-            throw new RuntimeException("회원가입 입력정보가 없습니다!");
+            throw new RuntimeException("수정된 회원정보가 없습니다!");
         }
 
-        User saved = userRepository.save(dto.toEntity(userInfo.getUserId(),passwordEncoder,profilePath));
+        if (dto.getPassword() == null){
+            dto.setPassword(userInfo.getPassword());
+        }
+        if (dto.getProfileIamge() == null){
+            dto.setProfileIamge(userInfo.getProfileImage());
+        }
+        if (dto.getUserName() == null){
+            dto.setUserName(userInfo.getUserName());
+        }
+
+
+        User saved = userRepository.save(dto.toEntity(userInfo.getUserId(),passwordEncoder,profilePath,userInfo.getRole()));
 
         String token = tokenProvider.createToken(saved);
 
@@ -106,6 +131,16 @@ public class UserService {
         originalFile.transferTo(uploadFile);
 
         return uniqueFileName;
+    }
+
+    public String getProfilePath(String id){
+
+        //DB에서 파일명 조회
+        User user = userRepository.findById(id).orElseThrow();
+        String fileName = user.getProfileImage();
+
+        return rootPath+"/"+fileName;
+
     }
 
 

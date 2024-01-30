@@ -13,7 +13,9 @@ import lombok.*;
 public class TokenUserInfo {
 
     private String userId;
-    private String email;
+    private String userName;
+    private String password;
+    private String profileImage;
     private Role role;
 
 }

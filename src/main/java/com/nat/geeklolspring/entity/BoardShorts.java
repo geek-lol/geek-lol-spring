@@ -63,13 +63,13 @@ public class BoardShorts {
 
 
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
-    @OneToMany(mappedBy = "shortsId")
-    private List<ShortsReply> shortsReplyId = new ArrayList<>();
-
-    @OneToMany(mappedBy = "shortsId")
-    private List<VoteCheck> shortsVoteId = new ArrayList<>();
+//    @OneToMany(mappedBy = "shortsId")
+//    private List<ShortsReply> shortsReplyId = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "shortsId")
+//    private List<VoteCheck> shortsVoteId = new ArrayList<>();
 }

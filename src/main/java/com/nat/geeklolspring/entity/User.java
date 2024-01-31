@@ -48,8 +48,8 @@ public class User {
 
 
 //-----------------------------------------
-    @OneToMany(mappedBy = "reportUserId")
-    private List<Report> reportUser = new ArrayList<>();
+//    @OneToMany(mappedBy = "reportUserId")
+//    private List<Report> reportUser = new ArrayList<>();
 
     @OneToMany(mappedBy = "posterId")
     private List<BoardBulletin> poster = new ArrayList<>();
@@ -60,14 +60,14 @@ public class User {
     @OneToMany(mappedBy = "replyWriter")
     private List<BoardReply> replyWriter = new ArrayList<>();
 
-    @OneToMany(mappedBy = "uploaderId")
-    private List<BoardShorts> uploaderId = new ArrayList<>();
+//    @OneToMany(mappedBy = "uploaderId")
+//    private List<BoardShorts> uploaderId = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "writerId")
+//    private List<ShortsReply> writerId = new ArrayList<>();
 
-    @OneToMany(mappedBy = "writerId")
-    private List<ShortsReply> writerId = new ArrayList<>();
-
-    @OneToMany(mappedBy = "receiver")
-    private List<VoteCheck> receiver = new ArrayList<>();
+//    @OneToMany(mappedBy = "receiver")
+//    private List<VoteCheck> receiver = new ArrayList<>();
 
     @OneToMany(mappedBy = "rulingPosterId")
     private List<BoardRuling> rulingPoster = new ArrayList<>();

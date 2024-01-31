@@ -1,14 +1,14 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.1'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '2.7.17'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'com.nat'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '11'
 }
 
 configurations {
@@ -45,8 +45,12 @@ dependencies {
 
     // 쿼리파라미터 추가 외부로그 남기기
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
-}
 
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation 'io.netty:netty-all:4.1.52.Final'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.52.Final:osx-x86_64'
+}
 tasks.named('test') {
     useJUnitPlatform()
 }

@@ -21,4 +21,4 @@ logging:
     root: info
     org.hibernate.SQL: debug
 
-lol.app-key: RGAPI-8fd9c9c2-e192-4a44-a11c-5464565b046e
+lol.app-key: RGAPI-ca7daa27-d182-41c8-a43f-9a117cd68928

@@ -27,8 +27,9 @@ public class UserSignUpRequestDTO {
 
     @NotBlank
     private String userName;
-
+    
     private String profileImage;
+
 
     public User toEntity(PasswordEncoder encoder){
         return User.builder()

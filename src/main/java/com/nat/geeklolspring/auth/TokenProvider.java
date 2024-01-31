@@ -33,8 +33,11 @@ public class TokenProvider {
 
         // 추가 클레임 정의
         Map<String, Object> claims = new HashMap<>();
-        claims.put("user-id", userEntity.getId());
-        claims.put("user-auth",userEntity.getRole());
+        claims.put("userId", userEntity.getId());
+        claims.put("password", userEntity.getPassword());
+        claims.put("userName",userEntity.getRole());
+        claims.put("profileImage",userEntity.getProfileImage());
+        claims.put("role",userEntity.getRole());
 
 
         return Jwts.builder()
@@ -61,11 +64,9 @@ public class TokenProvider {
 
         log.info("claims: {}", claims);
 
-//        String roleString = claims.get("role", String.class);
-//        Role role = (roleString != null) ? Role.valueOf(roleString) : null;
-
         return TokenUserInfo.builder()
-                .userId(claims.getSubject())
+//                .userId(claims.getSubject())
+                .userId(claims.get("userId",String.class))
                 .password(claims.get("password", String.class))
                 .userName(claims.get("userName", String.class))
                 .profileImage(claims.get("profileImage", String.class))

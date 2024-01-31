@@ -92,7 +92,7 @@ public class UserController {
     @PostMapping("/modify")
     public ResponseEntity<?> modify(
             @AuthenticationPrincipal TokenUserInfo userInfo,
-            @Validated @RequestPart(value = "user",required = false) UserModifyRequestDTO dto,
+            @Validated @RequestPart(value = "user") UserModifyRequestDTO dto,
             @RequestPart(value = "profileImage",required = false) MultipartFile profileImg,
             BindingResult result
     ) {

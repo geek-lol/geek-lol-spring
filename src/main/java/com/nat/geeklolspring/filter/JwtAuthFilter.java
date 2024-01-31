@@ -40,8 +40,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             String token = parseBearerToken(request);
 
+            log.info("{}", token);
+
             if (token != null) {
+
+
                 TokenUserInfo userInfo = tokenProvider.validateAndGetTokenUserInfo(token);
+
+                log.info("{}",userInfo);
 
                 List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
                 authorityList.add(new SimpleGrantedAuthority(userInfo.getRole().toString()));

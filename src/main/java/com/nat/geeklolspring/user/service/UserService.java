@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -90,7 +91,7 @@ public class UserService {
 
     public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
 
-        if (dto == null) {
+        if (dto == null && profilePath == null) {
             throw new RuntimeException("수정된 회원정보가 없습니다!");
         }
 
@@ -104,8 +105,15 @@ public class UserService {
             dto.setUserName(userInfo.getUserName());
         }
 
+        String userId = userInfo.getUserId();
 
-        User saved = userRepository.save(dto.toEntity(userInfo.getUserId(),passwordEncoder,profilePath,userInfo.getRole()));
+        Optional<User> byId = userRepository.findById(userId);
+
+        log.info("{}",byId);
+
+//        delete(byId);
+
+        User saved = userRepository.save(dto.toEntity(userId,passwordEncoder,profilePath,userInfo.getRole()));
 
         String token = tokenProvider.createToken(saved);
 

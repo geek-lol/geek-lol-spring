@@ -45,4 +45,7 @@ public class BoardApply {
     @JoinColumn(name = "applyPosterId")
     private User applyPosterId;
 
+    @OneToOne(mappedBy = "boardApply")
+    private BoardRuling boardRuling = new BoardRuling();
+
 }

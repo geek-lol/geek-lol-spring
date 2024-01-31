@@ -27,21 +27,14 @@ public class UserSignUpRequestDTO {
 
     @NotBlank
     private String userName;
+    
+    private String profileImage;
 
-    private String profileImage = null;
 
     public User toEntity(PasswordEncoder encoder){
         return User.builder()
                 .id(this.id)
                 .profileImage(this.profileImage)
-                .password(encoder.encode(this.password))
-                .userName(this.userName)
-                .build();
-    }
-
-    public User toEntity(PasswordEncoder encoder,String profileIamge){
-        return User.builder()
-                .profileImage(profileIamge)
                 .password(encoder.encode(this.password))
                 .userName(this.userName)
                 .build();

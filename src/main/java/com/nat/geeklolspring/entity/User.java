@@ -43,7 +43,6 @@ public class User {
     private int reportCount = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     @Builder.Default
     private Role role = COMMON;
 

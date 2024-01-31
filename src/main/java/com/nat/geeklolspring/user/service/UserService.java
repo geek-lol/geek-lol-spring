@@ -1,7 +1,9 @@
 package com.nat.geeklolspring.user.service;
 
 import com.nat.geeklolspring.auth.TokenProvider;
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
 import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -50,6 +53,17 @@ public class UserService {
 
     }
 
+    public void delete(User user) {
+
+        if (!userRepository.existsById(user.getId())) {
+            log.warn("삭제할 회원이 없습니다!! - {}", user.getId());
+            throw new RuntimeException("중복된 아이디입니다!!");
+        }
+
+        userRepository.delete(user);
+
+    }
+
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);
     }
@@ -73,17 +87,39 @@ public class UserService {
         return new LoginResponseDTO(user,token);
     }
 
-    public UserSignUpResponseDTO modify(String id,UserSignUpRequestDTO dto, String profilePath) {
 
-        if (dto == null) {
-            throw new RuntimeException("회원가입 입력정보가 없습니다!");
+
+    public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
+
+        if (dto == null && profilePath == null) {
+            throw new RuntimeException("수정된 회원정보가 없습니다!");
         }
 
-        User saved = userRepository.save(dto.toEntity(passwordEncoder,profilePath));
+        if (dto.getPassword() == null){
+            dto.setPassword(userInfo.getPassword());
+        }
+        if (dto.getProfileIamge() == null){
+            dto.setProfileIamge(userInfo.getProfileImage());
+        }
+        if (dto.getUserName() == null){
+            dto.setUserName(userInfo.getUserName());
+        }
+
+        String userId = userInfo.getUserId();
+
+        Optional<User> byId = userRepository.findById(userId);
+
+        log.info("{}",byId);
+
+//        delete(byId);
+
+        User saved = userRepository.save(dto.toEntity(userId,passwordEncoder,profilePath,userInfo.getRole()));
+
+        String token = tokenProvider.createToken(saved);
 
         log.info("회원정보 수정 성공!! saved user - {}", saved);
 
-        return new UserSignUpResponseDTO(saved);
+        return new LoginResponseDTO(saved,token);
 
     }
 
@@ -103,6 +139,16 @@ public class UserService {
         originalFile.transferTo(uploadFile);
 
         return uniqueFileName;
+    }
+
+    public String getProfilePath(String id){
+
+        //DB에서 파일명 조회
+        User user = userRepository.findById(id).orElseThrow();
+        String fileName = user.getProfileImage();
+
+        return rootPath+"/"+fileName;
+
     }
 
 

@@ -51,6 +51,10 @@ public class BoardRuling {
     @JoinColumn(name = "rulingPosterId")
     private User rulingPosterId;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boardApplyId")
+    private BoardApply boardApply;
+
     @OneToMany(mappedBy = "rulingId")
     private List<RulingReply> rulingReplyId = new ArrayList<>();
 

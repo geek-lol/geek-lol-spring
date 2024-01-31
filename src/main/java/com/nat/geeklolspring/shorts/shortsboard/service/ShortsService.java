@@ -1,10 +1,14 @@
 package com.nat.geeklolspring.shorts.shortsboard.service;
 
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
+import com.nat.geeklolspring.utils.token.TokenUtil;
+import jdk.jshell.execution.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,11 +24,16 @@ import java.util.stream.Collectors;
 public class ShortsService {
     private final ShortsRepository shortsRepository;
 
-    public ShortsListResponseDTO insertVideo(ShortsPostRequestDTO dto, String videoPath, String thumbnailPath) {
+    public ShortsListResponseDTO insertVideo(ShortsPostRequestDTO dto, String videoPath, String thumbnailPath, TokenUserInfo userInfo) {
         log.debug("쇼츠 등록 서비스 실행!");
 
         // DB에 저장될 형식에 맞게 엔티티화
         BoardShorts shorts = dto.toEntity(videoPath, thumbnailPath);
+        // user정보도 저장
+        shorts.setUploaderId(userInfo.getUserId());
+        shorts.setUploaderName(userInfo.getUserName());
+        log.warn("Role : {}", userInfo.getRole());
+        log.warn("userName : {}", userInfo.getUserName());
         // DB에 저장
         shortsRepository.save(shorts);
 
@@ -32,11 +41,16 @@ public class ShortsService {
         return retrieve();
     }
 
-    public ShortsListResponseDTO deleteShorts(Long id) {
+    public ShortsListResponseDTO deleteShorts(Long id, TokenUserInfo userInfo) {
+        BoardShorts shorts = shortsRepository.findById(id).orElseThrow();
+
+        boolean flag = TokenUtil.EqualsId(shorts.getUploaderId(), userInfo);
         try {
-            // id값에 해당하는 동영상 삭제
-            shortsRepository.deleteById(id);
-            return retrieve();
+            if(flag) {
+                // id값에 해당하는 동영상 삭제
+                shortsRepository.deleteById(id);
+                return retrieve();
+            } else throw new NotEqualTokenException("업로드 한 유저만 삭제할 수 있습니다!");
         } catch (Exception e) {
             // 보통 해당 아이디 값이 없을 때 발생
             // 다만 다른 예외적인 오류가 있을 수 있으므로 취급주의

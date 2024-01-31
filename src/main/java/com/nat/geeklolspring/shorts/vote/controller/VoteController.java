@@ -1,5 +1,7 @@
 package com.nat.geeklolspring.shorts.vote.controller;
 
+import antlr.Token;
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.exception.DuplicatedVoteException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
@@ -10,6 +12,7 @@ import com.nat.geeklolspring.shorts.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +31,14 @@ public class VoteController {
     // 좋아요 정보 조회
     @GetMapping()
     public ResponseEntity<?> vote(
-            @Validated @RequestParam Long shortsId
-            , @Validated @RequestParam String accountId
-    ) {
-        log.info("/api/vote?shortsId={}&accountId={} : GET!", shortsId, accountId);
+            @Validated @RequestParam Long shortsId,
+            @AuthenticationPrincipal TokenUserInfo userInfo
+            ) {
+        log.info("/api/vote?shortsId={} : GET!", shortsId);
 
         // 해당 동영상에 대한 나의 좋아요 정보 가져오기
         // 정보가 없다면 null값을 리턴받음
-        VoteResponseDTO vote = voteService.getVote(shortsId, accountId);
+        VoteResponseDTO vote = voteService.getVote(shortsId, userInfo);
 
         log.warn("vote : {}", vote);
 
@@ -46,6 +49,7 @@ public class VoteController {
     @PostMapping()
     public ResponseEntity<?> addVote(
             @Validated @RequestBody VotePostRequestDTO dto,
+            @AuthenticationPrincipal TokenUserInfo userInfo,
             BindingResult result
             ) {
         // 입력값 검증에 걸리면 400번 코드와 함께 메시지를 클라이언트에 전송
@@ -63,7 +67,7 @@ public class VoteController {
             // 해당 동영상에 대한 나의 좋아요 데이터가 있는지 확인
             // true : 좋아요 정보가 있음
             // false : 좋아요 정보가 없음
-            boolean flag = voteService.VoteCheck(dto);
+            boolean flag = voteService.VoteCheck(dto, userInfo);
 
             log.warn("flag : {}", flag);
 
@@ -71,7 +75,7 @@ public class VoteController {
             if (!flag) {
                 // 좋아요 정보 생성
                 // 리턴은 생성된 좋아요 정보
-                VoteResponseDTO vote = voteService.createVote(dto);
+                VoteResponseDTO vote = voteService.createVote(dto, userInfo);
                 return ResponseEntity.ok().body(vote);
             }
 
@@ -99,15 +103,16 @@ public class VoteController {
     // 좋아요 상태 수정
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> update(
-            @Validated @RequestBody VotePatchRequestDTO dto
-            , HttpServletRequest request
+            @Validated @RequestBody VotePatchRequestDTO dto,
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            HttpServletRequest request
     ) {
         log.info("/api/vote Request {}", request.getRequestURL());
         log.debug("dto: {}", dto);
 
         try {
             // 내 vote 정보 가져오는 서비스 실행
-            VoteCheck voteCheck = voteService.findVote(dto.getShortsId(), dto.getReceiver());
+            VoteCheck voteCheck = voteService.findVote(dto.getShortsId(), userInfo.getUserId());
             // 내 vote 정보 수정하는 서비스 실행
             VoteResponseDTO vote = voteService.changeVote(voteCheck);
             

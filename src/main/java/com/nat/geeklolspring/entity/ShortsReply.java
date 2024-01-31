@@ -26,6 +26,9 @@ public class ShortsReply {
     @Column(name = "user_id")
     private String writerId; // 작성자
 
+    @Column(name = "user_name")
+    private String writerName; // 작성자 닉네임
+
     @Column(name = "shorts_id")
     private Long shortsId; // 해당 댓글이 쓰인 쇼츠의 Id
 

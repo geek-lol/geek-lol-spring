@@ -1,6 +1,8 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.exception.DTONotFoundException;
+import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,6 +67,7 @@ public class ShortsController {
             @RequestPart("videoInfo") ShortsPostRequestDTO dto,
             @RequestPart("videoUrl") MultipartFile fileUrl,
             @RequestPart("thumbnail")MultipartFile thumbnail,
+            @AuthenticationPrincipal TokenUserInfo userInfo,
             BindingResult result
     ) {
         // 입력값 검증에 걸리면 400번 코드와 함께 메시지를 클라이언트에 전송
@@ -83,7 +87,7 @@ public class ShortsController {
 
         try {
             // 필요한 정보를 전달받지 못하면 커스텀 에러인 DTONotFoundException 발생
-            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty() || dto.getUploaderId().isEmpty())
+            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             // 동영상과 섬네일 이미지를 가공해 로컬폴더에 저장하고 경로를 리턴받기
@@ -96,7 +100,7 @@ public class ShortsController {
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
-            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath);
+            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath, userInfo);
             
             return ResponseEntity.ok().body(shortsList);
 
@@ -111,7 +115,8 @@ public class ShortsController {
 
     // 쇼츠 삭제 요청
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteShorts(@PathVariable Long id) {
+    public ResponseEntity<?> deleteShorts(@PathVariable Long id,
+                                          @AuthenticationPrincipal TokenUserInfo userInfo) {
 
         log.info("/api/shorts/{} DELETE !!", id);
 
@@ -128,9 +133,17 @@ public class ShortsController {
         try {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
-            ShortsListResponseDTO shortsList = shortsService.deleteShorts(id);
+            ShortsListResponseDTO shortsList = shortsService.deleteShorts(id, userInfo);
 
             return ResponseEntity.ok().body(shortsList);
+        } catch (NotEqualTokenException e) {
+          log.warn("작성자랑 일치하지 않는 사용자가 쇼츠 삭제를 시도했습니다!");
+          return ResponseEntity
+                  .badRequest()
+                  .body(ShortsListResponseDTO
+                          .builder()
+                          .error("쇼츠 업로더만 삭제할 수 있습니다!")
+                          .build());
         } catch (Exception e) {
             return ResponseEntity
                     .badRequest()

@@ -11,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ShortsPostRequestDTO {
+    // Post 시 필요한 정보들
     private String writerId;
     private String context;
 

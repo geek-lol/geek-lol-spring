@@ -33,6 +33,8 @@ public class VoteController {
     ) {
         log.info("/api/vote?shortsId={}&accountId={} : GET!", shortsId, accountId);
 
+        // 해당 동영상에 대한 나의 좋아요 정보 가져오기
+        // 정보가 없다면 null값을 리턴받음
         VoteResponseDTO vote = voteService.getVote(shortsId, accountId);
 
         log.warn("vote : {}", vote);
@@ -58,23 +60,39 @@ public class VoteController {
         log.warn("request parameter : {}", dto);
 
         try {
+            // 해당 동영상에 대한 나의 좋아요 데이터가 있는지 확인
+            // true : 좋아요 정보가 있음
+            // false : 좋아요 정보가 없음
             boolean flag = voteService.VoteCheck(dto);
 
             log.warn("flag : {}", flag);
 
+            // 좋아요 정보가 없으면 실행
             if (!flag) {
+                // 좋아요 정보 생성
+                // 리턴은 생성된 좋아요 정보
                 VoteResponseDTO vote = voteService.createVote(dto);
                 return ResponseEntity.ok().body(vote);
             }
 
+            // 좋아요 정보가 이미 있으므로 커스텀 에러인 DuplicatedVoteException 발생시키기
             throw new DuplicatedVoteException("이미 좋아요가 저장되어 있습니다!");
 
         } catch (DTONotFoundException e) {
             log.warn("유저 정보를 전달받지 못했습니다.");
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
         } catch (DuplicatedVoteException e) {
             log.warn("이미 좋아요 정보가 저장되어 있습니다.");
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return ResponseEntity
+                    .internalServerError()
+                    .body(e.getMessage());
         }
     }
 
@@ -88,8 +106,11 @@ public class VoteController {
         log.debug("dto: {}", dto);
 
         try {
+            // 내 vote 정보 가져오는 서비스 실행
             VoteCheck voteCheck = voteService.findVote(dto.getShortsId(), dto.getReceiver());
+            // 내 vote 정보 수정하는 서비스 실행
             VoteResponseDTO vote = voteService.changeVote(voteCheck);
+            
             return ResponseEntity.ok().body(vote);
         } catch (Exception e) {
             log.warn("서버 에러가 발생했습니다! 사유 : {}", e.getMessage());

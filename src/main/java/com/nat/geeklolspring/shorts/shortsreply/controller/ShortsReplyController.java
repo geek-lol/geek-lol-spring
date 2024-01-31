@@ -8,8 +8,11 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResp
 import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.print.Pageable;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -22,15 +25,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class ShortsReplyController {
     private final ShortsReplyService shortsReplyService;
 
-    // 해당 쇼츠의 댓글 정보를 가져오는 부분
+    // 해당 쇼츠의 댓글 정보를 가져오는 컨트롤러
     @GetMapping("/{shortsId}")
-    public ResponseEntity<?> replyList(@PathVariable Long shortsId) {
+    public ResponseEntity<?> replyList(
+            @PathVariable Long shortsId) {
         log.info("/api/shorts/reply/{} : Get!", shortsId);
 
         try {
+            // 댓글 리스트를 가져오는 부분, 나중에 페이징 처리 해야함
             ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId);
 
             if(replyList.getReply().isEmpty()) {
+                // 댓글 리스트가 비어있으면 실행되는 부분
+                // ShortsReplyListResponseDTO 안에 있는 error에 에러로그를 담는다.
                 return ResponseEntity
                         .badRequest()
                         .body(ShortsReplyListResponseDTO
@@ -39,7 +46,9 @@ public class ShortsReplyController {
                                 .build());
             }
 
+            // 정상적으로 실행되서 댓글 리스트를 리턴하는 부분
             return ResponseEntity.ok().body(replyList);
+
         } catch (Exception e) {
             return ResponseEntity
                     .internalServerError()
@@ -49,7 +58,7 @@ public class ShortsReplyController {
         }
     }
 
-    // 해당 쇼츠에 댓글을 등록하는 부분
+    // 해당 쇼츠에 댓글을 등록하는 컨트롤러
     @PostMapping("/{shortsId}")
     public ResponseEntity<?> addReply(
             @PathVariable Long shortsId,
@@ -59,9 +68,12 @@ public class ShortsReplyController {
         log.warn("전달받은 데이터 : {}", dto);
 
         try {
+            // 데이터를 정상적으로 전달받았는지 확인
+            // 전달받지 못했으면 커스텀 에러인 DTONotFoundException을 만든다.
             if (dto.getContext().isEmpty() || dto.getWriterId().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
+            // 댓글을 DB에 저장하는 service 호출, 새 댓글이 DB에 저장된 댓글 리스트를 리턴받음
             ShortsReplyListResponseDTO replyList = shortsReplyService.insertShortsReply(shortsId, dto);
             return ResponseEntity.ok().body(replyList);
 
@@ -74,12 +86,13 @@ public class ShortsReplyController {
         }
     }
 
-    // 해당 쇼츠의 댓글을 삭제하는 부분
+    // 댓글Id에 해당하는 댓글을 삭제하는 컨트롤러
     @DeleteMapping("/{shortsId}/{replyId}")
     public ResponseEntity<?> deleteReply(@PathVariable Long shortsId,
                                          @PathVariable Long replyId) {
         log.info("api/shorts/reply/{}/{} : Delete!", shortsId, replyId);
 
+        // 데이터를 정상적으로 전달받았는지 확인
         if(shortsId == null || replyId == null) {
             return ResponseEntity
                     .badRequest()
@@ -90,6 +103,9 @@ public class ShortsReplyController {
         }
 
         try {
+            // replyId에 맞는 댓글을 삭제하는 서비스 실행
+            // shortsId를 보내주는 이유는 DB에 댓글을 삭제하고
+            // 삭제가 완료된 DB에서 정보를 다시 가져와야 하기 때문
             ShortsReplyListResponseDTO replyList = shortsReplyService.deleteShortsReply(shortsId, replyId);
 
             return ResponseEntity.ok().body(replyList);
@@ -103,12 +119,25 @@ public class ShortsReplyController {
         }
     }
 
+
+    // 댓글 수정 컨트롤러
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> updateShortsReply(@RequestBody ShortsUpdateRequestDTO dto) {
         log.info("api/shorts/reply : PATCH");
         log.debug("서버에서 받은 값 : {}", dto);
 
+        // 데이터를 정상적으로 전달받았는지 확인
+        if(dto.getShortsId() == null || dto.getReplyId() == null || dto.getContext().isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ShortsReplyListResponseDTO
+                            .builder()
+                            .error("필요한 값 중에 비어있는 값이 있습니다!")
+                            .build());
+        }
+
         try {
+            // 댓글을 DB에서 수정하는 서비스 호출
             ShortsReplyListResponseDTO replyList = shortsReplyService.updateReply(dto);
 
             return ResponseEntity.ok().body(replyList);

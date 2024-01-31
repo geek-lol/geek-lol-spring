@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Builder
 public class VotePostRequestDTO {
+    // 좋아요를 만들 때 필요한 정보들
     @NotNull
     private String receiver;
 

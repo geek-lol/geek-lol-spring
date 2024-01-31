@@ -18,10 +18,12 @@ public class VoteService {
     public VoteResponseDTO createVote(VotePostRequestDTO dto) {
         log.debug("좋아요 저장 서비스 실행!");
 
+        // 필요한 정보가 잘 입력되어 있는지 확인
         if (dto.getShortsId() == null || dto.getReceiver().isEmpty()) {
             throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
         }
 
+        // 좋아요 등록
         VoteCheck saved = voteCheckRepository.save(dto.toEntity(dto));
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
@@ -29,13 +31,10 @@ public class VoteService {
         return new VoteResponseDTO(saved);
     }
 
-    public VoteCheck findVote(long shortsId, String accountId) {
-        return voteCheckRepository.findByShortsIdAndReceiver(shortsId, accountId);
-    }
-
     public VoteResponseDTO getVote(long shortsId, String accountId) {
         VoteCheck voteCheck = voteCheckRepository.findByShortsIdAndReceiver(shortsId, accountId);
 
+        // 해당 동영상에 대한 나의 좋아요 정보가 없다면 null을 리턴
         if(voteCheck == null) {
             log.warn("vote 정보가 없습니다.");
             return null;
@@ -48,13 +47,16 @@ public class VoteService {
     }
 
     public VoteResponseDTO changeVote(VoteCheck vote) {
+        // vote 값 수정
         if (vote.getUp() == 1)
             vote.setUp(0);
         else
             vote.setUp(1);
 
+        // 수정한 vote 값 DB에 저장
         VoteCheck saved = voteCheckRepository.save(vote);
 
+        // 수정된 정보를 저장해서 Controller에 전달
         return VoteResponseDTO.builder()
                 .up(saved.getUp())
                 .build();
@@ -69,5 +71,10 @@ public class VoteService {
             return true;
         else
             return false;
+    }
+
+    public VoteCheck findVote(long shortsId, String accountId) {
+        // 쇼츠 아이디와 계정명이 일치하는 vote정보를 리턴
+        return voteCheckRepository.findByShortsIdAndReceiver(shortsId, accountId);
     }
 }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ShortsReplyResponseDTO {
+    // 웹사이트에 보내줄(보여줄) 정보들
     private Long replyId;
     private String writerId;
     private String context;

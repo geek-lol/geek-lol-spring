@@ -11,13 +11,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ShortsPostRequestDTO {
-    private String writerId;
+    // Post 시 필요한 정보들
     private String context;
 
     public ShortsReply toEntity(Long id) {
         return ShortsReply.builder()
                 .shortsId(id)
-                .writerId(writerId)
                 .context(context)
                 .build();
     }

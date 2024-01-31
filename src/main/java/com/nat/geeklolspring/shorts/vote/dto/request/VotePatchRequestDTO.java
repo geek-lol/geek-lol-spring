@@ -10,6 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class VotePatchRequestDTO {
-    private String receiver;
+    // 좋아요를 수정하는데 필요한 정보들
     private Long shortsId;
 }

@@ -12,8 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Builder
 public class ShortsPostRequestDTO {
+    // 동영상 업로드할 때 필요한 정보들
     private String title;
-    private String uploaderId;
     private String context;
     private MultipartFile videoLink;
     private MultipartFile videoThumbnail;
@@ -21,7 +21,6 @@ public class ShortsPostRequestDTO {
     public BoardShorts toEntity(String videoLink, String thumbnail) {
         return BoardShorts.builder()
                 .title(title)
-                .uploaderId(uploaderId)
                 .context(context)
                 .videoLink(videoLink)
                 .thumbnailImage(thumbnail)

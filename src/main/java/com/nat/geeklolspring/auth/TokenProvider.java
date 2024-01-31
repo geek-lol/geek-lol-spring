@@ -35,7 +35,7 @@ public class TokenProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userEntity.getId());
         claims.put("password", userEntity.getPassword());
-        claims.put("userName",userEntity.getRole());
+        claims.put("userName",userEntity.getUserName());
         claims.put("profileImage",userEntity.getProfileImage());
         claims.put("role",userEntity.getRole());
 

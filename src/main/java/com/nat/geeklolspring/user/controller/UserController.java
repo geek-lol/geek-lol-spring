@@ -81,12 +81,13 @@ public class UserController {
     public void delete(
             @Validated @RequestBody User user
             )
-    {try {
-        userService.delete(user);
-        log.info("delete user : {}",user.getUserName());
-    }catch (RuntimeException e){
-        log.warn(e.getMessage());
-    }
+    {
+        try {
+            userService.delete(user);
+            log.info("delete user : {}",user.getUserName());
+        }catch (RuntimeException e){
+            log.warn(e.getMessage());
+        }
     }
 
     @PostMapping("/modify")

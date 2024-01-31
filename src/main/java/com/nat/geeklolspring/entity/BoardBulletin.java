@@ -22,7 +22,7 @@ public class BoardBulletin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bulletin_id")
-    private long bulletinId;
+    private Long bulletinId;
 
     @CreationTimestamp
     @Column(name = "board_date")
@@ -40,12 +40,8 @@ public class BoardBulletin {
     @Column(name = " board_report_count")
     private String boardReportCount;
 
-
-
-    //----------------------------------------
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poster_id")
-    private User posterId;
+    @Column(name = "poster_id")
+    private String posterId;
 
 
 

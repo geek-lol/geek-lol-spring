@@ -51,9 +51,6 @@ public class User {
     @OneToMany(mappedBy = "reportUserId")
     private List<Report> reportUser = new ArrayList<>();
 
-    @OneToMany(mappedBy = "posterId")
-    private List<BoardBulletin> poster = new ArrayList<>();
-
     @OneToMany(mappedBy = "bulletinCheckerId")
     private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
 

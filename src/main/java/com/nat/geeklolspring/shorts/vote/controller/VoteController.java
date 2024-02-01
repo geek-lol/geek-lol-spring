@@ -1,6 +1,5 @@
 package com.nat.geeklolspring.shorts.vote.controller;
 
-import antlr.Token;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.exception.DuplicatedVoteException;

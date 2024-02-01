@@ -47,7 +47,7 @@ public class ReportController {
             } else {
                 // 권한이 없음 (Common)
                 // 본인의 신고 정보만 가져옴
-                ReportListResponseDTO reportList = reportService.retriever(userInfo);
+                ReportListResponseDTO reportList = reportService.retrieve(userInfo);
 
                 if (reportList.getReportList().isEmpty()) {
                     return ResponseEntity

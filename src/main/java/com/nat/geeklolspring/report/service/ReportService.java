@@ -1,6 +1,5 @@
 package com.nat.geeklolspring.report.service;
 
-import antlr.Token;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.Report;
 import com.nat.geeklolspring.report.dto.request.ReportPostRequestDTO;
@@ -22,6 +21,7 @@ import static com.nat.geeklolspring.entity.Role.ADMIN;
 public class ReportService {
     private final ReportRepository reportRepository;
 
+    // Admin이면 실행
     public ReportListResponseDTO retrieveAdmin() {
         List<Report> reportsList = reportRepository.findAll();
 
@@ -35,7 +35,8 @@ public class ReportService {
         return userInfo.getRole().equals(ADMIN);
     }
 
-    public ReportListResponseDTO retriever(TokenUserInfo userInfo) {
+    // 일반유저면 실행
+    public ReportListResponseDTO retrieve(TokenUserInfo userInfo) {
         List<Report> reportsList = reportRepository.findAllByUserId(userInfo.getUserId());
 
         return ReportListResponseDTO
@@ -51,7 +52,7 @@ public class ReportService {
 
         reportRepository.save(entity);
 
-        return retriever(userInfo);
+        return retrieve(userInfo);
 
 
     }

@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsreply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
@@ -37,7 +38,7 @@ public class ShortsReplyController {
 
         try {
             // 댓글 리스트를 가져오는 부분
-            ShortsReplyListResponseDTO replyList = shortsReplyService.retrievePaging(shortsId,pageInfo);
+            ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId,pageInfo);
 
             if(replyList.getReply().isEmpty()) {
                 // 댓글 리스트가 비어있으면 실행되는 부분
@@ -53,6 +54,13 @@ public class ShortsReplyController {
             // 정상적으로 실행되서 댓글 리스트를 리턴하는 부분
             return ResponseEntity.ok().body(replyList);
 
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ShortsReplyListResponseDTO
+                            .builder()
+                            .error(e.getMessage())
+                            .build());
         } catch (Exception e) {
             return ResponseEntity
                     .internalServerError()

@@ -24,11 +24,14 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
     // 입력값 검증 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
@@ -45,6 +48,18 @@ dependencies {
 
     //파일업로드 라이브러리
     implementation 'commons-io:commons-io:2.8.0'
+    
+    // API 사용을 위한 라이브러리들
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation group: 'org.apache.camel', name: 'json-simple-ordered', version: '2.25.4'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation 'io.netty:netty-all:4.1.52.Final'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.52.Final:osx-x86_64'
 }
 
 tasks.named('test') {

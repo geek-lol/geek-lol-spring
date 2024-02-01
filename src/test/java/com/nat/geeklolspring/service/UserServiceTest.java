@@ -28,7 +28,6 @@ class UserServiceTest {
                 .id("abc123")
                 .password("abc12356789")
                 .userName("나")
-                .profileIamge(null)
                 .build();
         //when
         UserSignUpResponseDTO responseDTO = userService.create(dto);

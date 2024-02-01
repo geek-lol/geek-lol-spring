@@ -35,6 +35,7 @@ public class SecurityConfig {
                 // 토큰 페이지 설정
                 .authorizeRequests()
                 .antMatchers("/","/user/**").permitAll()
+                .antMatchers("/","/board/**").permitAll()
                 .antMatchers("/", "/api/**").permitAll()
 //                    .antMatchers("/**").hasRole("ADMIN")
                     //.antMatchers(HttpMethod.GET,"/").permitAll()

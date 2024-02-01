@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class LolApiCotroller {
 
     private final LolApiService lolApiService;
 
-    @GetMapping(path = "/find/{name}/{tag}")
+    @GetMapping("/find/{name}/{tag}")
     public JSONObject findUserInfomation(
             @PathVariable(name = "name") String name,
             @PathVariable(name = "tag") String tag

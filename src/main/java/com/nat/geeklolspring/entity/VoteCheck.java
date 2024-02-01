@@ -35,11 +35,11 @@ public class VoteCheck {
 
 
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shorts_id", insertable = false, updatable = false)
-    private BoardShorts boardShorts;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+//    private User user;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "shorts_id", insertable = false, updatable = false)
+//    private BoardShorts boardShorts;
 }

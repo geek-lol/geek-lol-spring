@@ -18,6 +18,7 @@ public class ShortsDetailResponseDTO {
     private String uploaderId;
     private String uploaderName;
     private String title;
+    private String context;
     private int viewCount;
     private int upCount;
     private String videoLink;
@@ -29,6 +30,7 @@ public class ShortsDetailResponseDTO {
         this.uploaderId = shorts.getUploaderId();
         this.uploaderName = shorts.getUploaderName();
         this.title = shorts.getTitle();
+        this.context = shorts.getContext();
         this.viewCount = shorts.getViewCount();
         this.upCount = shorts.getUpCount();
         this.videoLink = shorts.getVideoLink();

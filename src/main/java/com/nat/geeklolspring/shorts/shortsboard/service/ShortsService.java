@@ -8,7 +8,6 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailRespons
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.utils.token.TokenUtil;
-import jdk.jshell.execution.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,12 +27,7 @@ public class ShortsService {
         log.debug("쇼츠 등록 서비스 실행!");
 
         // DB에 저장될 형식에 맞게 엔티티화
-        BoardShorts shorts = dto.toEntity(videoPath, thumbnailPath);
-        // user정보도 저장
-        shorts.setUploaderId(userInfo.getUserId());
-        shorts.setUploaderName(userInfo.getUserName());
-        log.warn("Role : {}", userInfo.getRole());
-        log.warn("userName : {}", userInfo.getUserName());
+        BoardShorts shorts = dto.toEntity(videoPath, thumbnailPath, userInfo);
         // DB에 저장
         shortsRepository.save(shorts);
 

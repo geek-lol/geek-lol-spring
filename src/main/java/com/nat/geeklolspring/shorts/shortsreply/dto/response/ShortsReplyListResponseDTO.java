@@ -16,6 +16,6 @@ public class ShortsReplyListResponseDTO {
     private List<ShortsReplyResponseDTO> reply; // reply 전체 리스트
 
     // 페이징 처리할 때 필요한 함수
-    private Long totalPages; // 총 페이지 수
-    private Long totalCount; // 총 댓글 수
+    private int totalPages; // 총 페이지 수
+    private long totalCount; // 총 댓글 수
 }

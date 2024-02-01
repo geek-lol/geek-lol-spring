@@ -8,9 +8,11 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestD
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
-import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,25 @@ public class ShortsReplyService {
 
         return ShortsReplyListResponseDTO.builder()
                 .reply(allReply)
+                .build();
+    }
+
+    public ShortsReplyListResponseDTO retrievePaging(Long shortsId, Pageable pageInfo) {
+        log.warn("retreieve 페이징처리 실행! Id: {}, PageInfo: {}", shortsId, pageInfo);
+
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+
+        Page<ShortsReply> replyList = shortsReplyRepository.findAll(pageable);
+
+        List<ShortsReplyResponseDTO> allReply = replyList.stream()
+                .map(ShortsReplyResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return ShortsReplyListResponseDTO
+                .builder()
+                .reply(allReply)
+                .totalPages(replyList.getTotalPages())
+                .totalCount(replyList.getTotalElements())
                 .build();
     }
 

@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class BoardBulletinService {
 
     private final BoardBulletinRepository boardBulletinRepository;
-    private final UserRepository userRepository;
 
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve() {
@@ -38,6 +37,22 @@ public class BoardBulletinService {
 
         return BoardBulletinResponseDTO.builder()
                 .board(list)
+                .build();
+
+    }
+
+    public BoardBulletinDetailResponseDTO detailRetrieve(Long bulletinId) {
+
+        BoardBulletin boardBulletin = boardBulletinRepository.findById(bulletinId).get();
+
+        log.info("{}",boardBulletin);
+
+        return BoardBulletinDetailResponseDTO.builder()
+                .bulletinId(boardBulletin.getBulletinId())
+                .title(boardBulletin.getTitle())
+                .posterId(boardBulletin.getPosterId())
+                .content(boardBulletin.getBoardContent())
+                .boardMedia(boardBulletin.getBoardMedia())
                 .build();
 
     }

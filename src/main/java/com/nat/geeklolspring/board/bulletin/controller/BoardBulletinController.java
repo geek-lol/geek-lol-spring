@@ -43,6 +43,24 @@ public class BoardBulletinController {
         }
     }
 
+    @GetMapping("/detail")
+    public ResponseEntity<?> boardDetail(
+            @RequestBody String bulletinId
+    ) {
+        log.info("/board/bulletin/detail : Get!");
+
+        try {
+            BoardBulletinDetailResponseDTO boardBulletin =boardBulletinService.detailRetrieve(Long.valueOf(bulletinId));
+            return ResponseEntity.ok().body(boardBulletin);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(BoardBulletinResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
+        }
+    }
+
     @PostMapping()
     public ResponseEntity<?> boardCreate(
             @AuthenticationPrincipal TokenUserInfo userInfo,

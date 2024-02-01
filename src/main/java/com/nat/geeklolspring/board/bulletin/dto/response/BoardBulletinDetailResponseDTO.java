@@ -14,7 +14,7 @@ import lombok.*;
 public class BoardBulletinDetailResponseDTO {
 
 
-    private long bulletinId;
+    private Long bulletinId;
     private String title;
     private String posterId;
     private String content;

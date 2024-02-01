@@ -10,12 +10,10 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResp
 import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -31,12 +29,13 @@ public class ShortsReplyController {
     // 해당 쇼츠의 댓글 정보를 가져오는 컨트롤러
     @GetMapping("/{shortsId}")
     public ResponseEntity<?> replyList(
-            @PathVariable Long shortsId) {
+            @PathVariable Long shortsId,
+            Pageable pageInfo) {
         log.info("/api/shorts/reply/{} : Get!", shortsId);
 
         try {
             // 댓글 리스트를 가져오는 부분, 나중에 페이징 처리 해야함
-            ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId);
+            ShortsReplyListResponseDTO replyList = shortsReplyService.retrievePaging(shortsId,pageInfo);
 
             if(replyList.getReply().isEmpty()) {
                 // 댓글 리스트가 비어있으면 실행되는 부분

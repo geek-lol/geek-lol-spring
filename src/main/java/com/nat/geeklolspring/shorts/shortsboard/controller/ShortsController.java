@@ -10,6 +10,8 @@ import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -28,18 +30,18 @@ public class ShortsController {
     @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;
 
-    @Value("D:/geek-lol/upload/shorts/thumbnail")
-    private String rootThumbnailPath;
-
     private final ShortsService shortsService;
 
+    // shorts 리스트 가져오기
     @GetMapping()
-    public ResponseEntity<?> shortsList() {
+    public ResponseEntity<?> shortsList(@PageableDefault(page = 1, size = 5) Pageable pageInfo) {
         log.info("/api/shorts : Get!");
 
         try {
             // 모든 쇼츠 목록 가져오기
-            ShortsListResponseDTO shortsList = shortsService.retrieve();
+            ShortsListResponseDTO shortsList = shortsService.retrievePaging(pageInfo);
+
+            log.warn("shortsList: {}", shortsList);
 
             // 가져온 shortsList가 비어있을 경우 아직 업로드된 동영상이 없다는 뜻
             if(shortsList.getShorts().isEmpty()) {
@@ -66,7 +68,6 @@ public class ShortsController {
     public ResponseEntity<?> addShorts(
             @RequestPart("videoInfo") ShortsPostRequestDTO dto,
             @RequestPart("videoUrl") MultipartFile fileUrl,
-            @RequestPart("thumbnail")MultipartFile thumbnail,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             BindingResult result
     ) {
@@ -83,26 +84,22 @@ public class ShortsController {
 
         // 따로 가져온 파일들을 dto안에 세팅하기
         dto.setVideoLink(fileUrl);
-        dto.setVideoThumbnail(thumbnail);
 
         try {
             // 필요한 정보를 전달받지 못하면 커스텀 에러인 DTONotFoundException 발생
-            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty() || dto.getVideoThumbnail().isEmpty())
+            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             // 동영상과 섬네일 이미지를 가공해 로컬폴더에 저장하고 경로를 리턴받기
             // 동영상 가공
             Map<String, String> videoMap = FileUtil.uploadFile(fileUrl, rootShortsPath);
             String videoPath = videoMap.get("filePath");
-            // 이미지 가공
-            Map<String, String> profileImgMap = FileUtil.uploadFile(thumbnail, rootThumbnailPath);
-            String thumbnailPath = profileImgMap.get("filePath");
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
-            ShortsListResponseDTO shortsList = shortsService.insertVideo(dto, videoPath, thumbnailPath, userInfo);
+            shortsService.insertVideo(dto, videoPath, userInfo);
             
-            return ResponseEntity.ok().body(shortsList);
+            return ResponseEntity.ok().body(null);
 
         } catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");
@@ -133,9 +130,9 @@ public class ShortsController {
         try {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
-            ShortsListResponseDTO shortsList = shortsService.deleteShorts(id, userInfo);
+            shortsService.deleteShorts(id, userInfo);
 
-            return ResponseEntity.ok().body(shortsList);
+            return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {
           log.warn("작성자랑 일치하지 않는 사용자가 쇼츠 삭제를 시도했습니다!");
           return ResponseEntity

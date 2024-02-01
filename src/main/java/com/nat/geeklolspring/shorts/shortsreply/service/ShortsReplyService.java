@@ -34,17 +34,20 @@ public class ShortsReplyService {
 
     public ShortsReplyListResponseDTO retrieve(Long shortsId, Pageable pageInfo) {
         log.warn("retreieve 페이징처리 실행! Id: {}, PageInfo: {}", shortsId, pageInfo);
-
+        
+        // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
 
+        // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
         Page<ShortsReply> replyList = shortsReplyRepository.findAllByShortsId(shortsId, pageable);
 
+        // 정보를 가공하여 List<DTO>형태로 저장
         List<ShortsReplyResponseDTO> allReply = replyList.stream()
                 .map(ShortsReplyResponseDTO::new)
                 .collect(Collectors.toList());
 
         if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {
-            // DB에 존재하는 댓글 수를 넘어가는 페이지를 요청시 에러발생
+            // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
             throw new BadRequestException("비정상적인 접근입니다!");
         } else {
             return ShortsReplyListResponseDTO

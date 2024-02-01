@@ -8,7 +8,6 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
-import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,21 +54,7 @@ public class ShortsService {
         }
     }
 
-    public ShortsListResponseDTO retrieve() {
-        // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
-        List<BoardShorts> shortsList = shortsRepository.findAll();
-
-        // shortsList를 정제해서 allShorts에 저장
-        List<ShortsDetailResponseDTO> allShorts = shortsList.stream()
-                .map(ShortsDetailResponseDTO::new)
-                .collect(Collectors.toList());
-
-        return ShortsListResponseDTO.builder()
-                .shorts(allShorts)
-                .build();
-    }
-
-    public ShortsListResponseDTO retrievePaging(Pageable pageInfo) {
+    public ShortsListResponseDTO retrieve(Pageable pageInfo) {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장

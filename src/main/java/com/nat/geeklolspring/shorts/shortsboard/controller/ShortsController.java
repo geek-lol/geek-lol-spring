@@ -39,7 +39,7 @@ public class ShortsController {
 
         try {
             // 모든 쇼츠 목록 가져오기
-            ShortsListResponseDTO shortsList = shortsService.retrievePaging(pageInfo);
+            ShortsListResponseDTO shortsList = shortsService.retrieve(pageInfo);
 
             log.warn("shortsList: {}", shortsList);
 

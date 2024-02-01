@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +66,11 @@ public class ShortsReplyService {
     }
 
     // 쇼츠 댓글 저장 서비스
-    public ShortsReplyListResponseDTO insertShortsReply(Long id, ShortsPostRequestDTO dto, TokenUserInfo userInfo) {
+    public ShortsReplyListResponseDTO insertShortsReply(
+            Long id,
+            ShortsPostRequestDTO dto,
+            TokenUserInfo userInfo,
+            Pageable pageainfo) {
         log.debug("쇼츠 댓글 저장 서비스 실행!");
 
         // dto에 담겨 있던 내용을 ShortsReply 형식으로 변환해 reply에 저장
@@ -78,11 +83,14 @@ public class ShortsReplyService {
         shortsReplyRepository.save(reply);
 
         // 새 댓글이 DB에 저장된 댓글 리스트를 리턴
-        return retrieve(id);
+        return retrievePaging(id, pageainfo);
     }
 
     // 쇼츠 댓글 삭제 서비스
-    public ShortsReplyListResponseDTO deleteShortsReply(Long shortsId, Long replyId, TokenUserInfo userInfo) {
+    public ShortsReplyListResponseDTO deleteShortsReply(Long shortsId,
+                                                        Long replyId,
+                                                        TokenUserInfo userInfo,
+                                                        Pageable pageInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기
         ShortsReply reply = shortsReplyRepository.findById(replyId).orElseThrow();
 
@@ -96,7 +104,7 @@ public class ShortsReplyService {
                 throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
 
             // 댓글이 삭제된 DB에서 가져온 댓글 리스트를 리턴
-            return retrieve(shortsId);
+            return retrievePaging(shortsId, pageInfo);
         } catch (Exception e) {
             log.error("삭제에 실패했습니다. - ID: {}, Error: {}", replyId, e.getMessage());
             throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
@@ -104,7 +112,9 @@ public class ShortsReplyService {
     }
 
     // 쇼츠 댓글 수정 서비스
-    public ShortsReplyListResponseDTO updateReply(ShortsUpdateRequestDTO dto, TokenUserInfo userInfo) {
+    public ShortsReplyListResponseDTO updateReply(ShortsUpdateRequestDTO dto,
+                                                  TokenUserInfo userInfo,
+                                                  Pageable pageInfo) {
 
         ShortsReply reply = shortsReplyRepository.findById(dto.getReplyId()).orElseThrow();
 
@@ -128,6 +138,6 @@ public class ShortsReplyService {
 
         // 수정된 내용을 불러오기 위해 해당 쇼츠의 댓글 다시 불러오기(refresh)
         // target이 null이어도 실행함
-        return retrieve(dto.getShortsId());
+        return retrievePaging(dto.getShortsId(), pageInfo);
     }
 }

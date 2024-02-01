@@ -92,10 +92,10 @@ public class ShortsController {
 
             // 동영상과 섬네일 이미지를 가공해 로컬폴더에 저장하고 경로를 리턴받기
             // 동영상 가공
-            Map<String, String> videoMap = FileUtil.uploadVideo(fileUrl, rootShortsPath);
+            Map<String, String> videoMap = FileUtil.uploadFile(fileUrl, rootShortsPath);
             String videoPath = videoMap.get("filePath");
             // 이미지 가공
-            Map<String, String> profileImgMap = FileUtil.uploadVideo(thumbnail, rootThumbnailPath);
+            Map<String, String> profileImgMap = FileUtil.uploadFile(thumbnail, rootThumbnailPath);
             String thumbnailPath = profileImgMap.get("filePath");
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행

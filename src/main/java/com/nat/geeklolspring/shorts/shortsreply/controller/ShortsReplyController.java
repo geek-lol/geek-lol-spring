@@ -11,6 +11,7 @@ import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -30,11 +31,12 @@ public class ShortsReplyController {
     @GetMapping("/{shortsId}")
     public ResponseEntity<?> replyList(
             @PathVariable Long shortsId,
-            Pageable pageInfo) {
+            // 값이 주어지지 않으면 디폴트로 1페이지와 5개씩 로드하도록 전달
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
         log.info("/api/shorts/reply/{} : Get!", shortsId);
 
         try {
-            // 댓글 리스트를 가져오는 부분, 나중에 페이징 처리 해야함
+            // 댓글 리스트를 가져오는 부분
             ShortsReplyListResponseDTO replyList = shortsReplyService.retrievePaging(shortsId,pageInfo);
 
             if(replyList.getReply().isEmpty()) {
@@ -65,7 +67,8 @@ public class ShortsReplyController {
     public ResponseEntity<?> addReply(
             @PathVariable Long shortsId,
             @RequestBody ShortsPostRequestDTO dto,
-            @AuthenticationPrincipal TokenUserInfo userInfo
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo
     ) {
 
         log.info("api/shorts/reply/{} : Post!", shortsId);
@@ -78,7 +81,7 @@ public class ShortsReplyController {
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             // 댓글을 DB에 저장하는 service 호출, 새 댓글이 DB에 저장된 댓글 리스트를 리턴받음
-            ShortsReplyListResponseDTO replyList = shortsReplyService.insertShortsReply(shortsId, dto, userInfo);
+            ShortsReplyListResponseDTO replyList = shortsReplyService.insertShortsReply(shortsId, dto, userInfo, pageInfo);
             return ResponseEntity.ok().body(replyList);
 
         } catch (DTONotFoundException e) {
@@ -94,7 +97,8 @@ public class ShortsReplyController {
     @DeleteMapping("/{shortsId}/{replyId}")
     public ResponseEntity<?> deleteReply(@PathVariable Long shortsId,
                                          @PathVariable Long replyId,
-                                         @AuthenticationPrincipal TokenUserInfo userInfo) {
+                                         @AuthenticationPrincipal TokenUserInfo userInfo,
+                                         @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
         log.info("api/shorts/reply/{}/{} : Delete!", shortsId, replyId);
 
         // 데이터를 정상적으로 전달받았는지 확인
@@ -111,7 +115,7 @@ public class ShortsReplyController {
             // replyId에 맞는 댓글을 삭제하는 서비스 실행
             // shortsId를 보내주는 이유는 DB에 댓글을 삭제하고
             // 삭제가 완료된 DB에서 정보를 다시 가져와야 하기 때문
-            ShortsReplyListResponseDTO replyList = shortsReplyService.deleteShortsReply(shortsId, replyId, userInfo);
+            ShortsReplyListResponseDTO replyList = shortsReplyService.deleteShortsReply(shortsId, replyId, userInfo, pageInfo);
 
             return ResponseEntity.ok().body(replyList);
         } catch (NotEqualTokenException e) {
@@ -136,7 +140,8 @@ public class ShortsReplyController {
     // 댓글 수정 컨트롤러
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> updateShortsReply(@RequestBody ShortsUpdateRequestDTO dto,
-                                               @AuthenticationPrincipal TokenUserInfo userInfo) {
+                                               @AuthenticationPrincipal TokenUserInfo userInfo,
+                                               @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
         log.info("api/shorts/reply : PATCH");
         log.debug("서버에서 받은 값 : {}", dto);
 
@@ -152,7 +157,7 @@ public class ShortsReplyController {
 
         try {
             // 댓글을 DB에서 수정하는 서비스 호출
-            ShortsReplyListResponseDTO replyList = shortsReplyService.updateReply(dto, userInfo);
+            ShortsReplyListResponseDTO replyList = shortsReplyService.updateReply(dto, userInfo, pageInfo);
 
             return ResponseEntity.ok().body(replyList);
 

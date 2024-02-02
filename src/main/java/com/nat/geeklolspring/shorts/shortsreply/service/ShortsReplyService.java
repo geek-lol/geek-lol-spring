@@ -91,9 +91,11 @@ public class ShortsReplyService {
         try {
             boolean flag = EqualsId(reply.getWriterId(), userInfo);
             // 토큰의 id와 댓글의 작성자 id가 같으면 실행
-            if(flag)
+            if(flag) {
                 // 삭제하지 못하면 Exception 발생
-                 shortsReplyRepository.deleteById(replyId);
+                shortsReplyRepository.deleteById(replyId);
+                shortsRepository.downReplyCount(reply.getShortsId());
+            }
             else
                 throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
 

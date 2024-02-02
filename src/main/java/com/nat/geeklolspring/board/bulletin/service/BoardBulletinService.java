@@ -112,9 +112,9 @@ public class BoardBulletinService {
 
     }
 
-    public BoardBulletinDetailResponseDTO detailRetrieve(Long bulletinId) {
+    public BoardBulletinDetailResponseDTO detailRetrieve(String bulletinId) {
 
-        BoardBulletin boardBulletin = boardBulletinRepository.findById(bulletinId).get();
+        BoardBulletin boardBulletin = boardBulletinRepository.findById(Long.valueOf(bulletinId)).get();
 
         log.info("{}",boardBulletin);
 

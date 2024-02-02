@@ -22,8 +22,7 @@ public class BoardReplyResponseDTO {
     private LocalDateTime replyDate;
     public BoardReplyResponseDTO(BoardReply reply) {
         this.replyId = reply.getReplyId();
-        this.writerId = reply.getReplyWriter().getId();
-        this.writerName = reply.getReplyWriter().getUserName();
+        this.writerId = reply.getReplyWriter();
         this.context = reply.getReplyText();
         this.replyDate = reply.getBoardReplyDate();
     }

@@ -12,23 +12,7 @@ import java.util.UUID;
 
 public class FileUtil {
 
-    public static String uploadFile(MultipartFile file, String rootPath) {
-
-        // 원본 파일을 중복이 없는 랜덤 이름으로 변경
-        String newFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-
-        // 파일 업로드 수행
-        try {
-            file.transferTo(new File(rootPath, newFileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("/" + newFileName);
-        return "/" + newFileName;
-    }
-
-    public static Map<String, String> uploadVideo(MultipartFile file, String rootFilePath) {
+    public static Map<String, String> uploadFile(MultipartFile file, String rootFilePath) {
         Map<String, String> uploadedPaths = new HashMap<>();
 
         // 원본 파일을 중복이 없는 랜덤 이름으로 변경

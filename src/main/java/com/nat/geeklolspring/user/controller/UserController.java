@@ -77,6 +77,7 @@ public class UserController {
         }
     }
 
+
     @PostMapping("/delete")
     public void delete(
             @Validated @RequestBody User user

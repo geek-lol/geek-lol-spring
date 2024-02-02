@@ -2,6 +2,7 @@ package com.nat.geeklolspring.shorts.shortsreply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.ShortsReply;
+import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
@@ -10,6 +11,9 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyResponse
 import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,23 +31,40 @@ public class ShortsReplyService {
     private final ShortsReplyRepository shortsReplyRepository;
 
     // 댓글 정보들을 돌려주는 서비스
-    public ShortsReplyListResponseDTO retrieve(Long shortsId) {
-        log.warn("retrieve Execute! - {}", shortsId);
-        // 해당 쇼츠Id에 달린 모든 댓글 리스트를 replyList에 저장
-        List<ShortsReply> replyList = shortsReplyRepository.findAllByShortsId(shortsId);
 
-        // replyList를 정제해서 allReply에 저장
+    public ShortsReplyListResponseDTO retrieve(Long shortsId, Pageable pageInfo) {
+        log.warn("retreieve 페이징처리 실행! Id: {}, PageInfo: {}", shortsId, pageInfo);
+        
+        // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+
+        // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
+        Page<ShortsReply> replyList = shortsReplyRepository.findAllByShortsId(shortsId, pageable);
+
+        // 정보를 가공하여 List<DTO>형태로 저장
         List<ShortsReplyResponseDTO> allReply = replyList.stream()
                 .map(ShortsReplyResponseDTO::new)
                 .collect(Collectors.toList());
 
-        return ShortsReplyListResponseDTO.builder()
-                .reply(allReply)
-                .build();
+        if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {
+            // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
+            throw new BadRequestException("비정상적인 접근입니다!");
+        } else {
+            return ShortsReplyListResponseDTO
+                    .builder()
+                    .reply(allReply)
+                    .totalPages(replyList.getTotalPages())
+                    .totalCount(replyList.getTotalElements())
+                    .build();
+        }
     }
 
     // 쇼츠 댓글 저장 서비스
-    public ShortsReplyListResponseDTO insertShortsReply(Long id, ShortsPostRequestDTO dto, TokenUserInfo userInfo) {
+    public ShortsReplyListResponseDTO insertShortsReply(
+            Long id,
+            ShortsPostRequestDTO dto,
+            TokenUserInfo userInfo,
+            Pageable pageInfo) {
         log.debug("쇼츠 댓글 저장 서비스 실행!");
 
         // dto에 담겨 있던 내용을 ShortsReply 형식으로 변환해 reply에 저장
@@ -56,11 +77,11 @@ public class ShortsReplyService {
         shortsReplyRepository.save(reply);
 
         // 새 댓글이 DB에 저장된 댓글 리스트를 리턴
-        return retrieve(id);
+        return retrieve(id, pageInfo);
     }
 
     // 쇼츠 댓글 삭제 서비스
-    public ShortsReplyListResponseDTO deleteShortsReply(Long shortsId, Long replyId, TokenUserInfo userInfo) {
+    public void deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기
         ShortsReply reply = shortsReplyRepository.findById(replyId).orElseThrow();
 
@@ -73,8 +94,6 @@ public class ShortsReplyService {
             else
                 throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
 
-            // 댓글이 삭제된 DB에서 가져온 댓글 리스트를 리턴
-            return retrieve(shortsId);
         } catch (Exception e) {
             log.error("삭제에 실패했습니다. - ID: {}, Error: {}", replyId, e.getMessage());
             throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
@@ -82,7 +101,8 @@ public class ShortsReplyService {
     }
 
     // 쇼츠 댓글 수정 서비스
-    public ShortsReplyListResponseDTO updateReply(ShortsUpdateRequestDTO dto, TokenUserInfo userInfo) {
+    public void updateReply(ShortsUpdateRequestDTO dto,
+                                                  TokenUserInfo userInfo) {
 
         ShortsReply reply = shortsReplyRepository.findById(dto.getReplyId()).orElseThrow();
 
@@ -103,9 +123,5 @@ public class ShortsReplyService {
             });
         } else
             throw new NotEqualTokenException("댓글 작성자만 수정할 수 있습니다!");
-
-        // 수정된 내용을 불러오기 위해 해당 쇼츠의 댓글 다시 불러오기(refresh)
-        // target이 null이어도 실행함
-        return retrieve(dto.getShortsId());
     }
 }

@@ -4,6 +4,8 @@ import com.nat.geeklolspring.entity.BoardBulletin;
 import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @ToString
@@ -14,11 +16,13 @@ import lombok.*;
 public class BoardBulletinDetailResponseDTO {
 
 
-    private long bulletinId;
+    private Long bulletinId;
     private String title;
     private String posterId;
     private String content;
-    private String boardMedia;
+    private String boardMe
+    private int viewCount;
+    private LocalDateTime localDateTime;
 
     public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {
         this.bulletinId = boardBulletin.getBulletinId();
@@ -26,6 +30,8 @@ public class BoardBulletinDetailResponseDTO {
         this.title = boardBulletin.getTitle();
         this.content = boardBulletin.getBoardContent();
         this.boardMedia = boardBulletin.getBoardMedia();
+        this.viewCount = boardBulletin.getViewCount();
+        this.localDateTime = boardBulletin.getBoardDate();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsreply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
@@ -10,12 +11,11 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResp
 import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -31,12 +31,14 @@ public class ShortsReplyController {
     // 해당 쇼츠의 댓글 정보를 가져오는 컨트롤러
     @GetMapping("/{shortsId}")
     public ResponseEntity<?> replyList(
-            @PathVariable Long shortsId) {
+            @PathVariable Long shortsId,
+            // 값이 주어지지 않으면 디폴트로 1페이지와 5개씩 로드하도록 전달
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
         log.info("/api/shorts/reply/{} : Get!", shortsId);
 
         try {
-            // 댓글 리스트를 가져오는 부분, 나중에 페이징 처리 해야함
-            ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId);
+            // 댓글 리스트를 가져오는 부분
+            ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId,pageInfo);
 
             if(replyList.getReply().isEmpty()) {
                 // 댓글 리스트가 비어있으면 실행되는 부분
@@ -52,6 +54,13 @@ public class ShortsReplyController {
             // 정상적으로 실행되서 댓글 리스트를 리턴하는 부분
             return ResponseEntity.ok().body(replyList);
 
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ShortsReplyListResponseDTO
+                            .builder()
+                            .error(e.getMessage())
+                            .build());
         } catch (Exception e) {
             return ResponseEntity
                     .internalServerError()
@@ -66,7 +75,8 @@ public class ShortsReplyController {
     public ResponseEntity<?> addReply(
             @PathVariable Long shortsId,
             @RequestBody ShortsPostRequestDTO dto,
-            @AuthenticationPrincipal TokenUserInfo userInfo
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo
     ) {
 
         log.info("api/shorts/reply/{} : Post!", shortsId);
@@ -78,8 +88,8 @@ public class ShortsReplyController {
             if (dto.getContext().isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
-            // 댓글을 DB에 저장하는 service 호출, 새 댓글이 DB에 저장된 댓글 리스트를 리턴받음
-            ShortsReplyListResponseDTO replyList = shortsReplyService.insertShortsReply(shortsId, dto, userInfo);
+            // 댓글을 DB에 저장하는 service 호출, 새 댓글만 리턴받음
+            ShortsReplyListResponseDTO replyList = shortsReplyService.insertShortsReply(shortsId, dto, userInfo, pageInfo);
             return ResponseEntity.ok().body(replyList);
 
         } catch (DTONotFoundException e) {
@@ -92,14 +102,13 @@ public class ShortsReplyController {
     }
 
     // 댓글Id에 해당하는 댓글을 삭제하는 컨트롤러
-    @DeleteMapping("/{shortsId}/{replyId}")
-    public ResponseEntity<?> deleteReply(@PathVariable Long shortsId,
-                                         @PathVariable Long replyId,
+    @DeleteMapping("/{replyId}")
+    public ResponseEntity<?> deleteReply(@PathVariable Long replyId,
                                          @AuthenticationPrincipal TokenUserInfo userInfo) {
-        log.info("api/shorts/reply/{}/{} : Delete!", shortsId, replyId);
+        log.info("api/shorts/reply/{} : Delete!", replyId);
 
         // 데이터를 정상적으로 전달받았는지 확인
-        if(shortsId == null || replyId == null) {
+        if(replyId == null) {
             return ResponseEntity
                     .badRequest()
                     .body(ShortsReplyListResponseDTO
@@ -110,18 +119,16 @@ public class ShortsReplyController {
 
         try {
             // replyId에 맞는 댓글을 삭제하는 서비스 실행
-            // shortsId를 보내주는 이유는 DB에 댓글을 삭제하고
-            // 삭제가 완료된 DB에서 정보를 다시 가져와야 하기 때문
-            ShortsReplyListResponseDTO replyList = shortsReplyService.deleteShortsReply(shortsId, replyId, userInfo);
+            shortsReplyService.deleteShortsReply(replyId, userInfo);
 
-            return ResponseEntity.ok().body(replyList);
+            return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {
             log.warn("댓글 작성자만 삭제할 수 있습니다!");
             return ResponseEntity
                     .badRequest()
                     .body(ShortsReplyListResponseDTO
                             .builder()
-                            .error("댓글 작성자만 삭제할 수 있습니다!")
+                            .error(e.getMessage())
                             .build());
         } catch (Exception e) {
             return ResponseEntity
@@ -142,7 +149,7 @@ public class ShortsReplyController {
         log.debug("서버에서 받은 값 : {}", dto);
 
         // 데이터를 정상적으로 전달받았는지 확인
-        if(dto.getShortsId() == null || dto.getReplyId() == null || dto.getContext().isEmpty()) {
+        if(dto.getReplyId() == null || dto.getContext().isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body(ShortsReplyListResponseDTO
@@ -153,9 +160,9 @@ public class ShortsReplyController {
 
         try {
             // 댓글을 DB에서 수정하는 서비스 호출
-            ShortsReplyListResponseDTO replyList = shortsReplyService.updateReply(dto, userInfo);
+            shortsReplyService.updateReply(dto, userInfo);
 
-            return ResponseEntity.ok().body(replyList);
+            return ResponseEntity.ok().body(null);
 
         } catch (NotEqualTokenException e) {
             log.warn("댓글 작성자만 수정할 수 있습니다!");
@@ -163,7 +170,7 @@ public class ShortsReplyController {
                     .badRequest()
                     .body(ShortsReplyListResponseDTO
                             .builder()
-                            .error("댓글 작성자만 수정할 수 있습니다!")
+                            .error(e.getMessage())
                             .build());
         } catch (Exception e) {
             return ResponseEntity.internalServerError()

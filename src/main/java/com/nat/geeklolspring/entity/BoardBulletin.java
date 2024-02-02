@@ -43,6 +43,9 @@ public class BoardBulletin {
     @Column(name = "poster_id")
     private String posterId;
 
+    @Column(name = "view_count")
+    private int viewCount;
+
 
 
     //----------------------------------------

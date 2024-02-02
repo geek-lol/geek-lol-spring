@@ -53,6 +53,7 @@ public class UserService {
 
     }
 
+
     public void delete(User user) {
 
         if (!userRepository.existsById(user.getId())) {
@@ -67,6 +68,7 @@ public class UserService {
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);
     }
+
 
     public LoginResponseDTO authenticate(final LoginRequestDTO dto){
 

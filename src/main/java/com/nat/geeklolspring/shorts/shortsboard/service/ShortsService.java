@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,33 +56,70 @@ public class ShortsService {
         }
     }
 
-    public ShortsListResponseDTO retrieve(String keyword, Pageable pageInfo) {
+    public ShortsListResponseDTO retrieve() {
 
-        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-        Page<BoardShorts> shortsList;
-        // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
-        if(keyword == null)
-            // keyword가 없으면 전체를 리턴
-            shortsList = shortsRepository.findAll(pageable);
-        else
-            // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
-            shortsList = shortsRepository.findByTitleContaining(keyword, pageable);
+        // 페이징 처리 시 사용했던 것들
+        // Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        // Page<BoardShorts> shortsList = shortsRepository.findAll(pageable);
 
-        List<ShortsDetailResponseDTO> allShorts = shortsList.stream()
+        // shorts 전체 가져오기
+        List<BoardShorts> shortsList = shortsRepository.findAll();
+
+        // 만약 쇼츠가 5개가 넘지 않는다면 바로 리턴하기
+        if(shortsList.size() < 5) {
+            List<ShortsDetailResponseDTO> allShorts = shortsList.stream()
+                    .map(ShortsDetailResponseDTO::new)
+                    .collect(Collectors.toList());
+
+            // shortsList를 정제해서 allShorts에 저장
+            return ShortsListResponseDTO
+                    .builder()
+                    .shorts(allShorts)
+                    .build();
+        }
+
+        // 랜덤으로 쇼츠를 가져오기 위한 함수들 선언
+        Random rand = new Random();
+        int count = 0;
+        BoardShorts shorts;
+        ArrayList<BoardShorts> randShortsList = new ArrayList<>();
+        boolean flag;
+
+
+        // 랜덤으로 중복되지 않는 쇼츠 5개 가져오기
+        while (count < 5) {
+            // flag 초기화
+            flag = false;
+            // 리스트 중에서 랜덤으로 숫자 하나를 뽑아서 shorts로 등록
+            shorts = shortsRepository.findById((long) rand.nextInt(shortsList.size())).orElseThrow();
+            for (BoardShorts boardShorts : randShortsList) {
+                if (boardShorts.getShortsId().equals(shorts.getShortsId()))
+                {
+                    // 랜덤으로 가져온 값이 기존에 뽑은 값과 일치하므로 flag 값 변경
+                    flag = true;
+                    // 이미 값이 겹쳤기 때문에 더 볼 필요가 없으니 break로 빠져나오기
+                    break;
+                }
+            }
+
+            // flag가 true면 기존에 있던 값이므로 while문 재실행
+            // false면 기존에 없던 값이므로 추가하고 count값 증가
+            if(flag)
+                continue;
+            else {
+                randShortsList.add(shorts);
+                count++;
+            }
+        }
+
+        List<ShortsDetailResponseDTO> allShorts = randShortsList.stream()
                 .map(ShortsDetailResponseDTO::new)
                 .collect(Collectors.toList());
 
         // shortsList를 정제해서 allShorts에 저장
-        if (pageInfo.getPageNumber() > 1 && shortsList.isEmpty()) {
-            // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
-            throw new BadRequestException("비정상적인 접근입니다!");
-        } else {
-            return ShortsListResponseDTO
-                    .builder()
-                    .shorts(allShorts)
-                    .totalPages(shortsList.getTotalPages())
-                    .totalCount(shortsList.getTotalElements())
-                    .build();
-        }
+        return ShortsListResponseDTO
+                .builder()
+                .shorts(allShorts)
+                .build();
     }
 }

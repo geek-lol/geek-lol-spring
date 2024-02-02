@@ -34,16 +34,12 @@ public class ShortsController {
 
     // shorts 리스트 가져오기
     @GetMapping()
-    public ResponseEntity<?> shortsList(
-            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
-            @RequestParam(required = false) String keyword) {
+    public ResponseEntity<?> shortsList() {
         log.info("/api/shorts : Get!");
-
-        log.info("keyword : {}", keyword);
 
         try {
             // 모든 쇼츠 목록 가져오기
-            ShortsListResponseDTO shortsList = shortsService.retrieve(keyword, pageInfo);
+            ShortsListResponseDTO shortsList = shortsService.retrieve();
 
             log.warn("shortsList: {}", shortsList);
 

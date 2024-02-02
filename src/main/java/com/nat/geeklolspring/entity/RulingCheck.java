@@ -27,8 +27,6 @@ public class RulingCheck {
     @Column(name = "vote_two")
     private int two = 0;
 
-
-
     // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voter_id")

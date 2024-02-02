@@ -36,9 +36,12 @@ public class BoardApply {
     private String title;
 
     @Builder.Default
-    @Column(name = "apply_count")
+    @Column(name = "apply_report_count")
     private int reportCount = 0;
 
+    @Builder.Default
+    @Column(name = "check_good")
+    private int upCount = 0;
 
     // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)

@@ -92,7 +92,10 @@ public class ShortsReplyController {
             ShortsReplyListResponseDTO replyList = shortsReplyService.insertShortsReply(shortsId, dto, userInfo, pageInfo);
             return ResponseEntity.ok().body(replyList);
 
-        } catch (DTONotFoundException e) {
+        } catch (BadRequestException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsreply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
@@ -63,24 +64,28 @@ public class ShortsReplyService {
 
     // 쇼츠 댓글 저장 서비스
     public ShortsReplyListResponseDTO insertShortsReply(
-            Long shortsid,
+            Long shortsId,
             ShortsPostRequestDTO dto,
             TokenUserInfo userInfo,
             Pageable pageInfo) {
         log.debug("쇼츠 댓글 저장 서비스 실행!");
 
+        Optional<BoardShorts> findShorts = shortsRepository.findById(shortsId);
+
+        findShorts.orElseThrow(() -> new BadRequestException("올바른 shortsId 값을 보내주세요!"));
+
         // dto에 담겨 있던 내용을 ShortsReply 형식으로 변환해 reply에 저장
-        ShortsReply reply = dto.toEntity(shortsid);
+        ShortsReply reply = dto.toEntity(shortsId);
         // 현재 유저 정보의 id와 닉네임을 꺼내서 reply에 저장
         reply.setWriterId(userInfo.getUserId());
         reply.setWriterName(userInfo.getUserName());
 
         // DB에 저장
         shortsReplyRepository.save(reply);
-        shortsRepository.upReplyCount(shortsid);
+        shortsRepository.upReplyCount(shortsId);
 
         // 새 댓글이 DB에 저장된 댓글 리스트를 리턴
-        return retrieve(shortsid, pageInfo);
+        return retrieve(shortsId, pageInfo);
     }
 
     // 쇼츠 댓글 삭제 서비스

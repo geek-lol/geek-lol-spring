@@ -45,15 +45,11 @@ public class ReportService {
                 .build();
     }
 
-    public ReportListResponseDTO insertReport(ReportPostRequestDTO dto, TokenUserInfo userInfo) {
+    public void insertReport(ReportPostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("리포트 등록 서비스 실행!");
 
         Report entity = dto.toEntity(userInfo);
 
         reportRepository.save(entity);
-
-        return retrieve(userInfo);
-
-
     }
 }

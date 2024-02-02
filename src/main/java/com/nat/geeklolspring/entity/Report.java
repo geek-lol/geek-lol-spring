@@ -37,7 +37,7 @@ public class Report {
 
     @Column(name = "report_check")
     @Builder.Default
-    private int reportCheck = 0;
+    private int reportCheck = 0; // 운영자가 리포트를 확인했는지 체크하는 함수
 
     //---------------------------------------
 

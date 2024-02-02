@@ -98,12 +98,6 @@ public class ShortsController {
             // 동영상 가공
             Map<String, String> videoMap = FileUtil.uploadFile(fileUrl, rootShortsPath);
             String videoPath = videoMap.get("filePath");
-<<<<<<< HEAD
-            // 이미지 가공
-            Map<String, String> profileImgMap = FileUtil.uploadFile(thumbnail, rootThumbnailPath);
-            String thumbnailPath = profileImgMap.get("filePath");
-=======
->>>>>>> origin/mingeon_shortsReplyPaging
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들

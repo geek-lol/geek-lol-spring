@@ -11,6 +11,8 @@ import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -32,11 +34,14 @@ public class BoardBulletinController {
     private final BoardBulletinService boardBulletinService;
 
     @GetMapping()
-    public ResponseEntity<?> boardList() {
+    public ResponseEntity<?> boardList(
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
+            @RequestParam(required = false) String keyword
+    ) {
         log.info("/board/bulletin : Get!");
 
         try {
-            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve();
+            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(keyword,pageInfo);
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {
             return ResponseEntity

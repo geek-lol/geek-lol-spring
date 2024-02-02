@@ -8,11 +8,15 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResp
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
+import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,9 +33,18 @@ public class BoardBulletinService {
     private final BoardBulletinRepository boardBulletinRepository;
 
     // 목록 불러오기
-    public BoardBulletinResponseDTO retrieve() {
+    public BoardBulletinResponseDTO retrieve(String keyword, Pageable pageInfo) {
 
-        List<BoardBulletin> boardBulletinList = boardBulletinRepository.findAll();
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardBulletin> boardBulletinList;
+        // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
+        if(keyword == null)
+            // keyword가 없으면 전체를 리턴
+            boardBulletinList = boardBulletinRepository.findAll(pageable);
+        else
+            // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
+            boardBulletinList = boardBulletinRepository.findByTitleContaining(keyword, pageable);
+
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
                 .map(BoardBulletinDetailResponseDTO::new)
@@ -48,6 +61,8 @@ public class BoardBulletinService {
         BoardBulletin boardBulletin = boardBulletinRepository.findById(bulletinId).get();
 
         log.info("{}",boardBulletin);
+
+        boardBulletin.setViewCount(boardBulletin.getViewCount()+1);
 
         return BoardBulletinDetailResponseDTO.builder()
                 .bulletinId(boardBulletin.getBulletinId())

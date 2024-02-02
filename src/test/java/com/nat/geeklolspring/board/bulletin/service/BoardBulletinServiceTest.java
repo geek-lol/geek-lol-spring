@@ -46,17 +46,6 @@ class BoardBulletinServiceTest {
     }
 
     @Test
-    @DisplayName("게시판 목록 보여주기")
-    void viewBoard() {
-        //given
-
-        //when
-        boardBulletinService.retrieve();
-        //then
-
-    }
-
-    @Test
     @DisplayName("삭제 테스트")
     void deleteTest() {
         //given

@@ -1,11 +1,11 @@
-
 server:
   port: 8686
 
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3308/lol_search
+    url: jdbc:mariadb://localhost:3306/geeklol
+#    url: jdbc:mariadb://localhost:3308/lol_search
     username: root
     password: mariadb
   jpa:
@@ -22,7 +22,7 @@ logging:
     root: info
     org.hibernate.SQL: debug
 
-lol.app-key: RGAPI-8fd9c9c2-e192-4a44-a11c-5464565b046e
+lol.app-key: RGAPI-d8d4830b-4756-409c-b977-726e23cd1858
 
 jwt:
   secret: Gt9jGFwmCAjnUG64pitfmWSm8v/0c1uNjYvTWxCUWpY8jNbUmgfXWk9h4CaA6UFC7kQtbjF4iqNtX2hkRaAe4w==

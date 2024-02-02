@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.util.Map;
 
 @RestController
@@ -51,6 +52,7 @@ public class BoardBulletinController {
                             .error(e.getMessage()));
         }
     }
+
 
     @GetMapping("/detail")
     public ResponseEntity<?> boardDetail(

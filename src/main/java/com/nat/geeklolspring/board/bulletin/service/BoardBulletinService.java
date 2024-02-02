@@ -31,6 +31,62 @@ import java.util.stream.Collectors;
 public class BoardBulletinService {
 
     private final BoardBulletinRepository boardBulletinRepository;
+    private final UserRepository userRepository;
+
+    // 목록 불러오기
+    public BoardBulletinResponseDTO retrieve() {
+
+        List<BoardBulletin> boardBulletinList = boardBulletinRepository.findAll();
+
+        List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
+                .map(BoardBulletinDetailResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return BoardBulletinResponseDTO.builder()
+                .board(list)
+                .build();
+
+    }
+
+    // 글 생성
+    public BoardBulletinDetailResponseDTO create(BoardBulletinWriteRequestDTO dto,
+                                                 TokenUserInfo userInfo
+                                                 , String fileUrl
+                                                 ){
+
+        BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(fileUrl));
+
+        boardBulletin.setPosterId(userInfo.getUserId());
+
+        BoardBulletin save = boardBulletinRepository.save(boardBulletin);
+
+        log.info("{}",userInfo);
+
+
+        return new BoardBulletinDetailResponseDTO(save);
+
+    }
+
+    // 글 삭제
+
+    public void delete(TokenUserInfo userInfo, BoardBulletinDeleteResponseDTO dto) {
+
+        if (!Objects.equals(dto.getPosterId(), userInfo.getUserId())) {
+            log.warn("삭제할 권한이 없습니다!! - {}", dto.getPosterId());
+            throw new RuntimeException("삭제 권한이 없습니다");
+        }
+
+        log.info("dto : {}",dto.getBulletinId());
+        log.info("userInfo : {}",userInfo);
+
+//        boardBulletinRepository.deleteByBoardBulletinIdWithJPQL(dto.getBulletinId());
+
+        boardBulletinRepository.deleteById(dto.getBulletinId());
+    }
+
+    // 글 수정
+
+
 
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve(String keyword, Pageable pageInfo) {

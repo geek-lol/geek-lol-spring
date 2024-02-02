@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public class FileUtil {
 
-
     public static Map<String, String> uploadFile(MultipartFile file, String rootFilePath) {
         Map<String, String> uploadedPaths = new HashMap<>();
 

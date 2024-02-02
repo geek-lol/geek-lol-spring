@@ -43,9 +43,6 @@ public class BoardShorts {
     @Column(name = "shorts_link")
     private String videoLink;
 
-    @Column(name = "shorts_thumbnail_image")
-    private String thumbnailImage;
-
     @Builder.Default
     @Column(name = "view_count")
     private int viewCount = 0;

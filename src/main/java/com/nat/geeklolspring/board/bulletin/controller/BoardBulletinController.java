@@ -36,7 +36,7 @@ public class BoardBulletinController {
         log.info("/board/bulletin : Get!");
 
         try {
-            BoardBulletinResponseDTO boardBulletinList =boardBulletinService.retrieve();
+            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve();
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {
             return ResponseEntity

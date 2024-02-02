@@ -2,18 +2,15 @@ package com.nat.geeklolspring.shorts.shortsboard.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
-import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
+import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
 import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -107,6 +104,8 @@ public class ShortsService {
             if(flag)
                 continue;
             else {
+                // 쇼츠 조회수 처리는 잘 모르겠으니까 그냥 불러오게 되면 전부 +1되도록 코드 작성
+                shortsRepository.plusUpCount(shorts.getShortsId());
                 randShortsList.add(shorts);
                 count++;
             }

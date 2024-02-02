@@ -2,6 +2,7 @@ package com.nat.geeklolspring.shorts.vote.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.exception.DTONotFoundException;
+import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
 import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
 import com.nat.geeklolspring.entity.VoteCheck;
@@ -15,25 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VoteService {
     private final VoteCheckRepository voteCheckRepository;
-
-    public VoteResponseDTO createVote(VotePostRequestDTO dto, TokenUserInfo userInfo) {
-        log.debug("좋아요 저장 서비스 실행!");
-
-        // 필요한 정보가 잘 입력되어 있는지 확인
-        if (dto.getShortsId() == null) {
-            throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
-        }
-
-        VoteCheck entity = dto.toEntity(dto);
-        entity.setReceiver(userInfo.getUserId());
-
-        // 좋아요 등록
-        VoteCheck saved = voteCheckRepository.save(entity);
-
-        log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
-
-        return new VoteResponseDTO(saved);
-    }
+    private final ShortsRepository shortsRepository;
 
     public VoteResponseDTO getVote(long shortsId, TokenUserInfo userInfo) {
         String userId = userInfo.getUserId();
@@ -52,12 +35,39 @@ public class VoteService {
 
     }
 
+    public VoteResponseDTO createVote(VotePostRequestDTO dto, TokenUserInfo userInfo) {
+        log.debug("좋아요 저장 서비스 실행!");
+
+        // 필요한 정보가 잘 입력되어 있는지 확인
+        if (dto.getShortsId() == null) {
+            throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
+        }
+
+        VoteCheck entity = dto.toEntity(dto);
+        entity.setReceiver(userInfo.getUserId());
+
+        // 좋아요 등록
+        VoteCheck saved = voteCheckRepository.save(entity);
+        // 좋아요 등록에 따른 좋아요 카운트 증가
+        shortsRepository.plusUpCount(dto.getShortsId());
+
+        log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
+
+        return new VoteResponseDTO(saved);
+    }
+
     public VoteResponseDTO changeVote(VoteCheck vote) {
         // vote 값 수정
-        if (vote.getUp() == 1)
+        if (vote.getUp() == 1) {
+            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
+            shortsRepository.downUpCount(vote.getShortsId());
             vote.setUp(0);
-        else
+        }
+        else {
+            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
+            shortsRepository.plusUpCount(vote.getShortsId());
             vote.setUp(1);
+        }
 
         // 수정한 vote 값 DB에 저장
         VoteCheck saved = voteCheckRepository.save(vote);

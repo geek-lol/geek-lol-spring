@@ -21,7 +21,7 @@ public class RulingApplyDetailResponseDTO {
     private int upCount;
     private int reportCount;
     private LocalDateTime apply_date;
-    private User applyPosterId;
+    private String applyPosterId;
 
     public RulingApplyDetailResponseDTO(BoardApply boardApply){
         this.applyId = boardApply.getApplyId();

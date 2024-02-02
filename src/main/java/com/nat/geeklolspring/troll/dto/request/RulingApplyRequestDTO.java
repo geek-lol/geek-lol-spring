@@ -16,19 +16,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class RulingApplyRequestDTO {
-    private Long applyId;
     private String applyLink;
     private String content;
     private String title;
-    private User applyPosterId;
+    private String applyPosterId;
 
-    public BoardApply toEntity(User user){
+    public BoardApply toEntity(){
         return BoardApply.builder()
-                .applyId(applyId)
                 .applyLink(applyLink)
                 .content(content)
                 .title(title)
-                .applyPosterId(user)
+                .applyPosterId(applyPosterId)
                 .build();
     }
 }

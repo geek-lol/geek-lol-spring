@@ -34,12 +34,16 @@ public class ShortsController {
 
     // shorts 리스트 가져오기
     @GetMapping()
-    public ResponseEntity<?> shortsList(@PageableDefault(page = 1, size = 5) Pageable pageInfo) {
+    public ResponseEntity<?> shortsList(
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
+            @RequestParam(required = false) String keyword) {
         log.info("/api/shorts : Get!");
+
+        log.info("keyword : {}", keyword);
 
         try {
             // 모든 쇼츠 목록 가져오기
-            ShortsListResponseDTO shortsList = shortsService.retrieve(pageInfo);
+            ShortsListResponseDTO shortsList = shortsService.retrieve(keyword, pageInfo);
 
             log.warn("shortsList: {}", shortsList);
 
@@ -63,7 +67,7 @@ public class ShortsController {
         }
     }
 
-    // 쇼츠 생성
+    // 쇼츠 등록
     @PostMapping()
     public ResponseEntity<?> addShorts(
             @RequestPart("videoInfo") ShortsPostRequestDTO dto,

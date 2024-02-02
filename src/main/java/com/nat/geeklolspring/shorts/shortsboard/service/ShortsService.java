@@ -54,11 +54,17 @@ public class ShortsService {
         }
     }
 
-    public ShortsListResponseDTO retrieve(Pageable pageInfo) {
+    public ShortsListResponseDTO retrieve(String keyword, Pageable pageInfo) {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardShorts> shortsList;
         // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
-        Page<BoardShorts> shortsList = shortsRepository.findAll(pageable);
+        if(keyword == null)
+            // keyword가 없으면 전체를 리턴
+            shortsList = shortsRepository.findAll(pageable);
+        else
+            // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
+            shortsList = shortsRepository.findByTitleContaining(keyword, pageable);
 
         List<ShortsDetailResponseDTO> allShorts = shortsList.stream()
                 .map(ShortsDetailResponseDTO::new)

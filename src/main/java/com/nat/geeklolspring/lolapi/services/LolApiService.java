@@ -231,6 +231,8 @@ public class LolApiService {
                         long gameEndTinestamp = info.path("gameEndTimestamp").asLong();
                         int queueId = info.path("queueId").asInt();
                         long gameId = info.path("gameId").asLong();
+                        String gameMode = info.path("gameMode").asText();
+
                         String matchIdss = String.valueOf(metadata.path("matchId"));
 
 
@@ -241,6 +243,7 @@ public class LolApiService {
                         gameData.setQueueId(queueId);
                         gameData.setGameId(gameId);
                         gameData.setMatchId(matchIdss);
+                        gameData.setGameMode(gameMode);
 
 
                         singleGameResult.put("info", gameData);

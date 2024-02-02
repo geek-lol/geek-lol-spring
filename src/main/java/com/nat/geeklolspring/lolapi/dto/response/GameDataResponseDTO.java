@@ -14,5 +14,6 @@ public class GameDataResponseDTO {
     private int queueId;
     private Long gameId;
     private String matchId;
+    private String gameMode;
 
 }

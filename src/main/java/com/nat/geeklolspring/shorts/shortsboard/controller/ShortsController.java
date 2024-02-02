@@ -111,14 +111,14 @@ public class ShortsController {
     }
 
     // 쇼츠 삭제 요청
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteShorts(@PathVariable Long id,
+    @DeleteMapping("/{shortsId}")
+    public ResponseEntity<?> deleteShorts(@PathVariable Long shortsId,
                                           @AuthenticationPrincipal TokenUserInfo userInfo) {
 
-        log.info("/api/shorts/{} DELETE !!", id);
+        log.info("/api/shorts/{} DELETE !!", shortsId);
 
         // 데이터를 전달받지 못했다면 실행
-        if(id == null) {
+        if(shortsId == null) {
             return ResponseEntity
                     .badRequest()
                     .body(ShortsListResponseDTO
@@ -130,7 +130,7 @@ public class ShortsController {
         try {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
-            shortsService.deleteShorts(id, userInfo);
+            shortsService.deleteShorts(shortsId, userInfo);
 
             return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {

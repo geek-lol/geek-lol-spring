@@ -88,7 +88,8 @@ public class ShortsService {
             // flag 초기화
             flag = false;
             // 리스트 중에서 랜덤으로 숫자 하나를 뽑아서 shorts로 등록
-            shorts = shortsRepository.findById((long) rand.nextInt(shortsList.size())).orElseThrow();
+            Long randNum = (long) rand.nextInt(shortsList.size()) + 1;
+            shorts = shortsRepository.findById(randNum).orElseThrow();
             for (BoardShorts boardShorts : randShortsList) {
                 if (boardShorts.getShortsId().equals(shorts.getShortsId()))
                 {

@@ -38,7 +38,7 @@ public class ShortsController {
         log.info("/api/shorts : Get!");
 
         try {
-            // 모든 쇼츠 목록 가져오기
+            // 쇼츠 목록 가져오기
             ShortsListResponseDTO shortsList = shortsService.retrieve();
 
             log.warn("shortsList: {}", shortsList);

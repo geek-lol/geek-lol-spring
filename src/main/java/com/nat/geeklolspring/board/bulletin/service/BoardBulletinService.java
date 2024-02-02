@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.board.bulletin.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinModifyRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinWriteRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDeleteResponseDTO;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResponseDTO;
@@ -9,6 +10,7 @@ import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.repository.UserRepository;
+import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,10 +62,12 @@ public class BoardBulletinService {
     // 글 생성
     public BoardBulletinDetailResponseDTO create(BoardBulletinWriteRequestDTO dto,
                                                  TokenUserInfo userInfo
-                                                 , String fileUrl
+                                                 ,String filePath
                                                  ){
 
-        BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(fileUrl));
+        BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(filePath));
+
+
 
         boardBulletin.setPosterId(userInfo.getUserId());
 
@@ -71,6 +75,25 @@ public class BoardBulletinService {
 
         log.info("{}",userInfo);
 
+
+        return new BoardBulletinDetailResponseDTO(save);
+
+    }
+
+    //글 수정
+    public BoardBulletinDetailResponseDTO modify(BoardBulletinModifyRequestDTO dto,String filePath){
+
+        Optional<BoardBulletin> boardBulletin = boardBulletinRepository.findById(dto.getBulletinId());
+
+        if (dto.getTitle() == null){
+            dto.setTitle(boardBulletin.get().getTitle());
+        }
+        if (dto.getContent() == null){
+            dto.setContent(boardBulletin.get().getBoardContent());
+        }
+
+
+        BoardBulletin save = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath));
 
         return new BoardBulletinDetailResponseDTO(save);
 
@@ -92,8 +115,6 @@ public class BoardBulletinService {
 
         boardBulletinRepository.deleteById(dto.getBulletinId());
     }
-
-    // 글 수정
 
 
 

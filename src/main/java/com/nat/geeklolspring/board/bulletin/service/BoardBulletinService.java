@@ -108,6 +108,8 @@ public class BoardBulletinService {
 
         return BoardBulletinResponseDTO.builder()
                 .board(list)
+                .totalCount(boardBulletinList.getTotalElements())
+                .totalPages(boardBulletinList.getTotalPages())
                 .build();
 
     }

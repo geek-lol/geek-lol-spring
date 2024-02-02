@@ -59,7 +59,7 @@ public class BoardBulletinController {
         log.info("/board/bulletin/detail : Get!");
 
         try {
-            BoardBulletinDetailResponseDTO boardBulletin =boardBulletinService.detailRetrieve(Long.valueOf(bulletinId));
+            BoardBulletinDetailResponseDTO boardBulletin = boardBulletinService.detailRetrieve(Long.valueOf(bulletinId));
             return ResponseEntity.ok().body(boardBulletin);
         } catch (Exception e) {
             return ResponseEntity

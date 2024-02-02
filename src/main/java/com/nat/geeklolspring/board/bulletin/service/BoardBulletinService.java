@@ -70,6 +70,8 @@ public class BoardBulletinService {
                 .posterId(boardBulletin.getPosterId())
                 .content(boardBulletin.getBoardContent())
                 .boardMedia(boardBulletin.getBoardMedia())
+                .localDateTime(boardBulletin.getBoardDate())
+                .viewCount(boardBulletin.getViewCount())
                 .build();
 
     }

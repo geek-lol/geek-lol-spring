@@ -9,6 +9,7 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyPostRequestDTO;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
@@ -104,7 +105,7 @@ public class ApplyReplyService {
     }
 
     // 쇼츠 댓글 수정 서비스
-    public void updateReply(ShortsUpdateRequestDTO dto,
+    public void updateReply(ApplyReplyUpdateRequestDTO dto,
                             TokenUserInfo userInfo) {
 
         ApplyReply reply = applyReplyRepository.findById(dto.getReplyId()).orElseThrow();

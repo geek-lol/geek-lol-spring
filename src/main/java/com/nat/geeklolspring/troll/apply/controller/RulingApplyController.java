@@ -1,22 +1,23 @@
-package com.nat.geeklolspring.troll.controller;
+package com.nat.geeklolspring.troll.apply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
-import com.nat.geeklolspring.troll.dto.request.RulingApplyRequestDTO;
-import com.nat.geeklolspring.troll.dto.response.RulingApplyResponseDTO;
-import com.nat.geeklolspring.troll.service.RulingApplyService;
+import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
+import com.nat.geeklolspring.troll.apply.service.RulingApplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 
-@RequestMapping("/troll/support")
+@RequestMapping("/troll/apply")
 public class RulingApplyController {
     private final RulingApplyService rulingApplyService;
 
@@ -39,14 +40,33 @@ public class RulingApplyController {
     // 게시물 등록
     @PostMapping
     public ResponseEntity<?> createBoard(
-            @RequestBody RulingApplyRequestDTO dto,
+            @Validated @RequestPart("board") RulingApplyRequestDTO dto,
+            @RequestPart(value = "profileImage", required = false) MultipartFile boardFile,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         log.info("트롤 지원 만들기 실행");
 
         try {
-            RulingApplyResponseDTO applyBoardList = rulingApplyService.createBoard(dto, userInfo);
+            RulingApplyResponseDTO applyBoardList = rulingApplyService.createBoard(dto, userInfo, boardFile);
             return ResponseEntity.ok().body(applyBoardList);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(RulingApplyResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
+        }
+    }
+
+    //게시물 상세보기
+    @GetMapping("/detail")
+    public ResponseEntity<?> detailBoard(
+          String applyId
+    ){
+        log.info("지원 디테일 실행! {}",applyId);
+        try {
+            RulingApplyDetailResponseDTO applyBoard = rulingApplyService.detailBoard(Long.valueOf(applyId));
+            return ResponseEntity.ok().body(applyBoard);
         }catch (Exception e) {
             return ResponseEntity
                     .internalServerError()

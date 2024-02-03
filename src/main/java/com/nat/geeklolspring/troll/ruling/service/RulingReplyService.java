@@ -1,8 +1,8 @@
-package com.nat.geeklolspring.troll.service;
+package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.RulingReply;
-import com.nat.geeklolspring.troll.repository.RulingReplyRepository;
+import com.nat.geeklolspring.troll.ruling.repository.RulingReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

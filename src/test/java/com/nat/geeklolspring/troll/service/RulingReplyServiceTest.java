@@ -1,18 +1,15 @@
 package com.nat.geeklolspring.troll.service;
 
-import com.nat.geeklolspring.board.ruling.repository.BoardRulingRepository;
+import com.nat.geeklolspring.troll.apply.repository.BoardRulingRepository;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.RulingReply;
 import com.nat.geeklolspring.entity.User;
+import com.nat.geeklolspring.troll.apply.service.RulingReplyService;
 import com.nat.geeklolspring.user.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-
-import javax.transaction.Transactional;
 
 import java.util.List;
 

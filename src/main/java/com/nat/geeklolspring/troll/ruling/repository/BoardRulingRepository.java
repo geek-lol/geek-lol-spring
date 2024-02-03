@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.board.ruling.repository;
+package com.nat.geeklolspring.troll.ruling.repository;
 
 import com.nat.geeklolspring.entity.BoardRuling;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.troll.repository;
+package com.nat.geeklolspring.troll.ruling.repository;
 
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.RulingCheck;

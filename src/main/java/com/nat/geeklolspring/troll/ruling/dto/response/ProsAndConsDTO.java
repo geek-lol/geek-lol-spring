@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.troll.dto.response;
+package com.nat.geeklolspring.troll.ruling.dto.response;
 
 import lombok.*;
 

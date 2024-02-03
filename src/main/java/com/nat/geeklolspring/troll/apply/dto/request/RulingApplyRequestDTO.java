@@ -1,12 +1,7 @@
-package com.nat.geeklolspring.troll.dto.request;
+package com.nat.geeklolspring.troll.apply.dto.request;
 
 import com.nat.geeklolspring.entity.BoardApply;
-import com.nat.geeklolspring.entity.User;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.Column;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -19,14 +14,13 @@ public class RulingApplyRequestDTO {
     private String applyLink;
     private String content;
     private String title;
-    private String applyPosterId;
 
-    public BoardApply toEntity(){
+    public BoardApply toEntity(String applyLink, String userId){
         return BoardApply.builder()
                 .applyLink(applyLink)
                 .content(content)
                 .title(title)
-                .applyPosterId(applyPosterId)
+                .applyPosterId(userId)
                 .build();
     }
 }

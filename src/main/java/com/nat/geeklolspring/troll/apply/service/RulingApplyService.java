@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Transactional
+
 @RequiredArgsConstructor
 public class RulingApplyService {
     private final RulingApplyRepository rar;
@@ -66,9 +69,10 @@ public class RulingApplyService {
 
 
     // 게시물 저장
-    public RulingApplyResponseDTO createBoard(RulingApplyRequestDTO dto,
-                                              TokenUserInfo userInfo,
-                                              MultipartFile boardFile) throws IOException {
+    public RulingApplyResponseDTO createBoard(
+            RulingApplyRequestDTO dto,
+            TokenUserInfo userInfo,
+            MultipartFile boardFile) throws IOException {
         String boardImg = null;
         if (boardFile !=null){
             log.info(" file-name:{}",boardFile.getOriginalFilename());
@@ -111,6 +115,7 @@ public class RulingApplyService {
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
     @Scheduled(cron = "0 0 0 */3 * *")
     public void selectionOfTopic() {
+        log.info("스케줄링 실행중!!");
         // 현재 시간
         LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
         // 현재 시간으로부터 3일전

@@ -59,13 +59,13 @@ public class RulingApplyController {
     }
 
     //게시물 상세보기
-    @GetMapping("/detail")
+    @GetMapping("/detail/{applyId}")
     public ResponseEntity<?> detailBoard(
-          String applyId
+          @RequestParam Long applyId
     ){
         log.info("지원 디테일 실행! {}",applyId);
         try {
-            RulingApplyDetailResponseDTO applyBoard = rulingApplyService.detailBoard(Long.valueOf(applyId));
+            RulingApplyDetailResponseDTO applyBoard = rulingApplyService.detailBoard(applyId);
             return ResponseEntity.ok().body(applyBoard);
         }catch (Exception e) {
             return ResponseEntity

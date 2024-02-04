@@ -43,6 +43,10 @@ public class BoardApply {
     @Column(name = "check_good")
     private int upCount = 0;
 
+    @Builder.Default
+    @Column(name = "view_count")
+    private int viewCount = 0;
+
     @Column(name = "applyPosterId")
     private String applyPosterId;
     // fk가 필요한 곳

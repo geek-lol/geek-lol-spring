@@ -3,6 +3,7 @@ package com.nat.geeklolspring.troll.ruling.service;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
+import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +32,18 @@ public class RulingBoardService {
                     .build();
         }else if (topTwo.size() == 1){
             return CurrentBoardListResponseDTO.builder()
-                    .currentBoard(new RulingBoardDetailResponseDTO(topTwo.get(0)))
+                    .currentBoard(new RulingBoardResponseDTO(topTwo.get(0)))
                     .previousBoard(null)
                     .build();
         }
 
         //최근 2개의 게시판만 저장해서 리턴
         return new CurrentBoardListResponseDTO(topTwo);
+    }
+    //게시물 상세조회
+    public RulingBoardDetailResponseDTO findDetailBoard(Long rulingId){
+        BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
+        return new RulingBoardDetailResponseDTO(boardRuling);
     }
 
 

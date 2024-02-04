@@ -14,12 +14,12 @@ import java.util.List;
 public class CurrentBoardListResponseDTO {
 
     // 이전 투표 게시물
-    private RulingBoardDetailResponseDTO previousBoard;
+    private RulingBoardResponseDTO previousBoard;
     //현재 투표중인 게시물
-    private RulingBoardDetailResponseDTO currentBoard;
+    private RulingBoardResponseDTO currentBoard;
 
     public CurrentBoardListResponseDTO(List<BoardRuling> boardRulingList){
-       this.previousBoard = new RulingBoardDetailResponseDTO(boardRulingList.get(0));
-       this.currentBoard = new RulingBoardDetailResponseDTO(boardRulingList.get(1));
+       this.previousBoard = new RulingBoardResponseDTO(boardRulingList.get(0));
+       this.currentBoard = new RulingBoardResponseDTO(boardRulingList.get(1));
     }
 }

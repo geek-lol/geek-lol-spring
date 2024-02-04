@@ -7,6 +7,7 @@ import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.service.RulingApplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +42,7 @@ public class RulingApplyController {
     @PostMapping
     public ResponseEntity<?> createBoard(
             @Validated @RequestPart("board") RulingApplyRequestDTO dto,
-            @RequestPart(value = "profileImage", required = false) MultipartFile boardFile,
+            @RequestPart(value = "boardFile", required = false) MultipartFile boardFile,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         log.info("트롤 지원 만들기 실행");
@@ -61,7 +62,7 @@ public class RulingApplyController {
     //게시물 상세보기
     @GetMapping("/detail/{applyId}")
     public ResponseEntity<?> detailBoard(
-          @RequestParam Long applyId
+            @PathVariable Long applyId
     ){
         log.info("지원 디테일 실행! {}",applyId);
         try {

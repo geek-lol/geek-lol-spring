@@ -30,14 +30,14 @@ public class ApplyVoteController {
     private final ApplyVoteService voteService;
     
     // 좋아요 정보 조회
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> vote(
             @Validated @RequestParam Long applyId,
             @AuthenticationPrincipal TokenUserInfo userInfo
             ) {
         log.info("/api/vote?shortsId={} : GET!", applyId);
 
-        // 해당 동영상에 대한 나의 좋아요 정보 가져오기
+        //  나의 좋아요 정보 가져오기
         // 정보가 없다면 null값을 리턴받음
         ApplyVoteResponseDTO vote = voteService.getVote(applyId, userInfo);
 
@@ -47,7 +47,7 @@ public class ApplyVoteController {
     }
 
     // 좋아요 생성
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> addVote(
             @Validated @RequestBody ApplyVotePostRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,

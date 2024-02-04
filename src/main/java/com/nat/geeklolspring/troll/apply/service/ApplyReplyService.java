@@ -43,7 +43,7 @@ public class ApplyReplyService {
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
 
         // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
-        Page<ApplyReply> replyList = applyReplyRepository.findAllByApplyId(applyId,pageInfo);
+        Page<ApplyReply> replyList = applyReplyRepository.findAllByApplyId(applyId,pageable);
 
         // 정보를 가공하여 List<DTO>형태로 저장
         List<ApplyReplyResponseDTO> allReply = replyList.stream()
@@ -63,28 +63,28 @@ public class ApplyReplyService {
         }
     }
 
-    // 쇼츠 댓글 저장 서비스
-    public ApplyReplyListResponseDTO insertShortsReply(
+    // 댓글 저장 서비스
+    public ApplyReplyListResponseDTO insertReply(
             Long id,
             ApplyReplyPostRequestDTO dto,
             TokenUserInfo userInfo,
             Pageable pageInfo) {
         log.debug("쇼츠 댓글 저장 서비스 실행!");
 
-        // dto에 담겨 있던 내용을 ShortsReply 형식으로 변환해 reply에 저장
+        // dto에 담겨 있던 내용을 변환해 reply에 저장
         ApplyReply reply = dto.toEntity(id);
         // 현재 유저 정보의 id와 닉네임을 꺼내서 reply에 저장
         reply.setWriterId(userInfo.getUserId());
         reply.setWriterName(userInfo.getUserName());
 
         // DB에 저장
-        applyReplyRepository.save(reply);
+        ApplyReply save = applyReplyRepository.save(reply);
 
         // 새 댓글이 DB에 저장된 댓글 리스트를 리턴
         return retrieve(id, pageInfo);
     }
 
-    // 쇼츠 댓글 삭제 서비스
+    // 댓글 삭제 서비스
     public void deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기
         ApplyReply reply = applyReplyRepository.findById(replyId).orElseThrow();

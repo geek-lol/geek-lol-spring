@@ -73,7 +73,7 @@ public class RulingApplyReplyController {
         }
     }
 
-    // 해당 쇼츠에 댓글을 등록하는 컨트롤러
+    // 댓글을 등록하는 컨트롤러
     @PostMapping("/{applyId}")
     public ResponseEntity<?> addReply(
             @PathVariable Long applyId,
@@ -92,8 +92,8 @@ public class RulingApplyReplyController {
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             // 댓글을 DB에 저장하는 service 호출, 새 댓글만 리턴받음
-            ApplyReplyListResponseDTO replyList = applyReplyService.insertShortsReply(applyId, dto, userInfo, pageInfo);
-            return ResponseEntity.ok().body(replyList);
+            ApplyReplyListResponseDTO replyList = applyReplyService.insertReply(applyId, dto, userInfo, pageInfo);
+            return ResponseEntity.ok().body(null);
 
         } catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");

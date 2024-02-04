@@ -5,6 +5,7 @@ import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
+import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class RulingApplyService {
     private final RulingApplyRepository rar;
     private final BoardRulingRepository boardRulingRepository;
+    private final ApplyVoteCheckRepository applyVoteCheckRepository;
 
     @Value("${upload.path}")
     private String rootPath;
@@ -97,6 +99,7 @@ public class RulingApplyService {
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rar.findById(applyId).orElseThrow();
+        int goodCount = applyVoteCheckRepository.countByApplyId(applyId);
         RulingApplyDetailResponseDTO dto = new RulingApplyDetailResponseDTO(boardApply);
         return dto;
     }

@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RulingApplyRequestDTO {
-    private String applyLink;
     private String content;
     private String title;
 

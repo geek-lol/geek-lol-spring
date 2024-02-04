@@ -22,6 +22,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/troll/ruling/reply")
 public class RulingReplyController {
     private final RulingReplyService rulingReplyService;
 

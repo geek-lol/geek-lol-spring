@@ -6,14 +6,18 @@ import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
+import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
+import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RulingApplyService {
     private final RulingApplyRepository rar;
+    private final BoardRulingRepository boardRulingRepository;
 
     @Value("${upload.path}")
     private String rootPath;
@@ -76,9 +81,6 @@ public class RulingApplyService {
     // 글 삭제
     public RulingApplyResponseDTO deleteBoard(TokenUserInfo userInfo, Long bno){
         BoardApply targetBoard = rar.findById(bno).orElseThrow();
-        if (targetBoard == null) {
-            throw new IllegalStateException("존재하지 않은 게시판입니다.");
-        }
         if (targetBoard.getApplyPosterId().equals(userInfo.getUserId())){
             rar.delete(targetBoard);
             return findAllBoard();
@@ -106,9 +108,19 @@ public class RulingApplyService {
     }
 
 
-    // 기준일로 부터 3일 뒤 추천수 많은거 골라내기
-    public BoardApply selectionOfTopic() {
-        return null;
+    // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
+    @Scheduled(cron = "0 0 0 */3 * *")
+    public void selectionOfTopic() {
+        // 현재 시간
+        LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        // 현재 시간으로부터 3일전
+        LocalDateTime threeDaysAgo = now.minusDays(3);
+
+        // 3일 동안 추천수가 가장 많은 게시물
+        BoardApply BestBoard = rar.findFirstByApplyDateBetweenOrderByUpCountDescReportCountDesc(threeDaysAgo, now);
+        RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
+        boardRulingRepository.save(rulingDto.toEntity());
+
     }
 
 }

@@ -46,8 +46,8 @@ public class BoardApply {
     @Column(name = "applyPosterId")
     private String applyPosterId;
     // fk가 필요한 곳
-
-    @OneToOne(mappedBy = "boardApply")
-    private BoardRuling boardRuling;
+//
+//    @OneToOne(mappedBy = "boardApply")
+//    private BoardRuling boardRuling;
 
 }

@@ -1,15 +1,9 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.ApplyReply;
 import com.nat.geeklolspring.entity.RulingReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
-import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyPostRequestDTO;
-import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
-import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
-import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyResponseDTO;
-import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyListResponseDTO;

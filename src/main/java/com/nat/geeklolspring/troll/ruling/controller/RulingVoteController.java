@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.ruling.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.troll.ruling.dto.request.RulingVoteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.ProsAndConsDTO;
 import com.nat.geeklolspring.troll.ruling.service.RulingVoteService;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,12 @@ public class RulingVoteController {
     //투표 정보 저장
     //rulingId => 투표할 게시물 아이디
     //vote => 찬성투표시 vote=pros , 반대투표시 vote=cons
-    @PostMapping("/{rulingId}/{vote}")
+    @PostMapping
     public ResponseEntity<?> voteSave(
-            @RequestParam String vote,
-            @RequestParam Long rulingId,
+            @RequestBody RulingVoteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
-        ProsAndConsDTO prosAndConsDTO = rulingVoteService.rulingVoteSave(userInfo, rulingId, vote);
+        ProsAndConsDTO prosAndConsDTO = rulingVoteService.rulingVoteSave(dto, userInfo);
         return ResponseEntity.ok().body(prosAndConsDTO);
     }
 }

@@ -2,6 +2,7 @@ package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.RulingCheck;
+import com.nat.geeklolspring.troll.ruling.dto.request.RulingVoteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.ProsAndConsDTO;
 import com.nat.geeklolspring.troll.ruling.repository.RulingVoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,28 +16,26 @@ public class RulingVoteService {
     private final RulingVoteRepository rvr;
 
     // 투표한 내용을 저장
-    public ProsAndConsDTO rulingVoteSave(TokenUserInfo userInfo, Long rulingId, String vote){
-        if (vote.equals("pros")){
+    public ProsAndConsDTO rulingVoteSave(RulingVoteRequestDTO dto,TokenUserInfo userInfo){
+        if (dto.getVote().equals("pros")){
             RulingCheck check = RulingCheck.builder()
                     .rulingVoter(userInfo.getUserId())
                     .pros(1)
                     .cons(0)
-                    .rulingId(rulingId)
+                    .rulingId(dto.getRulingId())
                     .build();
             rvr.save(check);
-            return prosAndCons(rulingId);
         }
-        if (vote.equals("cons")){
+        if (dto.getVote().equals("cons")){
             RulingCheck check = RulingCheck.builder()
                     .rulingVoter(userInfo.getUserId())
                     .pros(0)
                     .cons(1)
-                    .rulingId(rulingId)
+                    .rulingId(dto.getRulingId())
                     .build();
             rvr.save(check);
-            return prosAndCons(rulingId);
         }
-        return prosAndCons(rulingId);
+        return prosAndCons(dto.getRulingId());
     }
     //찬성,반대 총 득표율 계산
     public ProsAndConsDTO prosAndCons(Long rulingId){

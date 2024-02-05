@@ -36,7 +36,7 @@ public class BoardBulletinController {
 
     @GetMapping()
     public ResponseEntity<?> boardList(
-            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
+            @PageableDefault(page = 1, size = 20) Pageable pageInfo,
             @RequestParam(required = false) String keyword
     ) {
         log.info("/board/bulletin : Get!");
@@ -56,12 +56,12 @@ public class BoardBulletinController {
 
     @GetMapping("/detail")
     public ResponseEntity<?> boardDetail(
-            @RequestBody String bulletinId
+            @Validated String bulletinId
     ) {
         log.info("/board/bulletin/detail : Get!");
 
         try {
-            BoardBulletinDetailResponseDTO boardBulletin = boardBulletinService.detailRetrieve(Long.valueOf(bulletinId));
+            BoardBulletinDetailResponseDTO boardBulletin = boardBulletinService.detailRetrieve(bulletinId);
             return ResponseEntity.ok().body(boardBulletin);
         } catch (Exception e) {
             return ResponseEntity

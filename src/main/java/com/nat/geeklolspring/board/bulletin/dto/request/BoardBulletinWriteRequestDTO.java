@@ -26,6 +26,8 @@ public class BoardBulletinWriteRequestDTO {
 
     private String posterId;
 
+    private String posterName;
+
     private LocalDateTime boardDate = LocalDateTime.now();
 
     public BoardBulletin toEntity(String fileUrl) {
@@ -33,6 +35,7 @@ public class BoardBulletinWriteRequestDTO {
                 .title(title)
                 .boardContent(content)
                 .posterId(posterId)
+                .posterName(posterName)
                 .boardMedia(fileUrl)
                 .build();
     }

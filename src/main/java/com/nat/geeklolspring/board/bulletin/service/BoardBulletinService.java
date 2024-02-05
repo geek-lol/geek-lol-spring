@@ -58,6 +58,8 @@ public class BoardBulletinService {
 
         boardBulletin.setPosterId(userInfo.getUserId());
 
+        boardBulletin.setPosterName(userInfo.getUserName());
+
         BoardBulletin save = boardBulletinRepository.save(boardBulletin);
 
         log.info("{}",userInfo);
@@ -108,13 +110,15 @@ public class BoardBulletinService {
 
         return BoardBulletinResponseDTO.builder()
                 .board(list)
+                .totalCount(boardBulletinList.getTotalElements())
+                .totalPages(boardBulletinList.getTotalPages())
                 .build();
 
     }
 
-    public BoardBulletinDetailResponseDTO detailRetrieve(Long bulletinId) {
+    public BoardBulletinDetailResponseDTO detailRetrieve(String bulletinId) {
 
-        BoardBulletin boardBulletin = boardBulletinRepository.findById(bulletinId).get();
+        BoardBulletin boardBulletin = boardBulletinRepository.findById(Long.valueOf(bulletinId)).get();
 
         log.info("{}",boardBulletin);
 
@@ -129,27 +133,6 @@ public class BoardBulletinService {
                 .localDateTime(boardBulletin.getBoardDate())
                 .viewCount(boardBulletin.getViewCount())
                 .build();
-
-    }
-
-    // 글 생성
-    public BoardBulletinDetailResponseDTO create(BoardBulletinWriteRequestDTO dto,
-                                                 TokenUserInfo userInfo
-                                                 ,String filePath
-                                                 ){
-
-        BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(filePath));
-
-
-
-        boardBulletin.setPosterId(userInfo.getUserId());
-
-        BoardBulletin save = boardBulletinRepository.save(boardBulletin);
-
-        log.info("{}",userInfo);
-
-
-        return new BoardBulletinDetailResponseDTO(save);
 
     }
 
@@ -170,23 +153,6 @@ public class BoardBulletinService {
 
         return new BoardBulletinDetailResponseDTO(save);
 
-    }
-
-    // 글 삭제
-
-    public void delete(TokenUserInfo userInfo, BoardBulletinDeleteResponseDTO dto) {
-
-        if (!Objects.equals(dto.getPosterId(), userInfo.getUserId())) {
-            log.warn("삭제할 권한이 없습니다!! - {}", dto.getPosterId());
-            throw new RuntimeException("삭제 권한이 없습니다");
-        }
-
-        log.info("dto : {}",dto.getBulletinId());
-        log.info("userInfo : {}",userInfo);
-
-//        boardBulletinRepository.deleteByBoardBulletinIdWithJPQL(dto.getBulletinId());
-
-        boardBulletinRepository.deleteById(dto.getBulletinId());
     }
 
 

@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.game.dto.response;
 
+import com.nat.geeklolspring.entity.CsGameRank;
 import com.nat.geeklolspring.entity.ResGameRank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,8 +29,24 @@ public class GameRankResponseDTO {
         this.score = rank.getScore();
         recordDate = rank.getRecordDate();
     }
-    public ResGameRank toEntity(){
+    public GameRankResponseDTO(CsGameRank rank){
+        this.gameId = rank.getGameId();
+        this.userId = rank.getUserId();
+        this.userName = rank.getUserName();
+        this.score = rank.getScore();
+        recordDate = rank.getRecordDate();
+    }
+    public ResGameRank resToEntity(){
         return ResGameRank.builder()
+                .gameId(gameId)
+                .userId(userId)
+                .score(score)
+                .userName(userName)
+                .recordDate(recordDate)
+                .build();
+    }
+    public CsGameRank csToEntity(){
+        return CsGameRank.builder()
                 .gameId(gameId)
                 .userId(userId)
                 .score(score)

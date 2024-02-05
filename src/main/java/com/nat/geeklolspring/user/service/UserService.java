@@ -72,6 +72,8 @@ public class UserService {
 
     public LoginResponseDTO authenticate(final LoginRequestDTO dto){
 
+        log.info("dto : {}",dto);
+
         User user = userRepository.findById(dto.getId())
                 .orElseThrow(
                         () -> new RuntimeException("가입된 회원이 아닙니다.")
@@ -83,8 +85,15 @@ public class UserService {
         if (!passwordEncoder.matches(inputPassword,encodedPassword)){
             throw new RuntimeException("비밀번호가 틀렸습니다");
         }
+        String token;
+        if (dto.getAutoLogin()){
+            token = tokenProvider.createToken(user);
+        }
+        else {
+            token = null;
+        }
 
-        String token = tokenProvider.createToken(user);
+        log.info("user : {}",user);
 
         return new LoginResponseDTO(user,token);
     }

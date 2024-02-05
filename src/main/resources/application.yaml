@@ -4,12 +4,8 @@ server:
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-<<<<<<< HEAD
 #    url: jdbc:mariadb://localhost:3306/geeklol
     url: jdbc:mariadb://localhost:3308/lol_search
-=======
-    url: jdbc:mariadb://localhost:3306/geeklol
->>>>>>> origin/mingeon_shortsReplyPaging
     username: root
     password: mariadb
   jpa:

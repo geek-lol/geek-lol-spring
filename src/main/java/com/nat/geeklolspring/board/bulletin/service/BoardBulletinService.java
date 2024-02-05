@@ -125,6 +125,7 @@ public class BoardBulletinService {
         boardBulletin.setViewCount(boardBulletin.getViewCount()+1);
 
         return BoardBulletinDetailResponseDTO.builder()
+                .posterName(boardBulletin.getPosterName())
                 .bulletinId(boardBulletin.getBulletinId())
                 .title(boardBulletin.getTitle())
                 .posterId(boardBulletin.getPosterId())

@@ -17,7 +17,6 @@ import static com.nat.geeklolspring.entity.Role.COMMON;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Builder
-
 @Entity
 public class User {
 

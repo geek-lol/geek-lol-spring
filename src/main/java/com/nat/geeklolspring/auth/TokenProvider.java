@@ -36,6 +36,7 @@ public class TokenProvider {
         claims.put("userName",userEntity.getUserName());
         claims.put("profileImage",userEntity.getProfileImage());
         claims.put("role",userEntity.getRole());
+        claims.put("autoLogin",userEntity.isAutoLogin());
 
 
         return Jwts.builder()
@@ -70,6 +71,7 @@ public class TokenProvider {
                 .userName(claims.get("userName", String.class))
                 .profileImage(claims.get("profileImage", String.class))
                 .role(Role.valueOf(claims.get("role", String.class)))
+                .autoLogin(claims.get("autoLogin",Boolean.class))
                 .build();
     }
 

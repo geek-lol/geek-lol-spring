@@ -17,5 +17,6 @@ public class TokenUserInfo {
     private String password;
     private String profileImage;
     private Role role;
+    private boolean autoLogin;
 
 }

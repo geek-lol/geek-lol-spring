@@ -91,6 +91,8 @@ public class UserService {
 
         log.info("user : {}",user);
 
+        userRepository.save(user);
+
         return new LoginResponseDTO(user,token);
     }
 

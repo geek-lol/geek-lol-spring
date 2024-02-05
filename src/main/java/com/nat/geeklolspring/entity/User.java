@@ -47,7 +47,8 @@ public class User {
     private Role role = COMMON;
 
     @Column(name = "auto_login")
-    boolean autoLogin;
+    @Builder.Default
+    boolean autoLogin = false;
 
 
 //-----------------------------------------

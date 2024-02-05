@@ -44,6 +44,10 @@ public class BoardShorts {
     private String videoLink;
 
     @Builder.Default
+    @Column(name = "reply_count")
+    private int replyCount = 0;
+
+    @Builder.Default
     @Column(name = "view_count")
     private int viewCount = 0;
 

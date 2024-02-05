@@ -1,9 +1,11 @@
 package com.nat.geeklolspring.shorts.shortsreply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
+import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
@@ -29,11 +31,12 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Transactional
 public class ShortsReplyService {
     private final ShortsReplyRepository shortsReplyRepository;
+    private final ShortsRepository shortsRepository;
 
     // 댓글 정보들을 돌려주는 서비스
 
     public ShortsReplyListResponseDTO retrieve(Long shortsId, Pageable pageInfo) {
-        log.warn("retreieve 페이징처리 실행! Id: {}, PageInfo: {}", shortsId, pageInfo);
+        log.warn("retrieve 페이징처리 실행! Id: {}, PageInfo: {}", shortsId, pageInfo);
         
         // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
@@ -61,23 +64,28 @@ public class ShortsReplyService {
 
     // 쇼츠 댓글 저장 서비스
     public ShortsReplyListResponseDTO insertShortsReply(
-            Long id,
+            Long shortsId,
             ShortsPostRequestDTO dto,
             TokenUserInfo userInfo,
             Pageable pageInfo) {
         log.debug("쇼츠 댓글 저장 서비스 실행!");
 
+        Optional<BoardShorts> findShorts = shortsRepository.findById(shortsId);
+
+        findShorts.orElseThrow(() -> new BadRequestException("올바른 shortsId 값을 보내주세요!"));
+
         // dto에 담겨 있던 내용을 ShortsReply 형식으로 변환해 reply에 저장
-        ShortsReply reply = dto.toEntity(id);
+        ShortsReply reply = dto.toEntity(shortsId);
         // 현재 유저 정보의 id와 닉네임을 꺼내서 reply에 저장
         reply.setWriterId(userInfo.getUserId());
         reply.setWriterName(userInfo.getUserName());
 
         // DB에 저장
         shortsReplyRepository.save(reply);
+        shortsRepository.upReplyCount(shortsId);
 
         // 새 댓글이 DB에 저장된 댓글 리스트를 리턴
-        return retrieve(id, pageInfo);
+        return retrieve(shortsId, pageInfo);
     }
 
     // 쇼츠 댓글 삭제 서비스
@@ -88,9 +96,11 @@ public class ShortsReplyService {
         try {
             boolean flag = EqualsId(reply.getWriterId(), userInfo);
             // 토큰의 id와 댓글의 작성자 id가 같으면 실행
-            if(flag)
+            if(flag) {
                 // 삭제하지 못하면 Exception 발생
-                 shortsReplyRepository.deleteById(replyId);
+                shortsReplyRepository.deleteById(replyId);
+                shortsRepository.downReplyCount(reply.getShortsId());
+            }
             else
                 throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
 

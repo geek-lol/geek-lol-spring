@@ -20,7 +20,7 @@ public class BoardReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
-    private long replyId;
+    private Long replyId;
 
     @CreationTimestamp
     @Column(name = " board_reply_date")

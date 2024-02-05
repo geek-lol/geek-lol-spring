@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
-    private final RulingApplyRepository rulingApplyRepository;
+    private final RulingApplyService rulingApplyService;
 
     public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("좋아요 저장 서비스 실행!");
@@ -32,6 +32,7 @@ public class ApplyVoteService {
 
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
+        rulingApplyService.agrees(dto.getApplyId());
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 

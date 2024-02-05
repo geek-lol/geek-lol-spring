@@ -99,7 +99,6 @@ public class RulingApplyService {
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rar.findById(applyId).orElseThrow();
-        int goodCount = applyVoteCheckRepository.countByApplyId(applyId);
         RulingApplyDetailResponseDTO dto = new RulingApplyDetailResponseDTO(boardApply);
         return dto;
     }
@@ -108,10 +107,10 @@ public class RulingApplyService {
     public void modityBoard(Long applyId){}
 
     //게시물 추천수 증가
-    public RulingApplyDetailResponseDTO agrees(Long applyId){
+    public void agrees(Long applyId){
         BoardApply targetBoard = rar.findById(applyId).orElseThrow();
         targetBoard.setUpCount(targetBoard.getUpCount()+1);
-        return new RulingApplyDetailResponseDTO(rar.save(targetBoard));
+        rar.save(targetBoard);
     }
 
 

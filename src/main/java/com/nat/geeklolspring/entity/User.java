@@ -46,6 +46,9 @@ public class User {
     @Builder.Default
     private Role role = COMMON;
 
+    @Column(name = "auto_login")
+    boolean autoLogin;
+
 
 //-----------------------------------------
 //    @OneToMany(mappedBy = "reportUserId")

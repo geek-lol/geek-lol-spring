@@ -85,13 +85,9 @@ public class UserService {
         if (!passwordEncoder.matches(inputPassword,encodedPassword)){
             throw new RuntimeException("비밀번호가 틀렸습니다");
         }
-        String token;
-        if (dto.getAutoLogin()){
-            token = tokenProvider.createToken(user);
-        }
-        else {
-            token = null;
-        }
+        String token = tokenProvider.createToken(user);
+
+        user.setAutoLogin(dto.getAutoLogin());
 
         log.info("user : {}",user);
 

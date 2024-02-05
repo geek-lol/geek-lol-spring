@@ -21,7 +21,7 @@ public class RulingVoteController {
     //투표 정보 조회
     @GetMapping("/{rulingId}")
     public ResponseEntity<?> voteStatus(
-            @RequestParam Long rulingId
+            @PathVariable Long rulingId
     ){
         ProsAndConsDTO prosAndConsDTO = rulingVoteService.prosAndCons(rulingId);
         return ResponseEntity.ok().body(prosAndConsDTO);

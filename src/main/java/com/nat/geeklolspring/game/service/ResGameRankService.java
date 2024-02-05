@@ -24,7 +24,7 @@ public class ResGameRankService {
 
     // 랭킹 조회
     public GameRankListResponseDTO findRank(){
-        List<ResGameRank> rankList = resGameRankRepository.findAll();
+        List<ResGameRank> rankList = resGameRankRepository.findAllByOrderByScore();
         List<GameRankResponseDTO> dtoList = rankList.stream()
                 .map(GameRankResponseDTO::new)
                 .collect(Collectors.toList());
@@ -35,12 +35,12 @@ public class ResGameRankService {
     }
     // 랭킹 저장
     public GameRankListResponseDTO addRank(GameRankRequestDTO dto, TokenUserInfo userInfo){
-        // 근데 랭킹에 이미 있고, 원래 점수보다 높으면 수정해서 저장
+        // 근데 랭킹에 이미 있고, 원래 점수보다 낮으면 수정해서 저장
         ResGameRank userRankInfo = resGameRankRepository.findByUserId(userInfo.getUserId());
         GameRankResponseDTO gameRankResponseDTO;
         if (userRankInfo != null){ //랭킹에 저장된 정보가 있음
             gameRankResponseDTO = new GameRankResponseDTO(userRankInfo);
-            if (gameRankResponseDTO.getScore() < dto.getScore()){
+            if (gameRankResponseDTO.getScore() > dto.getScore()){
                 gameRankResponseDTO.setScore(dto.getScore());
             }
         }else { //랭킹에 저장된 정보가 없음

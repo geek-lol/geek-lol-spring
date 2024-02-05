@@ -24,7 +24,7 @@ public class CsGameRankService {
 
     // 랭킹 조회
     public GameRankListResponseDTO findRank(){
-        List<CsGameRank> rankList = csGameRankRepository.findAll();
+        List<CsGameRank> rankList = csGameRankRepository.findAllByOrderByScore();
         List<GameRankResponseDTO> dtoList = rankList.stream()
                 .map(GameRankResponseDTO::new)
                 .collect(Collectors.toList());

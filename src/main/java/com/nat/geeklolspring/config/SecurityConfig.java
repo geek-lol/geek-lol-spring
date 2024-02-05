@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .antMatchers("/", "/find/**").permitAll()
                 .antMatchers("/", "/recentGames/**").permitAll()
                 .antMatchers("/","/board/**").permitAll()
+                .antMatchers("/","/detail/**").permitAll()
                 .antMatchers("/", "/api/**").permitAll()
 //                    .antMatchers("/**").hasRole("ADMIN")
                     //.antMatchers(HttpMethod.GET,"/").permitAll()

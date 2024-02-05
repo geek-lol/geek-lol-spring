@@ -32,8 +32,11 @@ public class BoardReply {
     @Column(name = "board_reply_modify")
     private int boardReplyModify;
 
-    @Column(name = "reply_writer")
-    private String replyWriter;
+    @Column(name = "reply_writer_id")
+    private String replyWriterId;
+
+    @Column(name = "reply_writer_name")
+    private String replyWriterName;
 
     @Column(name = "bulletin_id")
     private Long bulletinId;

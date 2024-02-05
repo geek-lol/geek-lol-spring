@@ -56,7 +56,7 @@ public class BoardBulletinController {
 
     @GetMapping("/detail")
     public ResponseEntity<?> boardDetail(
-            @Validated @RequestBody String bulletinId
+            @Validated String bulletinId
     ) {
         log.info("/board/bulletin/detail : Get!");
 

@@ -72,7 +72,8 @@ public class BoardReplyService {
         // dto에 담겨 있던 내용을 Reply 형식으로 변환해 reply에 저장
         BoardReply reply = dto.toEntity(id);
         // 현재 유저 정보의 id와 닉네임을 꺼내서 reply에 저장
-        reply.setReplyWriter(userInfo.getUserId());
+        reply.setReplyWriterId(userInfo.getUserId());
+        reply.setReplyWriterName(userInfo.getUserName());
 
         // DB에 저장
         boardReplyRepository.save(reply);
@@ -87,7 +88,7 @@ public class BoardReplyService {
         BoardReply reply = boardReplyRepository.findById(replyId).orElseThrow();
 
         try {
-            boolean flag = EqualsId(reply.getReplyWriter(), userInfo);
+            boolean flag = EqualsId(reply.getReplyWriterId(), userInfo);
             // 토큰의 id와 댓글의 작성자 id가 같으면 실행
             if(flag)
                 // 삭제하지 못하면 Exception 발생
@@ -110,7 +111,7 @@ public class BoardReplyService {
         // 현재 접속한 유저의 id와 쓴 사람의 id를 비교
         // 일치하면 true
         // 일치하지 않으면 false
-        boolean flag = EqualsId(reply.getReplyWriter(), userInfo);
+        boolean flag = EqualsId(reply.getReplyWriterId(), userInfo);
 
         if(flag) {
             // dto 안에 들어가있는 id값으로 찾은 댓글의 모든 정보를 target에 저장

@@ -58,6 +58,8 @@ public class BoardBulletinService {
 
         boardBulletin.setPosterId(userInfo.getUserId());
 
+        boardBulletin.setPosterName(userInfo.getUserName());
+
         BoardBulletin save = boardBulletinRepository.save(boardBulletin);
 
         log.info("{}",userInfo);

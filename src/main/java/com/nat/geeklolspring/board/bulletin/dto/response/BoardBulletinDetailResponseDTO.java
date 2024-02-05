@@ -22,6 +22,7 @@ public class BoardBulletinDetailResponseDTO {
     private String content;
     private String boardMedia;
     private int viewCount;
+    private String posterName;
     private LocalDateTime localDateTime;
 
     public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {

@@ -6,6 +6,7 @@ import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
+import com.nat.geeklolspring.user.dto.response.UserResponseDTO;
 import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.repository.UserRepository;
@@ -33,6 +34,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
+    public UserResponseDTO findByUserInfo(TokenUserInfo userInfo){
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        return new UserResponseDTO(user);
+
+    }
     public UserSignUpResponseDTO create(UserSignUpRequestDTO dto) {
 
         if (dto == null) {

@@ -23,7 +23,7 @@ public class AdminPageRulingResponseDTO {
         this.rulingDate = boardRuling.getRulingDate();
         this.title = boardRuling.getTitle();
         this.rulingDate = boardRuling.getRulingDate();
-        this.applyPosterId = boardRuling.getRulingPosterId().toString();
+        this.applyPosterId = boardRuling.getApplyPosterId();
     }
 
 }

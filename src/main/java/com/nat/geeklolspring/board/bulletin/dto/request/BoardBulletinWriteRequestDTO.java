@@ -28,6 +28,7 @@ public class BoardBulletinWriteRequestDTO {
 
     private String posterName;
 
+    @Builder.Default
     private LocalDateTime boardDate = LocalDateTime.now();
 
     public BoardBulletin toEntity(String fileUrl) {

@@ -37,9 +37,7 @@ public class BoardBulletinService {
     @Value("${upload.path}")
     private String rootPath;
 
-
     private final BoardBulletinRepository boardBulletinRepository;
-    private final UserRepository userRepository;
 
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve() {
@@ -163,8 +161,14 @@ public class BoardBulletinService {
             dto.setContent(boardBulletin.get().getBoardContent());
         }
 
+        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath));
 
-        BoardBulletin save = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath));
+        saveData.setBoardDate(boardBulletin.get().getBoardDate());
+        saveData.setPosterName(boardBulletin.get().getPosterName());
+        saveData.setViewCount(boardBulletin.get().getViewCount());
+        saveData.setBoardReportCount(boardBulletin.get().getBoardReportCount());
+
+        BoardBulletin save = boardBulletinRepository.save(saveData);
 
         return new BoardBulletinDetailResponseDTO(save);
 

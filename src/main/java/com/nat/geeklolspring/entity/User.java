@@ -53,10 +53,10 @@ public class User {
 //-----------------------------------------
 //    @OneToMany(mappedBy = "reportUserId")
 //    private List<Report> reportUser = new ArrayList<>();
-
-    @OneToMany(mappedBy = "bulletinCheckerId")
-    private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
-  
+//
+//    @OneToMany(mappedBy = "bulletinCheckerId")
+//    private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
+//
 //    @OneToMany(mappedBy = "replyWriter")
 //    private List<BoardReply> replyWriter = new ArrayList<>();
 

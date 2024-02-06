@@ -33,4 +33,4 @@ jwt:
   secret: Gt9jGFwmCAjnUG64pitfmWSm8v/0c1uNjYvTWxCUWpY8jNbUmgfXWk9h4CaA6UFC7kQtbjF4iqNtX2hkRaAe4w==
 
 upload:
-  path: /Users/yongseopkim/Desktop/spring_prj/upload
+  path: D:/geek-lol/upload/file

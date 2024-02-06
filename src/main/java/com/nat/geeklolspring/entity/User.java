@@ -17,7 +17,6 @@ import static com.nat.geeklolspring.entity.Role.COMMON;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Builder
-
 @Entity
 public class User {
 
@@ -46,6 +45,10 @@ public class User {
     @Builder.Default
     private Role role = COMMON;
 
+    @Column(name = "auto_login")
+    @Builder.Default
+    boolean autoLogin = false;
+
 
 //-----------------------------------------
 //    @OneToMany(mappedBy = "reportUserId")
@@ -53,7 +56,7 @@ public class User {
 
     @OneToMany(mappedBy = "bulletinCheckerId")
     private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
-//
+  
 //    @OneToMany(mappedBy = "replyWriter")
 //    private List<BoardReply> replyWriter = new ArrayList<>();
 
@@ -77,5 +80,6 @@ public class User {
 //
 //    @OneToMany(mappedBy = "applyPosterId")
 //    private List<BoardApply> applyPosterId = new ArrayList<>();
+
 
 }

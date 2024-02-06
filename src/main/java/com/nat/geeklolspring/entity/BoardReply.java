@@ -20,7 +20,7 @@ public class BoardReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
-    private long replyId;
+    private Long replyId;
 
     @CreationTimestamp
     @Column(name = " board_reply_date")
@@ -32,14 +32,13 @@ public class BoardReply {
     @Column(name = "board_reply_modify")
     private int boardReplyModify;
 
-    @Column(name = "reply_writer")
-    private String replyWriter;
+    @Column(name = "reply_writer_id")
+    private String replyWriterId;
 
-    //----------------------------------------
+    @Column(name = "reply_writer_name")
+    private String replyWriterName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bulletin_id")
-    private BoardBulletin bulletinId;
-
+    @Column(name = "bulletin_id")
+    private Long bulletinId;
 
 }

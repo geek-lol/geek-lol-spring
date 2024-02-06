@@ -34,16 +34,12 @@ public class ShortsController {
 
     // shorts 리스트 가져오기
     @GetMapping()
-    public ResponseEntity<?> shortsList(
-            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
-            @RequestParam(required = false) String keyword) {
+    public ResponseEntity<?> shortsList() {
         log.info("/api/shorts : Get!");
 
-        log.info("keyword : {}", keyword);
-
         try {
-            // 모든 쇼츠 목록 가져오기
-            ShortsListResponseDTO shortsList = shortsService.retrieve(keyword, pageInfo);
+            // 쇼츠 목록 가져오기
+            ShortsListResponseDTO shortsList = shortsService.retrieve();
 
             log.warn("shortsList: {}", shortsList);
 
@@ -115,14 +111,14 @@ public class ShortsController {
     }
 
     // 쇼츠 삭제 요청
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteShorts(@PathVariable Long id,
+    @DeleteMapping("/{shortsId}")
+    public ResponseEntity<?> deleteShorts(@PathVariable Long shortsId,
                                           @AuthenticationPrincipal TokenUserInfo userInfo) {
 
-        log.info("/api/shorts/{} DELETE !!", id);
+        log.info("/api/shorts/{} DELETE !!", shortsId);
 
         // 데이터를 전달받지 못했다면 실행
-        if(id == null) {
+        if(shortsId == null) {
             return ResponseEntity
                     .badRequest()
                     .body(ShortsListResponseDTO
@@ -134,7 +130,7 @@ public class ShortsController {
         try {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
-            shortsService.deleteShorts(id, userInfo);
+            shortsService.deleteShorts(shortsId, userInfo);
 
             return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {

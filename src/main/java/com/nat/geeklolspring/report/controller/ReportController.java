@@ -85,9 +85,9 @@ public class ReportController {
         log.warn("request parameter : {}", dto);
 
         try {
-            ReportListResponseDTO reportList = reportService.insertReport(dto, userInfo);
+            reportService.insertReport(dto, userInfo);
 
-            return ResponseEntity.ok().body(reportList);
+            return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());

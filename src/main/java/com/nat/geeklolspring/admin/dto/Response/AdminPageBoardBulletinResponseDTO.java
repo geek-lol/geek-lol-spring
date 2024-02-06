@@ -1,7 +1,6 @@
-package com.nat.geeklolspring.board.bulletin.dto.response;
+package com.nat.geeklolspring.admin.dto.Response;
 
 import com.nat.geeklolspring.entity.BoardBulletin;
-import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,25 +12,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardBulletinDetailResponseDTO {
-
-
+public class AdminPageBoardBulletinResponseDTO {
     private Long bulletinId;
     private String title;
-    private String posterId;
-    private String content;
-    private String boardMedia;
     private int viewCount;
     private String posterName;
     private LocalDateTime localDateTime;
 
-    public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {
+    public AdminPageBoardBulletinResponseDTO (BoardBulletin boardBulletin){
         this.bulletinId = boardBulletin.getBulletinId();
-        this.posterId = String.valueOf(boardBulletin.getPosterId());
         this.posterName = boardBulletin.getPosterName();
         this.title = boardBulletin.getTitle();
-        this.content = boardBulletin.getBoardContent();
-        this.boardMedia = boardBulletin.getBoardMedia();
         this.viewCount = boardBulletin.getViewCount();
         this.localDateTime = boardBulletin.getBoardDate();
     }

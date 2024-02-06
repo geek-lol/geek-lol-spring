@@ -14,21 +14,29 @@ import com.nat.geeklolspring.user.repository.UserRepository;
 import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class BoardBulletinService {
+
+    @Value("${upload.path}")
+    private String rootPath;
+
 
     private final BoardBulletinRepository boardBulletinRepository;
     private final UserRepository userRepository;
@@ -58,6 +66,8 @@ public class BoardBulletinService {
 
         boardBulletin.setPosterId(userInfo.getUserId());
 
+        boardBulletin.setPosterName(userInfo.getUserName());
+
         BoardBulletin save = boardBulletinRepository.save(boardBulletin);
 
         log.info("{}",userInfo);
@@ -84,8 +94,12 @@ public class BoardBulletinService {
         boardBulletinRepository.deleteById(dto.getBulletinId());
     }
 
-    // 글 수정
+    public void delete(BoardBulletinDeleteResponseDTO dto) {
 
+        log.info("dto : {}",dto.getBulletinId());
+
+        boardBulletinRepository.deleteById(dto.getBulletinId());
+    }
 
 
     // 목록 불러오기
@@ -108,19 +122,24 @@ public class BoardBulletinService {
 
         return BoardBulletinResponseDTO.builder()
                 .board(list)
+                .totalCount(boardBulletinList.getTotalElements())
+                .totalPages(boardBulletinList.getTotalPages())
                 .build();
 
     }
 
-    public BoardBulletinDetailResponseDTO detailRetrieve(Long bulletinId) {
+    public BoardBulletinDetailResponseDTO detailRetrieve(String bulletinId) {
 
-        BoardBulletin boardBulletin = boardBulletinRepository.findById(bulletinId).get();
+        BoardBulletin boardBulletin = boardBulletinRepository.findById(Long.valueOf(bulletinId)).get();
 
         log.info("{}",boardBulletin);
 
         boardBulletin.setViewCount(boardBulletin.getViewCount()+1);
 
+        boardBulletinRepository.save(boardBulletin);
+
         return BoardBulletinDetailResponseDTO.builder()
+                .posterName(boardBulletin.getPosterName())
                 .bulletinId(boardBulletin.getBulletinId())
                 .title(boardBulletin.getTitle())
                 .posterId(boardBulletin.getPosterId())
@@ -151,6 +170,31 @@ public class BoardBulletinService {
 
     }
 
+    public String uploadImage(MultipartFile originalFile) throws IOException {
+
+        // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다
+        File rootDir = new File(rootPath);
+        if (!rootDir.exists()) rootDir.mkdirs();
+
+        // 파일명을 유니크하게 변경
+        String uniqueFileName = UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
+
+        // 파일을 서버에 저장
+        File uploadFile = new File(rootPath + "/" + uniqueFileName);
+        originalFile.transferTo(uploadFile);
+
+        return uniqueFileName;
+    }
+
+    public String getImagePath(Long id){
+
+        //DB에서 파일명 조회
+        BoardBulletin boardBulletin = boardBulletinRepository.findById(id).orElseThrow();
+        String fileName = boardBulletin.getBoardMedia();
+
+        return rootPath+"/"+fileName;
+
+    }
 
 
 

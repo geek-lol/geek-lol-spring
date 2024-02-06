@@ -24,6 +24,7 @@ public class LoginResponseDTO {
     private List<BoardRuling> rulingPoster; // 문철
      */
     private String token;
+    private boolean autoLogin;
 
     public LoginResponseDTO(User user,String token){
         this.id = user.getId();
@@ -36,6 +37,7 @@ public class LoginResponseDTO {
          */
         this.role = user.getRole().toString();
         this.token = token;
+        this.autoLogin = user.isAutoLogin();
     }
 
 }

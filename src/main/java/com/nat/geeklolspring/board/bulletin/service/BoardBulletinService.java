@@ -105,6 +105,9 @@ public class BoardBulletinService {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardBulletin> boardBulletinList;
+
+        log.info("keyword : {}",keyword);
+
         // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
         if(keyword == null)
             // keyword가 없으면 전체를 리턴

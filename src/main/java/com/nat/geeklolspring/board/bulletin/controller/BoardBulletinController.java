@@ -42,11 +42,12 @@ public class BoardBulletinController {
     @GetMapping()
     public ResponseEntity<?> boardList(
             @PageableDefault(page = 1, size = 20) Pageable pageInfo,
-            @RequestParam(required = false) String keyword
+            @Validated @RequestPart(name = "keyword",required = false) String keyword
     ) {
         log.info("/board/bulletin : Get!");
 
         try {
+            log.info("keyword : {}",keyword);
             BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(keyword,pageInfo);
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {

@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 @Setter
 @Getter
-@ToString
+@ToString (exclude = {"applyPosterId"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -36,16 +36,22 @@ public class BoardApply {
     private String title;
 
     @Builder.Default
-    @Column(name = "apply_count")
+    @Column(name = "apply_report_count")
     private int reportCount = 0;
 
+    @Builder.Default
+    @Column(name = "check_good")
+    private int upCount = 0;
 
+    @Builder.Default
+    @Column(name = "view_count")
+    private int viewCount = 0;
+
+    @Column(name = "applyPosterId")
+    private String applyPosterId;
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applyPosterId")
-    private User applyPosterId;
-
-    @OneToOne(mappedBy = "boardApply")
-    private BoardRuling boardRuling = new BoardRuling();
+//
+//    @OneToOne(mappedBy = "boardApply")
+//    private BoardRuling boardRuling;
 
 }

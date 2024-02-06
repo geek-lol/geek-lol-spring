@@ -6,6 +6,7 @@ import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
+import com.nat.geeklolspring.user.dto.response.UserResponseDTO;
 import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
 import com.nat.geeklolspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,19 @@ public class UserController {
 
     private final UserService userService;
 
+    //회원 조회 하기
+    @GetMapping
+    public ResponseEntity<?> findMyInfo(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        try {
+
+            UserResponseDTO byUserInfo = userService.findByUserInfo(userInfo);
+            return ResponseEntity.ok().body(byUserInfo);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @PostMapping("/sign_up")
     public ResponseEntity<?> signUp(
             @Validated @RequestBody UserSignUpRequestDTO dto,
@@ -123,6 +137,7 @@ public class UserController {
         }
     }
 
+    //이미지 파일 불러오기
     @GetMapping("/load-profile")
     public ResponseEntity<?> loadProfile(
             @AuthenticationPrincipal TokenUserInfo userInfo

@@ -56,17 +56,30 @@ public class User {
 
     @OneToMany(mappedBy = "bulletinCheckerId")
     private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
+  
+//    @OneToMany(mappedBy = "replyWriter")
+//    private List<BoardReply> replyWriter = new ArrayList<>();
 
-    @OneToMany(mappedBy = "rulingPosterId")
-    private List<BoardRuling> rulingPoster = new ArrayList<>();
+//    @OneToMany(mappedBy = "uploaderId")
+//    private List<BoardShorts> uploaderId = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "writerId")
+//    private List<ShortsReply> writerId = new ArrayList<>();
 
-    @OneToMany(mappedBy = "rulingVoter")
-    private List<RulingCheck> rulingVoter = new ArrayList<>();
+//    @OneToMany(mappedBy = "receiver")
+//    private List<VoteCheck> receiver = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "rulingPosterId")
+//    private List<BoardRuling> rulingPoster = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "rulingVoter")
+//    private List<RulingCheck> rulingVoter = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "rulingWriterId")
+//    private List<RulingReply> rulingWriter = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "applyPosterId")
+//    private List<BoardApply> applyPosterId = new ArrayList<>();
 
-    @OneToMany(mappedBy = "rulingWriterId")
-    private List<RulingReply> rulingWriter = new ArrayList<>();
-
-    @OneToMany(mappedBy = "applyPosterId")
-    private List<BoardApply> applyPosterId = new ArrayList<>();
 
 }

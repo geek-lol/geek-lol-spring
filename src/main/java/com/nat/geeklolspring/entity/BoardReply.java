@@ -41,5 +41,4 @@ public class BoardReply {
     @Column(name = "bulletin_id")
     private Long bulletinId;
 
-
 }

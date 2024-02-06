@@ -31,9 +31,6 @@ public class VoteCheck {
     private int up = 1;
 
 
-
-
-
     // fk가 필요한 곳
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id", insertable = false, updatable = false)

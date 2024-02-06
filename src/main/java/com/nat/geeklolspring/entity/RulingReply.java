@@ -42,6 +42,9 @@ public class RulingReply {
     @Column(name = "ruling_id")
     private Long rulingId;
 
+    @Builder.Default
+    @Column(name = "apply_report_count")
+    private int reportCount = 0; // 신고 횟수
 //    // fk가 필요한 곳
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id")

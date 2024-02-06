@@ -3,6 +3,7 @@ package com.nat.geeklolspring.game.controller;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.game.dto.request.GameRankRequestDTO;
 import com.nat.geeklolspring.game.dto.response.GameRankListResponseDTO;
+import com.nat.geeklolspring.game.dto.response.GameRankResponseDTO;
 import com.nat.geeklolspring.game.service.ResGameRankService;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import lombok.RequiredArgsConstructor;

@@ -33,6 +33,10 @@ public class ApplyReply {
     @Column(name = "apply_reply_modify")
     private int modify = 0; //수정 횟수
 
+    @Builder.Default
+    @Column(name = "apply_report_count")
+    private int reportCount = 0; // 신고 횟수
+
     @Column(name = "apply_reply_writer")
     private String WriterId; // 작성자 아이디
 

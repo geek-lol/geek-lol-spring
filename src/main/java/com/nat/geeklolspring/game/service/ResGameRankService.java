@@ -33,6 +33,11 @@ public class ResGameRankService {
                 .gameRankList(dtoList)
                 .build();
     }
+    // 나의 랭킹 조회
+    public GameRankResponseDTO findMyRank(TokenUserInfo userInfo){
+        ResGameRank byUserId = resGameRankRepository.findByUserId(userInfo.getUserId());
+        return new GameRankResponseDTO(byUserId);
+    }
     // 랭킹 저장
     public GameRankListResponseDTO addRank(GameRankRequestDTO dto, TokenUserInfo userInfo){
         // 근데 랭킹에 이미 있고, 원래 점수보다 낮으면 수정해서 저장

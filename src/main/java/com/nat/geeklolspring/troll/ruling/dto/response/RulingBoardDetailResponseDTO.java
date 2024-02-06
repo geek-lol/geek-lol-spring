@@ -35,11 +35,11 @@ public class RulingBoardDetailResponseDTO {
         this.rulingDate = boardRuling.getRulingDate();
         this.title = boardRuling.getTitle();
         this.content = boardRuling.getContent();
-        this.applyPosterId = boardRuling.getApplyPosterId();
+        this.applyPosterId = boardRuling.getRulingPosterId();
     }
     public BoardRuling toEntity(){
         return BoardRuling.builder()
-                .applyPosterId(applyPosterId)
+                .rulingPosterId(applyPosterId)
                 .rulingLink(rulingLink)
                 .rulingDate(rulingDate)
                 .content(content)

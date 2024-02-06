@@ -38,7 +38,8 @@ public class BoardRuling {
     private String title;
 
     @Column(name = "applyPosterId")
-    private String applyPosterId;
+    private String rulingPosterId;
+
 
     // fk가 필요한 곳
 //    @ManyToOne(fetch = FetchType.LAZY)

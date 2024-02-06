@@ -86,6 +86,13 @@ public class BoardBulletinService {
         boardBulletinRepository.deleteById(dto.getBulletinId());
     }
 
+    public void delete(BoardBulletinDeleteResponseDTO dto) {
+
+        log.info("dto : {}",dto.getBulletinId());
+
+        boardBulletinRepository.deleteById(dto.getBulletinId());
+    }
+
     // 글 수정
 
 

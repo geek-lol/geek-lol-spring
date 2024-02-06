@@ -15,4 +15,7 @@ import java.util.List;
 public class ReportListResponseDTO {
     private String error;
     private List<Report> reportList;
+
+    private int totalPages; // 총 페이지 수
+    private long totalCount; // 총 댓글 수
 }

@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.admin.dto;
+package com.nat.geeklolspring.admin.dto.Response;
 
 import com.nat.geeklolspring.entity.BoardShorts;
 import lombok.*;

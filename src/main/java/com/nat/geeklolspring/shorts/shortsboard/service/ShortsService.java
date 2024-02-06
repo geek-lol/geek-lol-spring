@@ -53,6 +53,19 @@ public class ShortsService {
         }
     }
 
+    public void deleteShorts(Long id) {
+        BoardShorts shorts = shortsRepository.findById(id).orElseThrow();
+        try {
+            shortsRepository.deleteById(id);
+        } catch (Exception e) {
+            // 보통 해당 아이디 값이 없을 때 발생
+            // 다만 다른 예외적인 오류가 있을 수 있으므로 취급주의
+            log.error("삭제에 실패했습니다. - ID: {}, error: {}",
+                    id, e.getMessage());
+            throw new RuntimeException("해당 아이디 값을 가진 쇼츠가 없습니다!");
+        }
+    }
+
     public ShortsListResponseDTO retrieve() {
 
         // 페이징 처리 시 사용했던 것들

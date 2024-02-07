@@ -24,7 +24,7 @@ public class BoardBulletinModifyRequestDTO {
     private int boardReportCount;
     private int viewCount;
 
-    public BoardBulletin toEntity(Long bulletinId,String fileUrl) {
+    public BoardBulletin toEntity(Long bulletinId,String fileUrl,String title,String content) {
         return BoardBulletin.builder()
                 .bulletinId(bulletinId)
                 .title(title)

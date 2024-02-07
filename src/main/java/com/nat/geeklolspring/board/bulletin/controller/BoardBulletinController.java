@@ -44,7 +44,8 @@ public class BoardBulletinController {
             @PageableDefault(page = 1, size = 20) Pageable pageInfo,
             @Validated @RequestParam(name = "title",required = false) String titleKeyword,
             @Validated @RequestParam(name = "poster",required = false) String posterKeyword,
-            @Validated @RequestParam(name = "content",required = false) String contentKeyword
+            @Validated @RequestParam(name = "content",required = false) String contentKeyword,
+            @Validated @RequestParam(name = "upCount",required = false) int upCountView
     ) {
         log.info("/board/bulletin : Get!");
 
@@ -53,7 +54,7 @@ public class BoardBulletinController {
         log.info("contentKeyword : {}",contentKeyword);
 
         try {
-            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(titleKeyword,posterKeyword,contentKeyword,pageInfo);
+            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(titleKeyword,posterKeyword,contentKeyword,pageInfo,upCountView);
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {
             return ResponseEntity

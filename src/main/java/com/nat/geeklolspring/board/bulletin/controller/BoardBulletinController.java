@@ -42,14 +42,18 @@ public class BoardBulletinController {
     @GetMapping()
     public ResponseEntity<?> boardList(
             @PageableDefault(page = 1, size = 20) Pageable pageInfo,
-            @Validated String keyword
+            @Validated @RequestPart(name = "title",required = false) String titleKeyword,
+            @Validated @RequestPart(name = "poster",required = false) String posterKeyword,
+            @Validated @RequestPart(name = "content",required = false) String contentKeyword
     ) {
         log.info("/board/bulletin : Get!");
 
+        log.info("title : {}",titleKeyword);
+        log.info("poster : {}",posterKeyword);
+        log.info("contentKeyword : {}",contentKeyword);
+
         try {
-            log.info("keyword : {}",keyword);
-            log.info("pageInfo : {}",pageInfo);
-            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(keyword,pageInfo);
+            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(titleKeyword,posterKeyword,contentKeyword,pageInfo);
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {
             return ResponseEntity

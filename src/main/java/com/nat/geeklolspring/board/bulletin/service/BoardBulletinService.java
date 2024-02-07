@@ -101,18 +101,21 @@ public class BoardBulletinService {
 
 
     // 목록 불러오기
-    public BoardBulletinResponseDTO retrieve(String keyword, Pageable pageInfo) {
+    public BoardBulletinResponseDTO retrieve(String titleKeyword,String posterKeyword,String contentKeyword, Pageable pageInfo) {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardBulletin> boardBulletinList;
 
-        // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
-        if(keyword == null)
+            // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
+        if(titleKeyword != null)
+            boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByBoardDateDesc(titleKeyword, pageable);
+        else if(posterKeyword != null)
+            boardBulletinList = boardBulletinRepository.findByPosterIdContainingOrderByBoardDateDesc(posterKeyword,pageable);
+        else if(contentKeyword != null)
+            boardBulletinList = boardBulletinRepository.findByBoardContentContainingOrderByBoardDateDesc(contentKeyword,pageable);
+        else
             // keyword가 없으면 전체를 리턴 역순 정렬
             boardBulletinList = boardBulletinRepository.findAllByOrderByBoardDateDesc(pageable);
-        else
-            // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
-            boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByBoardBulletinIdDesc(keyword, pageable);
 
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()

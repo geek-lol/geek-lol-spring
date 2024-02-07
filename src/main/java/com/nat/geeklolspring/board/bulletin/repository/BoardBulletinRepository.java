@@ -9,7 +9,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface BoardBulletinRepository extends JpaRepository<BoardBulletin,Long> {
-    Page<BoardBulletin> findByTitleContainingOrderByBoardBulletinIdDesc(String title, Pageable pageable);
+    Page<BoardBulletin> findByTitleContainingOrderByBoardDateDesc(String title, Pageable pageable);
 
     Page<BoardBulletin> findAllByOrderByBoardDateDesc(Pageable pageable);
+
+    Page<BoardBulletin> findByPosterIdContainingOrderByBoardDateDesc(String posterKeyword, Pageable pageable);
+
+    Page<BoardBulletin> findByBoardContentContainingOrderByBoardDateDesc(String contentKeyword, Pageable pageable);
 }

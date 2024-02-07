@@ -105,7 +105,7 @@ public class BoardBulletinService {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardBulletin> boardBulletinList;
-
+        log.info("upCount : {}",upCountView);
 
         if (upCountView == 0){
             if(titleKeyword != null)

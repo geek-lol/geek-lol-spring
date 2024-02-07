@@ -45,16 +45,17 @@ public class BoardBulletinController {
             @Validated @RequestParam(name = "title",required = false) String titleKeyword,
             @Validated @RequestParam(name = "poster",required = false) String posterKeyword,
             @Validated @RequestParam(name = "content",required = false) String contentKeyword,
-            @Validated @RequestParam(name = "upCount",required = false) int upCountView
+            @Validated @RequestParam(name = "upCount",required = false) String upCountView
     ) {
         log.info("/board/bulletin : Get!");
 
         log.info("title : {}",titleKeyword);
         log.info("poster : {}",posterKeyword);
         log.info("contentKeyword : {}",contentKeyword);
+        log.info("upCount : {}",upCountView);
 
         try {
-            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(titleKeyword,posterKeyword,contentKeyword,pageInfo,upCountView);
+            BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(titleKeyword,posterKeyword,contentKeyword,pageInfo, Integer.parseInt(upCountView));
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {
             return ResponseEntity

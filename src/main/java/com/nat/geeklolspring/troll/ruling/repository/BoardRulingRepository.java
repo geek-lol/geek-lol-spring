@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface BoardRulingRepository extends JpaRepository<BoardRuling, Long> {
 
-    List<BoardRuling> findTopByOrderByRulingDateDesc();
+    List<BoardRuling> findAllByOrderByRulingDateDesc();
 }

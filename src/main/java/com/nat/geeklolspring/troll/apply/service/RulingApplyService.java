@@ -99,8 +99,13 @@ public class RulingApplyService {
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rar.findById(applyId).orElseThrow();
-        RulingApplyDetailResponseDTO dto = new RulingApplyDetailResponseDTO(boardApply);
-        return dto;
+        return new RulingApplyDetailResponseDTO(viewCountUp(boardApply));
+    }
+
+    //조회수 증가
+    public BoardApply viewCountUp(BoardApply boardApply){
+        boardApply.setViewCount(boardApply.getViewCount()+1);
+        return rar.save(boardApply);
     }
 
     // 게시물 수정

@@ -24,6 +24,7 @@ public class RulingBoardDetailResponseDTO {
     private String applyPosterId;
 
     public RulingBoardDetailResponseDTO(BoardApply boardApply) {
+        this.rulingId = boardApply.getApplyId();
         this.rulingLink =boardApply.getApplyLink();
         this.rulingDate = boardApply.getApplyDate();
         this.title = boardApply.getTitle();
@@ -31,6 +32,7 @@ public class RulingBoardDetailResponseDTO {
         this.applyPosterId = boardApply.getApplyPosterId();
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling) {
+        this.rulingId = boardRuling.getRulingId();
         this.rulingLink =boardRuling.getRulingLink();
         this.rulingDate = boardRuling.getRulingDate();
         this.title = boardRuling.getTitle();

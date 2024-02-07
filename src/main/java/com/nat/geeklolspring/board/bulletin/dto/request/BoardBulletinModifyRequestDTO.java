@@ -23,6 +23,7 @@ public class BoardBulletinModifyRequestDTO {
     private LocalDateTime boardDate;
     private int boardReportCount;
     private int viewCount;
+    private int upCount;
 
     public BoardBulletin toEntity(Long bulletinId,String fileUrl,String title,String content) {
         return BoardBulletin.builder()
@@ -35,6 +36,7 @@ public class BoardBulletinModifyRequestDTO {
                 .viewCount(this.viewCount)
                 .boardDate(this.boardDate)
                 .boardReportCount(this.boardReportCount)
+                .upCount(this.upCount)
                 .build();
     }
 

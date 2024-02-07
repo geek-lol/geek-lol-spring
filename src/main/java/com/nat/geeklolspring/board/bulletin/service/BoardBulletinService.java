@@ -169,6 +169,7 @@ public class BoardBulletinService {
         dto.setPosterName(boardBulletin.get().getPosterName());
         dto.setViewCount(boardBulletin.get().getViewCount());
         dto.setBoardReportCount(boardBulletin.get().getBoardReportCount());
+        dto.setUpCount(boardBulletin.get().getUpCount());
 
         log.info("dto : {}",dto);
 

@@ -46,8 +46,9 @@ public class BoardBulletin {
     @Column(name = "poster_name")
     private String posterName;
 
+    @Builder.Default
     @Column(name = "view_count")
-    private int viewCount;
+    private int viewCount = 0;
 
 
 

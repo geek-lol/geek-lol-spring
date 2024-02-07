@@ -165,16 +165,14 @@ public class BoardBulletinService {
             dto.setContent(boardBulletin.get().getBoardContent());
         }
 
+        dto.setBoardDate(boardBulletin.get().getBoardDate());
+        dto.setPosterName(boardBulletin.get().getPosterName());
+        dto.setViewCount(boardBulletin.get().getViewCount());
+        dto.setBoardReportCount(Integer.parseInt(boardBulletin.get().getBoardReportCount()));
+
         BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath));
 
-        saveData.setBoardDate(boardBulletin.get().getBoardDate());
-        saveData.setPosterName(boardBulletin.get().getPosterName());
-        saveData.setViewCount(boardBulletin.get().getViewCount());
-        saveData.setBoardReportCount(boardBulletin.get().getBoardReportCount());
-
-        BoardBulletin save = boardBulletinRepository.save(saveData);
-
-        return new BoardBulletinDetailResponseDTO(save);
+        return new BoardBulletinDetailResponseDTO(saveData);
 
     }
 

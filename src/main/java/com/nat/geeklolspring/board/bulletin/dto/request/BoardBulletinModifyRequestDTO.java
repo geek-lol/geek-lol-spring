@@ -3,6 +3,8 @@ package com.nat.geeklolspring.board.bulletin.dto.request;
 import com.nat.geeklolspring.entity.BoardBulletin;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @ToString
@@ -17,6 +19,10 @@ public class BoardBulletinModifyRequestDTO {
     private String content;
     private String boardMedia;
     private String posterId;
+    private String posterName;
+    private LocalDateTime boardDate;
+    private int boardReportCount;
+    private int viewCount;
 
     public BoardBulletin toEntity(Long bulletinId,String fileUrl) {
         return BoardBulletin.builder()

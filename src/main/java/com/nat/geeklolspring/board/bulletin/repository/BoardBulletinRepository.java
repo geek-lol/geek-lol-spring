@@ -16,4 +16,15 @@ public interface BoardBulletinRepository extends JpaRepository<BoardBulletin,Lon
     Page<BoardBulletin> findByPosterIdContainingOrderByBoardDateDesc(String posterKeyword, Pageable pageable);
 
     Page<BoardBulletin> findByBoardContentContainingOrderByBoardDateDesc(String contentKeyword, Pageable pageable);
+
+    @Modifying
+    @Query("update BoardBulletin s set s.upCount = s.upCount + 1 where s.bulletinId = :bulletinId")
+    void plusUpCount(Long bulletinId);
+
+    @Modifying
+    @Query("update BoardBulletin s set s.upCount = s.upCount - 1 where s.bulletinId = :bulletinId")
+    void downUpCount(Long bulletinId);
+
+
+
 }

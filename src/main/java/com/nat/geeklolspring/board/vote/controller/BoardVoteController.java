@@ -1,13 +1,13 @@
-package com.nat.geeklolspring.shorts.vote.controller;
+package com.nat.geeklolspring.board.vote.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.VoteCheck;
-import com.nat.geeklolspring.exception.DuplicatedVoteException;
+import com.nat.geeklolspring.board.vote.dto.request.BoardVotePatchRequestDTO;
+import com.nat.geeklolspring.board.vote.dto.request.BoardVotePostRequestDTO;
+import com.nat.geeklolspring.board.vote.dto.response.BoardVoteResponseDTO;
+import com.nat.geeklolspring.board.vote.service.BoardVoteService;
+import com.nat.geeklolspring.entity.BulletinCheck;
 import com.nat.geeklolspring.exception.DTONotFoundException;
-import com.nat.geeklolspring.shorts.vote.dto.request.VotePatchRequestDTO;
-import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
-import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
-import com.nat.geeklolspring.shorts.vote.service.VoteService;
+import com.nat.geeklolspring.exception.DuplicatedVoteException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
@@ -25,21 +26,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @Slf4j
 @RequiredArgsConstructor
 //@CrossOrigin(origins = {"http://localhost:3000","",""})
-@RequestMapping("/api/vote")
-public class VoteController {
-    private final VoteService voteService;
+@RequestMapping("/board/vote")
+public class BoardVoteController {
+    private final BoardVoteService voteService;
     
     // 좋아요 정보 조회
     @GetMapping()
     public ResponseEntity<?> vote(
-            @Validated @RequestParam Long shortsId,
+            @Validated @RequestParam Long bulletinId,
             @AuthenticationPrincipal TokenUserInfo userInfo
             ) {
-        log.info("/api/vote?shortsId={} : GET!", shortsId);
+        log.info("/api/vote?shortsId={} : GET!", bulletinId);
 
         // 해당 동영상에 대한 나의 좋아요 정보 가져오기
         // 정보가 없다면 null값을 리턴받음
-        VoteResponseDTO vote = voteService.getVote(shortsId, userInfo);
+        BoardVoteResponseDTO vote = voteService.getVote(bulletinId, userInfo);
 
         log.warn("vote : {}", vote);
 
@@ -50,7 +51,7 @@ public class VoteController {
     @Transactional
     @PostMapping()
     public ResponseEntity<?> addVote(
-            @Validated @RequestBody VotePostRequestDTO dto,
+            @Validated @RequestBody BoardVotePostRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             BindingResult result
     ) {
@@ -62,7 +63,7 @@ public class VoteController {
                     ;
         }
 
-        log.info("/api/vote : POST");
+        log.info("/board/vote : POST");
         log.warn("request parameter : {}", dto);
 
         try {
@@ -77,7 +78,7 @@ public class VoteController {
             if (!flag) {
                 // 좋아요 정보 생성
                 // 리턴은 생성된 좋아요 정보
-                VoteResponseDTO vote = voteService.createVote(dto, userInfo);
+                BoardVoteResponseDTO vote = voteService.createVote(dto, userInfo);
                 return ResponseEntity.ok().body(vote);
             }
 
@@ -106,7 +107,7 @@ public class VoteController {
     @Transactional
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> update(
-            @Validated @RequestBody VotePatchRequestDTO dto,
+            @Validated @RequestBody BoardVotePatchRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             HttpServletRequest request
     ) {
@@ -115,9 +116,9 @@ public class VoteController {
 
         try {
             // 내 vote 정보 가져오는 서비스 실행
-            VoteCheck voteCheck = voteService.findVote(dto.getShortsId(), userInfo.getUserId());
+            BulletinCheck voteCheck = voteService.findVote(dto.getBoardId(), userInfo.getUserId());
             // 내 vote 정보 수정하는 서비스 실행
-            VoteResponseDTO vote = voteService.changeVote(voteCheck);
+            BoardVoteResponseDTO vote = voteService.changeVote(voteCheck);
             
             return ResponseEntity.ok().body(vote);
         } catch (Exception e) {

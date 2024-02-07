@@ -51,6 +51,10 @@ public class BoardBulletin {
     @Column(name = "view_count")
     private int viewCount = 0;
 
+    @Builder.Default
+    @Column(name = "vote_up")
+    private int upCount = 0;
+
 
 
     //----------------------------------------

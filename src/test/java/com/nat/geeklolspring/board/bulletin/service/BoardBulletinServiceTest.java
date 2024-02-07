@@ -1,20 +1,14 @@
 package com.nat.geeklolspring.board.bulletin.service;
 
-import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinWriteRequestDTO;
-import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResponseDTO;
-import com.nat.geeklolspring.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -57,12 +51,14 @@ class BoardBulletinServiceTest {
     }
 
     @Test
-    @DisplayName("삭제 테스트")
-    void deleteTest() {
+    @DisplayName("검색")
+    void findKeywordTest(@PageableDefault(page = 1, size = 20) Pageable pageInfo) {
         //given
 
-        //when
+        String keyword = "아아아";
 
+        //when
+        boardBulletinService.retrieve(keyword,pageInfo);
         //then
     }
 

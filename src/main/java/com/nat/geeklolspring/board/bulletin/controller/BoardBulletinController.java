@@ -48,6 +48,7 @@ public class BoardBulletinController {
 
         try {
             log.info("keyword : {}",keyword);
+            log.info("pageInfo : {}",pageInfo);
             BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(keyword,pageInfo);
             return ResponseEntity.ok().body(boardBulletinList);
         } catch (Exception e) {
@@ -65,6 +66,8 @@ public class BoardBulletinController {
             @Validated String bulletinId
     ) {
         log.info("/board/bulletin/detail : Get!");
+
+        log.info("bulletinId : {}",bulletinId);
 
         try {
             BoardBulletinDetailResponseDTO boardBulletin = boardBulletinService.detailRetrieve(bulletinId);

@@ -110,11 +110,11 @@ public class BoardBulletinService {
 
         // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
         if(keyword == null)
-            // keyword가 없으면 전체를 리턴
-            boardBulletinList = boardBulletinRepository.findAll(pageable);
+            // keyword가 없으면 전체를 리턴 역순 정렬
+            boardBulletinList = boardBulletinRepository.findAllByOrderByBoardDateDesc(pageable);
         else
             // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
-            boardBulletinList = boardBulletinRepository.findByTitleContaining(keyword, pageable);
+            boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByBoardBulletinIdDesc(keyword, pageable);
 
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()

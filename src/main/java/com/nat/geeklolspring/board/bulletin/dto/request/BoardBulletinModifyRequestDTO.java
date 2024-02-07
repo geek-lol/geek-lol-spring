@@ -30,6 +30,11 @@ public class BoardBulletinModifyRequestDTO {
                 .title(title)
                 .boardContent(content)
                 .boardMedia(fileUrl)
+                .posterName(this.posterName)
+                .posterId(this.posterId)
+                .viewCount(this.viewCount)
+                .boardDate(this.boardDate)
+                .boardReportCount(this.boardReportCount)
                 .build();
     }
 

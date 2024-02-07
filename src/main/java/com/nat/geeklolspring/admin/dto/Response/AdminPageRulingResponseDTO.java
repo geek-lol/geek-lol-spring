@@ -20,7 +20,6 @@ public class AdminPageRulingResponseDTO {
     private String applyPosterId;
 
     public AdminPageRulingResponseDTO(BoardRuling boardRuling) {
-        this.rulingDate = boardRuling.getRulingDate();
         this.title = boardRuling.getTitle();
         this.rulingDate = boardRuling.getRulingDate();
         this.applyPosterId = boardRuling.getApplyPosterId();

@@ -35,7 +35,7 @@ public class BoardBulletinWriteRequestDTO {
                 .posterId(posterId)
                 .posterName(posterName)
                 .boardMedia(fileUrl)
-                .boardReportCount(String.valueOf(boardReportCount))
+                .boardReportCount(boardReportCount)
                 .build();
     }
 

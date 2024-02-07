@@ -168,7 +168,9 @@ public class BoardBulletinService {
         dto.setBoardDate(boardBulletin.get().getBoardDate());
         dto.setPosterName(boardBulletin.get().getPosterName());
         dto.setViewCount(boardBulletin.get().getViewCount());
-        dto.setBoardReportCount(Integer.parseInt(boardBulletin.get().getBoardReportCount()));
+        dto.setBoardReportCount(boardBulletin.get().getBoardReportCount());
+
+        log.info("dto : {}",dto);
 
         BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath,dto.getTitle(),dto.getContent()));
 

@@ -42,9 +42,9 @@ public class BoardBulletinController {
     @GetMapping()
     public ResponseEntity<?> boardList(
             @PageableDefault(page = 1, size = 20) Pageable pageInfo,
-            @Validated @RequestPart(name = "title",required = false) String titleKeyword,
-            @Validated @RequestPart(name = "poster",required = false) String posterKeyword,
-            @Validated @RequestPart(name = "content",required = false) String contentKeyword
+            @Validated @RequestParam(name = "title",required = false) String titleKeyword,
+            @Validated @RequestParam(name = "poster",required = false) String posterKeyword,
+            @Validated @RequestParam(name = "content",required = false) String contentKeyword
     ) {
         log.info("/board/bulletin : Get!");
 

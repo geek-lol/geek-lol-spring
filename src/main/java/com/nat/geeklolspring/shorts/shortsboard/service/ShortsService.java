@@ -11,6 +11,7 @@ import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository
 import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,9 @@ import java.util.stream.Collectors;
 @Transactional  // JPA 사용시 필수
 public class ShortsService {
     private final ShortsRepository shortsRepository;
+
+    @Value("D:/geek-lol/upload/shorts/video")
+    private String rootShortsPath;
 
     public void insertVideo(ShortsPostRequestDTO dto, String videoPath, TokenUserInfo userInfo) {
         log.debug("쇼츠 등록 서비스 실행!");
@@ -135,5 +139,12 @@ public class ShortsService {
                 .builder()
                 .shorts(allShorts)
                 .build();
+    }
+
+    public String getShortPath(Long shortsId){
+        BoardShorts byShort = shortsRepository.findByShortsId(shortsId);
+        String videoLink = byShort.getVideoLink();
+        return rootShortsPath+"/"+videoLink;
+
     }
 }

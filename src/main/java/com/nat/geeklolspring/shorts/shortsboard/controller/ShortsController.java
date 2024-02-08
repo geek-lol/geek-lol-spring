@@ -10,14 +10,17 @@ import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -150,4 +153,58 @@ public class ShortsController {
                             .build());
         }
     }
+
+    //이미지 파일 불러오기
+    @PostMapping("/load-video/{shortsId}")
+    public ResponseEntity<?> loadVideo(
+            @PathVariable Long shortsId
+    ){
+
+        try {
+            String shortPath = shortsService.getShortPath(shortsId);
+
+            File videoFile = new File(shortPath);
+
+            if (!videoFile.exists()) return ResponseEntity.notFound().build();
+
+            byte[] fileData = FileCopyUtils.copyToByteArray(videoFile);
+
+            HttpHeaders headers = new HttpHeaders();
+
+
+            MediaType mediaType = extractFileExtension(shortPath);
+            if (mediaType == null){
+                return ResponseEntity.internalServerError().body("비디오가 아닙니다");
+            }
+
+            headers.setContentType(mediaType);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+    private MediaType extractFileExtension(String filePath){
+
+        String ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+        switch (ext.toUpperCase()) {
+            case "MP4":
+                return MediaType.valueOf("video/mp4");
+            case "MKV":
+                return MediaType.valueOf("video/x-matroska");
+            case "AVI":
+                return MediaType.valueOf("video/x-msvideo");
+            default:
+                return null;
+        }
+
+    }
+
 }

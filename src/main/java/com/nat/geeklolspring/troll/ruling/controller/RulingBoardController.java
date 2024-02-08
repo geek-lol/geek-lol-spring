@@ -7,10 +7,8 @@ import com.nat.geeklolspring.troll.ruling.service.RulingBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -46,7 +44,7 @@ public class RulingBoardController {
     // 투표 게시물 상세보기
     @GetMapping("/{rulingId}")
     public ResponseEntity<?> findDetailBoard(
-            @RequestParam Long rulingId
+            @Validated @PathVariable Long rulingId
     ){
         log.info("/troll/ruling/board/{} !!",rulingId);
         RulingBoardDetailResponseDTO detailBoard = rulingBoardService.findDetailBoard(rulingId);

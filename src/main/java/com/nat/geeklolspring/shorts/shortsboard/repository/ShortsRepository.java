@@ -28,4 +28,6 @@ public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
     @Modifying
     @Query("update BoardShorts s set s.replyCount = s.replyCount - 1 where s.shortsId = :shortsId")
     void downReplyCount(Long shortsId);
+
+    BoardShorts findByShortsId(Long id);
 }

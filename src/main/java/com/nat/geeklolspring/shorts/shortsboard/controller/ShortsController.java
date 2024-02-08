@@ -6,6 +6,7 @@ import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
+import com.nat.geeklolspring.utils.files.Videos;
 import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -154,7 +155,7 @@ public class ShortsController {
         }
     }
 
-    //이미지 파일 불러오기
+    //비디오 파일 불러오기
     @PostMapping("/load-video/{shortsId}")
     public ResponseEntity<?> loadVideo(
             @PathVariable Long shortsId
@@ -172,7 +173,7 @@ public class ShortsController {
             HttpHeaders headers = new HttpHeaders();
 
 
-            MediaType mediaType = extractFileExtension(shortPath);
+            MediaType mediaType = Videos.extractFileExtension(shortPath);
             if (mediaType == null){
                 return ResponseEntity.internalServerError().body("비디오가 아닙니다");
             }
@@ -190,21 +191,5 @@ public class ShortsController {
 
     }
 
-    private MediaType extractFileExtension(String filePath){
-
-        String ext = filePath.substring(filePath.lastIndexOf(".") + 1);
-
-        switch (ext.toUpperCase()) {
-            case "MP4":
-                return MediaType.valueOf("video/mp4");
-            case "MKV":
-                return MediaType.valueOf("video/x-matroska");
-            case "AVI":
-                return MediaType.valueOf("video/x-msvideo");
-            default:
-                return null;
-        }
-
-    }
 
 }

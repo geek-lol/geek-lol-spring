@@ -95,11 +95,17 @@ public class RulingApplyService {
         }
     }
 
-
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rar.findById(applyId).orElseThrow();
         return new RulingApplyDetailResponseDTO(viewCountUp(boardApply));
+    }
+
+    // 게시물 영상 주소
+    public String getVideoPath(Long applyId){
+        BoardApply boardApply = rar.findById(applyId).orElseThrow();
+        String applyLink = boardApply.getApplyLink();
+        return rootPath+"/"+applyLink;
     }
 
     //조회수 증가

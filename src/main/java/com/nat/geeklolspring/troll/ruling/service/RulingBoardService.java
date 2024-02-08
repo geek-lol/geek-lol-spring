@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
@@ -8,6 +9,7 @@ import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 public class RulingBoardService {
     private final BoardRulingRepository boardRulingRepository;
 
+    @Value("${upload.path}")
+    private String rootPath;
     // 최근 게시물 2건 조회
     public CurrentBoardListResponseDTO descRulingBoard(){
         //투표 게시판의 목록을 불러옴
@@ -47,6 +51,13 @@ public class RulingBoardService {
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
         return new RulingBoardDetailResponseDTO(boardRuling);
     }
+    // 게시물 영상 주소
+    public String getVideoPath(Long rulingId){
+        BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
+        String applyLink = boardRuling.getRulingLink()
+        return rootPath+"/"+applyLink;
+    }
+
 
     // 게시물 전체조회
     public RulingBoardListResponseDTO findAllRulingBoard(){

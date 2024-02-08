@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
+    private final RulingApplyService rulingApplyService;
 
 
     public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
@@ -34,6 +35,7 @@ public class ApplyVoteService {
 
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
+        rulingApplyService.agrees(dto.getApplyId());
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 

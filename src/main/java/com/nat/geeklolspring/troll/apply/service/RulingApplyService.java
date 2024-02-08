@@ -8,6 +8,7 @@ import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseD
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
+import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 public class RulingApplyService {
 
     private final RulingApplyRepository rar;
-
+    private final BoardRulingRepository boardRulingRepository;
 
     @Value("${upload.path}")
     private String rootPath;
@@ -91,7 +92,7 @@ public class RulingApplyService {
             log.info(" file-name:{}",boardFile.getOriginalFilename());
             boardImg = uploadBoardImage(boardFile);
         }
-        BoardApply boardApply = rar.save(dto.toEntity(boardImg, userInfo.getUserId()));
+        BoardApply boardApply = rar.save(dto.toEntity(boardImg, userInfo));
         return new RulingApplyDetailResponseDTO(boardApply);
     }
 
@@ -147,7 +148,7 @@ public class RulingApplyService {
         // 3일 동안 추천수가 가장 많은 게시물
         BoardApply BestBoard = rar.findFirstByApplyDateBetweenOrderByUpCountDescReportCountDesc(threeDaysAgo, now);
         RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
-//        boardRulingRepository.save(rulingDto.toEntity());
+        boardRulingRepository.save(rulingDto.toEntity());
 
     }
 

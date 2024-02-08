@@ -24,7 +24,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000","",""})
 @RequestMapping("/troll/apply/vote")
 public class ApplyVoteController {
     private final ApplyVoteService voteService;

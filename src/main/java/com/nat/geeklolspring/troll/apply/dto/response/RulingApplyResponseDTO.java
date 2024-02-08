@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.troll.apply.dto.response;
 
+import com.nat.geeklolspring.entity.BoardApply;
 import lombok.*;
 
 import java.util.List;
@@ -14,4 +15,6 @@ import java.util.List;
 public class RulingApplyResponseDTO {
     private String error;
     private List<RulingApplyDetailResponseDTO> boardApply;
+
+
 }

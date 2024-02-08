@@ -49,6 +49,9 @@ public class BoardApply {
 
     @Column(name = "applyPosterId")
     private String applyPosterId;
+
+    @Column(name = "applyPosterName")
+    private String applyPosterName;
     // fk가 필요한 곳
 //
 //    @OneToOne(mappedBy = "boardApply")

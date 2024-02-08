@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.apply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplySearchRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
@@ -8,7 +9,9 @@ import com.nat.geeklolspring.troll.apply.service.RulingApplyService;
 import com.nat.geeklolspring.utils.files.Videos;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +34,13 @@ public class RulingApplyController {
 
     //게시물 목록 전체 조회
     @GetMapping
-    public ResponseEntity<?> findAllBoard(){
+    public ResponseEntity<?> findAllBoard(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo,
+            @RequestHeader(name = "Apply-Order-Header") String orderType
+    ){
         log.info("트롤 지원 조회 실행");
         try {
-            RulingApplyResponseDTO applyBoardList = rulingApplyService.findAllBoard();
+            RulingApplyResponseDTO applyBoardList = rulingApplyService.findAllBoard(pageInfo,orderType);
             return ResponseEntity.ok().body(applyBoardList);
         }catch (Exception e) {
             return ResponseEntity
@@ -55,8 +61,8 @@ public class RulingApplyController {
         log.info("트롤 지원 만들기 실행");
 
         try {
-            RulingApplyResponseDTO applyBoardList = rulingApplyService.createBoard(dto, userInfo, boardFile);
-            return ResponseEntity.ok().body(applyBoardList);
+            RulingApplyDetailResponseDTO applyBoard = rulingApplyService.createBoard(dto, userInfo, boardFile);
+            return ResponseEntity.ok().body(applyBoard);
         }catch (Exception e) {
             return ResponseEntity
                     .internalServerError()
@@ -91,8 +97,8 @@ public class RulingApplyController {
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         try {
-            RulingApplyResponseDTO applyBoardList = rulingApplyService.deleteBoard(userInfo, boardId);
-            return ResponseEntity.ok().body(applyBoardList);
+            int delFlag = rulingApplyService.deleteBoard(userInfo, boardId);
+            return ResponseEntity.ok().body(delFlag);
         }catch (Exception e) {
             return ResponseEntity
                     .internalServerError()
@@ -102,6 +108,23 @@ public class RulingApplyController {
         }
     }
 
+    // 게시판 검색하기
+    @GetMapping("/search")
+    public ResponseEntity<?> searchBoard(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo,
+            @RequestBody ApplySearchRequestDTO dto
+            ){
+        try {
+            RulingApplyResponseDTO applyList = rulingApplyService.serchToBoard(dto, pageInfo);
+            return ResponseEntity.ok().body(applyList);
+        }catch (Exception e){
+            return ResponseEntity
+                    .internalServerError()
+                    .body(RulingApplyResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
+        }
+    }
 
     //비디오 파일 불러오기
     @PostMapping("/load-video/{applyId}")

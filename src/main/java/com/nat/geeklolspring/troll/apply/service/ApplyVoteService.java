@@ -2,22 +2,24 @@ package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.VoteApply;
-import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyVotePostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
-import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
-    private final RulingApplyService rulingApplyService;
+
 
     public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("좋아요 저장 서비스 실행!");
@@ -32,7 +34,6 @@ public class ApplyVoteService {
 
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
-        rulingApplyService.agrees(dto.getApplyId());
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 

@@ -35,6 +35,7 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Transactional
 public class ApplyReplyService {
     private final ApplyReplyRepository applyReplyRepository;
+    private final RulingApplyRepository rulingApplyRepository;
 
     // 댓글 정보들을 돌려주는 서비스
     public ApplyReplyListResponseDTO retrieve(Long applyId, Pageable pageInfo) {
@@ -143,6 +144,10 @@ public class ApplyReplyService {
         // 정보를 가공하여 List<DTO>형태로 저장
         List<ApplyReplyResponseDTO> allReply = replyList.stream()
                 .map(ApplyReplyResponseDTO::new)
+                .peek(dto -> {
+                    BoardApply boardApply = rulingApplyRepository.findById(dto.getReplyId()).orElseThrow();
+                    dto.setApplyTitle(boardApply.getTitle());
+                } )
                 .collect(Collectors.toList());
 
         if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {

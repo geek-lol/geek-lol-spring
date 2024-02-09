@@ -23,6 +23,7 @@ public class ApplyReplyResponseDTO {
     private LocalDateTime replyDate;
     private int modify;
     private Long applyId;
+    private String applyTitle;
 
     public ApplyReplyResponseDTO(ApplyReply reply) {
         this.replyId = reply.getId();

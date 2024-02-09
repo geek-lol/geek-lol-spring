@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.apply.dto.response;
 
 import com.nat.geeklolspring.entity.ApplyReply;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.ShortsReply;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class ApplyReplyResponseDTO {
     private String context;
     private LocalDateTime replyDate;
     private int modify;
+    private Long applyId;
 
     public ApplyReplyResponseDTO(ApplyReply reply) {
         this.replyId = reply.getId();
@@ -29,5 +31,6 @@ public class ApplyReplyResponseDTO {
         this.context = reply.getContext();
         this.replyDate = reply.getReplyDate();
         this.modify = reply.getModify();
+        this.applyId = reply.getApplyId();
     }
 }

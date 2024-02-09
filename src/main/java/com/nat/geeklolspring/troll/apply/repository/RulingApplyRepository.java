@@ -27,4 +27,6 @@ public interface RulingApplyRepository extends JpaRepository<BoardApply,Long> {
     //제목+내용 찾기
     Page<BoardApply> findByTitleContainingAndContentContaining(String keyword,String conkeyword,Pageable pageable);
 
+    Page<BoardApply> findByApplyPosterId(String id, Pageable pageable);
+
 }

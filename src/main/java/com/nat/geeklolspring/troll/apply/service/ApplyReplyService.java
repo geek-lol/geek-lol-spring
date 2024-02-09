@@ -2,6 +2,7 @@ package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.ApplyReply;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
@@ -13,6 +14,7 @@ import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
+import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,7 +37,6 @@ public class ApplyReplyService {
     private final ApplyReplyRepository applyReplyRepository;
 
     // 댓글 정보들을 돌려주는 서비스
-
     public ApplyReplyListResponseDTO retrieve(Long applyId, Pageable pageInfo) {
         log.warn("retreieve 페이징처리 실행! Id: {}, PageInfo: {}", applyId, pageInfo);
 
@@ -104,7 +105,7 @@ public class ApplyReplyService {
         }
     }
 
-    // 쇼츠 댓글 수정 서비스
+    // 댓글 수정 서비스
     public void updateReply(ApplyReplyUpdateRequestDTO dto,
                             TokenUserInfo userInfo) {
 
@@ -127,5 +128,33 @@ public class ApplyReplyService {
             });
         } else
             throw new NotEqualTokenException("댓글 작성자만 수정할 수 있습니다!");
+    }
+
+    //내가 쓴 댓글 조회
+    public ApplyReplyListResponseDTO findMyReply(TokenUserInfo userInfo, Pageable pageInfo) {
+        String applyId = userInfo.getUserId();
+        // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+
+        log.warn("findMyReply 페이징처리 실행! Id: {}, PageInfo: {}", applyId, pageInfo);
+        // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
+        Page<ApplyReply> replyList = applyReplyRepository.findByWriterId(applyId,pageable);
+
+        // 정보를 가공하여 List<DTO>형태로 저장
+        List<ApplyReplyResponseDTO> allReply = replyList.stream()
+                .map(ApplyReplyResponseDTO::new)
+                .collect(Collectors.toList());
+
+        if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {
+            // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
+            throw new BadRequestException("비정상적인 접근입니다!");
+        } else {
+            return ApplyReplyListResponseDTO
+                    .builder()
+                    .reply(allReply)
+                    .totalPages(replyList.getTotalPages())
+                    .totalCount(replyList.getTotalElements())
+                    .build();
+        }
     }
 }

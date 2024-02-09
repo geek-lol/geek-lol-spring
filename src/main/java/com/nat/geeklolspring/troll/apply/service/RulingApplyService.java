@@ -52,13 +52,14 @@ public class RulingApplyService {
                 boardApplyList = rar.findAllByOrderByApplyDateDesc(pageable);
         }
 
-
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
                 .map(RulingApplyDetailResponseDTO::new)
                 .collect(Collectors.toList());
 
         return RulingApplyResponseDTO.builder()
                 .boardApply(list)
+                .totalPages(boardApplyList.getTotalPages())
+                .totalCount(boardApplyList.getTotalElements())
                 .build();
 
     }
@@ -128,6 +129,7 @@ public class RulingApplyService {
 
     // 게시물 수정
     public void modityBoard(Long applyId){}
+
     //게시물 추천수 증가
     public void agrees(Long applyId){
         BoardApply targetBoard = rar.findById(applyId).orElseThrow();
@@ -152,6 +154,7 @@ public class RulingApplyService {
 
     }
 
+    // 게시물 검색
     public RulingApplyResponseDTO serchToBoard(ApplySearchRequestDTO dto, Pageable pageInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardApply> boardApplyList;
@@ -176,9 +179,25 @@ public class RulingApplyService {
 
         return RulingApplyResponseDTO.builder()
                 .boardApply(list)
+                .totalPages(boardApplyList.getTotalPages())
+                .totalCount(boardApplyList.getTotalElements())
                 .build();
+    }
 
+    //로그인 한 사람의 게시물 조회
+    public RulingApplyResponseDTO findByUserId(TokenUserInfo userInfo, Pageable pageInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardApply> boardApplyList = rar.findByApplyPosterId(userInfo.getUserId(), pageable);
 
+        List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
+                .map(RulingApplyDetailResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return RulingApplyResponseDTO.builder()
+                .boardApply(list)
+                .totalPages(boardApplyList.getTotalPages())
+                .totalCount(boardApplyList.getTotalElements())
+                .build();
     }
 
 }

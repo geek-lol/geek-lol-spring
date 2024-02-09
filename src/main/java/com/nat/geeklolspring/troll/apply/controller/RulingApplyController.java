@@ -161,4 +161,23 @@ public class RulingApplyController {
         }
 
     }
+
+    //로그인한 사람 게시물 조회하기
+    @GetMapping("/my")
+    public ResponseEntity<?> findMyBoard(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ){
+        log.info("나의 페이지 트롤 지원 조회 실행");
+        try {
+            RulingApplyResponseDTO applyBoardList = rulingApplyService.findByUserId(userInfo,pageInfo);
+            return ResponseEntity.ok().body(applyBoardList);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(RulingApplyResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
+        }
+    }
 }

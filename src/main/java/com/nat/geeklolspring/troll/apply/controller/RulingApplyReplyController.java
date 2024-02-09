@@ -11,6 +11,7 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResp
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.service.ApplyReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -178,6 +179,26 @@ public class RulingApplyReplyController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(ApplyReplyListResponseDTO.builder().error(e.getMessage()));
+        }
+    }
+
+    //로그인한 사람 댓글 조회하기
+    @GetMapping("/my")
+    public ResponseEntity<?> findMyBoard(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ){
+        log.info("나의 페이지 트롤 지원 댓글 조회 실행");
+        try {
+            ApplyReplyListResponseDTO applyApplyList = applyReplyService.findMyReply(userInfo,pageInfo);
+            return ResponseEntity.ok().body(applyApplyList);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(ApplyReplyListResponseDTO
+                            .builder()
+                            .error(e.getMessage())
+                            .build());
         }
     }
 }

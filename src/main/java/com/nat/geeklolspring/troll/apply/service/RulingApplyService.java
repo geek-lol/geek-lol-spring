@@ -99,7 +99,7 @@ public class RulingApplyService {
     // 글 삭제
     public int deleteBoard(TokenUserInfo userInfo, Long bno){
         BoardApply targetBoard = rar.findById(bno).orElseThrow();
-        if (targetBoard.getApplyPosterId().equals(userInfo.getUserId())){
+        if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getApplyPosterId().equals(userInfo.getUserId())){
             rar.delete(targetBoard);
             return 1;
         }else{

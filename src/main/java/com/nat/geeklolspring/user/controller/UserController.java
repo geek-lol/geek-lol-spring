@@ -76,6 +76,15 @@ public class UserController {
 
         return ResponseEntity.badRequest().body(flag);
     }
+    @GetMapping("/pwcheck")
+    public ResponseEntity<?> pwCheck(
+            String pw
+            , @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        boolean flag = userService.isDupilcatePw(pw, userInfo);
+        log.info("{} 일치 - {}",pw,flag);
+        return ResponseEntity.badRequest().body(flag);
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(

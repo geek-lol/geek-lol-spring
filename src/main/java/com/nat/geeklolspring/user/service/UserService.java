@@ -74,6 +74,13 @@ public class UserService {
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);
     }
+    public boolean isDupilcatePw(String pw,TokenUserInfo userInfo){
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        if (!passwordEncoder.matches(pw,user.getPassword())){
+            return false;
+        }
+        return true;
+    }
 
 
     public LoginResponseDTO authenticate(final LoginRequestDTO dto){

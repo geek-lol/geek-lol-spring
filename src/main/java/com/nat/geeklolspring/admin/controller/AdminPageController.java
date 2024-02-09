@@ -13,6 +13,7 @@ import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.report.dto.response.ReportListResponseDTO;
 import com.nat.geeklolspring.report.service.ReportService;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
+import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,7 @@ public class AdminPageController {
 
     @DeleteMapping("/user")
     public ResponseEntity<?> userDelete(
-            @Validated @RequestBody User user,
+            @Validated @RequestBody UserDeleteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @PageableDefault(page = 1, size = 10) Pageable pageInfo
     ){
@@ -63,8 +64,8 @@ public class AdminPageController {
                 return ResponseEntity.badRequest().body("권한이 없습니다");
             }
 
-            userService.delete(user);
-            log.info("delete user : {}",user.getUserName());
+            userService.delete(dto);
+            log.info("delete user : {}",dto.getId());
             AdminPageUserListResponseDTO userList = adminPageService.userView(pageInfo);
             return ResponseEntity.ok().body(userList);
         }catch (RuntimeException e){

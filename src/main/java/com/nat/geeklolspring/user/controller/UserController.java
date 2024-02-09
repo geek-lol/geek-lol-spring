@@ -3,6 +3,7 @@ package com.nat.geeklolspring.user.controller;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
@@ -103,12 +104,12 @@ public class UserController {
 
     @PostMapping("/delete")
     public void delete(
-            @Validated @RequestBody User user
+            @Validated @RequestBody UserDeleteRequestDTO dto
             )
     {
         try {
-            userService.delete(user);
-            log.info("delete user : {}",user.getUserName());
+            userService.delete(dto);
+            log.info("delete user : {}",dto.getId());
         }catch (RuntimeException e){
             log.warn(e.getMessage());
         }

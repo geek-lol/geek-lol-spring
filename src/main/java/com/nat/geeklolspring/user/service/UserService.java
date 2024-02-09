@@ -3,6 +3,7 @@ package com.nat.geeklolspring.user.service;
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
@@ -60,12 +61,13 @@ public class UserService {
     }
 
 
-    public void delete(User user) {
+    public void delete(UserDeleteRequestDTO dto) {
 
-        if (!userRepository.existsById(user.getId())) {
-            log.warn("삭제할 회원이 없습니다!! - {}", user.getId());
+        if (!userRepository.existsById(dto.getId())) {
+            log.warn("삭제할 회원이 없습니다!! - {}", dto.getId());
             throw new RuntimeException("중복된 아이디입니다!!");
         }
+        User user = userRepository.findById(dto.getId()).orElseThrow();
 
         userRepository.delete(user);
 

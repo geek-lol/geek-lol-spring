@@ -4,6 +4,7 @@ import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyListResponseDTO;
@@ -26,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class RulingReplyController {
     private final RulingReplyService rulingReplyService;
 
-    // 해당 쇼츠의 댓글 정보를 가져오는 컨트롤러
+    // 댓글 정보를 가져오는 컨트롤러
     @GetMapping("/{rulingId}")
     public ResponseEntity<?> replyList(
             @PathVariable Long rulingId,
@@ -173,6 +174,24 @@ public class RulingReplyController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(RulingReplyListResponseDTO.builder().error(e.getMessage()));
+        }
+    }
+    //로그인한 사람 게시물 조회하기
+    @GetMapping("/my")
+    public ResponseEntity<?> findMyBoard(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ){
+        log.info("나의 페이지 트롤 지원 조회 실행");
+        try {
+            RulingReplyListResponseDTO applyBoardList = rulingReplyService.findMyReply(userInfo,pageInfo);
+            return ResponseEntity.ok().body(applyBoardList);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(RulingReplyListResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
         }
     }
 }

@@ -12,4 +12,6 @@ import java.util.List;
 public interface RulingReplyRepository extends JpaRepository<RulingReply,Long> {
 
     Page<RulingReply> findAllByRulingId(Long boardRuling, Pageable pageable);
+    Page<RulingReply> findByWriterId(String id, Pageable pageable);
+
 }

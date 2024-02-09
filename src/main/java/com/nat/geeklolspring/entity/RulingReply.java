@@ -34,7 +34,7 @@ public class RulingReply {
     private int modify = 0;
 
     @Column(name = "ruling_reply_writer")
-    private String WriterId; // 작성자 아이디
+    private String writerId; // 작성자 아이디
 
     @Column(name = "writer_name")
     private String writerName; // 작성자 닉네임

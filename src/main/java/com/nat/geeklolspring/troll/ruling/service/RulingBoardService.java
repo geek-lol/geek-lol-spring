@@ -50,6 +50,8 @@ public class RulingBoardService {
     //게시물 상세조회
     public RulingBoardDetailResponseDTO findDetailBoard(Long rulingId){
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
+        boardRuling.setViewCount(boardRuling.getViewCount()+1);
+        boardRulingRepository.save(boardRuling);
         return new RulingBoardDetailResponseDTO(boardRuling);
     }
     // 게시물 영상 주소

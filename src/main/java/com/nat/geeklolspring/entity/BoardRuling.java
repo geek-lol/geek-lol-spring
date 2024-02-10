@@ -31,6 +31,10 @@ public class BoardRuling {
     @Column(name = "ruling_date", updatable = false)
     private LocalDateTime rulingDate;
 
+    @Builder.Default
+    @Column(name = "view_count")
+    private int viewCount = 0;
+
     @Column(name = "ruling_content")
     private String content;
 
@@ -42,6 +46,8 @@ public class BoardRuling {
 
     @Column(name = "ruling_poster_name")
     private String rulingPosterName;
+
+
 
     // fk가 필요한 곳
 //    @ManyToOne(fetch = FetchType.LAZY)

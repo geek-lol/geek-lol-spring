@@ -11,6 +11,7 @@ import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.report.dto.response.ReportListResponseDTO;
 import com.nat.geeklolspring.report.service.ReportService;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.service.RulingApplyService;
 import com.nat.geeklolspring.troll.ruling.service.RulingBoardService;
 import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
@@ -179,9 +180,9 @@ public class AdminPageController {
         return ResponseEntity.ok().body(applyList);
     }
 
-    @DeleteMapping("/applys/{applyId}")
+    @DeleteMapping("/applys")
     public ResponseEntity<?> applysDetail(
-            @PathVariable Long applyId,
+            @PathVariable ApplyDeleteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @PageableDefault(page = 1, size = 10) Pageable pageInfo
     ) {
@@ -189,7 +190,7 @@ public class AdminPageController {
             if (!userInfo.getRole().toString().equals("ADMIN")){
                 return ResponseEntity.badRequest().body("권한이 없습니다");
             }
-            rulingApplyService.deleteBoard(userInfo,applyId);
+            rulingApplyService.deleteBoard(userInfo,dto);
             AdminPageRulingApplyListResponseDTO applyList = adminPageService.applyView(pageInfo);
             return ResponseEntity.ok().body(applyList);
         }catch (RuntimeException e){

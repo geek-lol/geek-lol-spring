@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ApplyDeleteRequestDTO {
-    Long replyId;
-    List<Long> replyList;
+    Long id;
+    List<Long> idList;
 }

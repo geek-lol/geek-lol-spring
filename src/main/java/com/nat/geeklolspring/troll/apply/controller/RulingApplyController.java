@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.apply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplySearchRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
@@ -93,12 +94,12 @@ public class RulingApplyController {
     //게시물 삭제
     @DeleteMapping
     public ResponseEntity<?> deleteBoard(
-            @Validated Long boardId,
+            @RequestBody ApplyDeleteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         try {
-            int delFlag = rulingApplyService.deleteBoard(userInfo, boardId);
-            return ResponseEntity.ok().body(delFlag);
+            rulingApplyService.deleteBoard(userInfo,dto);
+            return ResponseEntity.ok().body(1);
         }catch (Exception e) {
             return ResponseEntity
                     .internalServerError()

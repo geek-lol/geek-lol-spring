@@ -90,9 +90,9 @@ public class ApplyReplyService {
     // 댓글 삭제 서비스
     public void deleteShortsReply(ApplyDeleteRequestDTO dto, TokenUserInfo userInfo) {
 
-        if (dto.getReplyList() != null){
+        if (dto.getIdList() != null){
             log.info("삭제할거유!! ");
-            dto.getReplyList().stream()
+            dto.getIdList().stream()
                     .filter(replyId -> {
                         ApplyReply reply = applyReplyRepository.findById(replyId).orElseThrow();
                         return reply.getWriterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
@@ -100,24 +100,22 @@ public class ApplyReplyService {
                     .forEach(applyReplyRepository::deleteById);
         }
         else{
-            ApplyReply reply = applyReplyRepository.findById(dto.getReplyId()).orElseThrow();
+            ApplyReply reply = applyReplyRepository.findById(dto.getId()).orElseThrow();
 
             try {
                 boolean flag = EqualsId(reply.getWriterId(), userInfo) || userInfo.getRole().toString().equals("ADMIN");
                 // 토큰의 id와 댓글의 작성자 id가 같으면 실행
                 if (flag)
                     // 삭제하지 못하면 Exception 발생
-                    applyReplyRepository.deleteById(dto.getReplyId());
+                    applyReplyRepository.deleteById(dto.getId());
                 else
                     throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
 
             } catch (Exception e) {
-                log.error("삭제에 실패했습니다. - ID: {}, Error: {}", dto.getReplyId(), e.getMessage());
+                log.error("삭제에 실패했습니다. - ID: {}, Error: {}", dto.getId(), e.getMessage());
                 throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
             }
         }
-
-
     }
 
     // 댓글 수정 서비스

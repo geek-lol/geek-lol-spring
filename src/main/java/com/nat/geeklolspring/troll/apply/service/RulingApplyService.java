@@ -1,7 +1,9 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.ApplyReply;
 import com.nat.geeklolspring.entity.BoardApply;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplySearchRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
@@ -98,15 +100,25 @@ public class RulingApplyService {
     }
 
     // 글 삭제
-    public int deleteBoard(TokenUserInfo userInfo, Long bno){
-        BoardApply targetBoard = rar.findById(bno).orElseThrow();
-        if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getApplyPosterId().equals(userInfo.getUserId())){
-            rar.delete(targetBoard);
-            return 1;
-        }else{
-            throw new IllegalStateException("삭제 권한이 없습니다.");
+    public void deleteBoard(TokenUserInfo userInfo, ApplyDeleteRequestDTO dto) {
+        if (dto.getIdList() != null) {
+            dto.getIdList().stream()
+                    .filter(boardId -> {
+                        BoardApply boardApply = rar.findById(boardId).orElseThrow();
+                        return boardApply.getApplyPosterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
+                    })
+                    .forEach(rar::deleteById);
+
+        } else {
+            BoardApply targetBoard = rar.findById(dto.getId()).orElseThrow();
+            if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getApplyPosterId().equals(userInfo.getUserId())) {
+                rar.delete(targetBoard);
+            } else {
+                throw new IllegalStateException("삭제 권한이 없습니다.");
+            }
         }
     }
+
 
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){

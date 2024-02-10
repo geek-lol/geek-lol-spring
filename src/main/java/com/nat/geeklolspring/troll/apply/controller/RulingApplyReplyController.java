@@ -8,6 +8,7 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseD
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
@@ -106,9 +107,10 @@ public class RulingApplyReplyController {
     }
 
     // 댓글Id에 해당하는 댓글을 삭제하는 컨트롤러
-    @DeleteMapping("/{replyId}")
-    public ResponseEntity<?> deleteReply(@PathVariable Long replyId,
-                                         @AuthenticationPrincipal TokenUserInfo userInfo) {
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteReply(
+            @RequestBody ApplyDeleteRequestDTO replyId,
+            @AuthenticationPrincipal TokenUserInfo userInfo) {
         log.info("api/shorts/reply/{} : Delete!", replyId);
 
         // 데이터를 정상적으로 전달받았는지 확인

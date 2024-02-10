@@ -6,8 +6,8 @@ import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
+import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsMyPageResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
-import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
 import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,5 +146,19 @@ public class ShortsService {
         String videoLink = byShort.getVideoLink();
         return rootShortsPath+"/"+videoLink;
 
+    }
+
+    public ShortsListResponseDTO myUploadShort(TokenUserInfo userInfo){
+        List<BoardShorts> shortsList = shortsRepository.findAllByUploaderId(userInfo.getUserId());
+
+        List<ShortsMyPageResponseDTO> myShorts = shortsList.stream()
+                .map(ShortsMyPageResponseDTO::new)
+                .collect(Collectors.toList());
+
+        // shortsList를 정제해서 allShorts에 저장
+        return ShortsListResponseDTO
+                .builder()
+                .myshorts(myShorts)
+                .build();
     }
 }

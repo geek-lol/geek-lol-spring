@@ -1,7 +1,5 @@
-package com.nat.geeklolspring.troll.apply.dto.response;
+package com.nat.geeklolspring.shorts.shortsreply.dto.response;
 
-import com.nat.geeklolspring.entity.ApplyReply;
-import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.ShortsReply;
 import lombok.*;
 
@@ -14,24 +12,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApplyReplyResponseDTO {
+public class ShortsReplyMyPageResponseDTO {
     // 웹사이트에 보내줄(보여줄) 정보들
     private Long replyId;
     private String writerId;
     private String writerName;
     private String context;
     private LocalDateTime replyDate;
-    private int modify;
-    private Long applyId;
+    private Long shortId;
     private String title;
 
-    public ApplyReplyResponseDTO(ApplyReply reply) {
+    public ShortsReplyMyPageResponseDTO(ShortsReply reply) {
         this.replyId = reply.getId();
         this.writerId = reply.getWriterId();
         this.writerName = reply.getWriterName();
         this.context = reply.getContext();
         this.replyDate = reply.getReplyDate();
-        this.modify = reply.getModify();
-        this.applyId = reply.getApplyId();
+        this.shortId = reply.getShortsId();
     }
 }

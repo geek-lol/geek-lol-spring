@@ -191,5 +191,18 @@ public class ShortsController {
 
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<?> myShorts(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        try {
+            ShortsListResponseDTO shortsListResponseDTO = shortsService.myUploadShort(userInfo);
+            return ResponseEntity.ok().body(shortsListResponseDTO);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(ShortsListResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build());
+        }
+    }
 
 }

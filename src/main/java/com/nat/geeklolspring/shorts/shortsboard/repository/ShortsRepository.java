@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
     Page<BoardShorts> findByTitleContaining(String title, Pageable pageable);
     @Modifying
@@ -30,4 +32,6 @@ public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
     void downReplyCount(Long shortsId);
 
     BoardShorts findByShortsId(Long id);
+
+    List<BoardShorts> findAllByUploaderId(String id);
 }

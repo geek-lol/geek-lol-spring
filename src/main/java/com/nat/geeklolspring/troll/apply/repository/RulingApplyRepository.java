@@ -29,4 +29,5 @@ public interface RulingApplyRepository extends JpaRepository<BoardApply,Long> {
 
     Page<BoardApply> findByApplyPosterId(String id, Pageable pageable);
 
+
 }

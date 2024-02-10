@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.RulingReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
@@ -8,6 +9,7 @@ import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyResponseDTO;
+import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import com.nat.geeklolspring.troll.ruling.repository.RulingReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Transactional
 public class RulingReplyService {
     private final RulingReplyRepository rulingReplyRepository;
+    private final BoardRulingRepository boardRulingRepository;
 
     // 댓글 정보들을 돌려주는 서비스
 
@@ -137,7 +140,14 @@ public class RulingReplyService {
 
         // 정보를 가공하여 List<DTO>형태로 저장
         List<RulingReplyResponseDTO> allReply = replyList.stream()
-                .map(RulingReplyResponseDTO::new)
+                .map(reply -> {
+                    RulingReplyResponseDTO dto = new RulingReplyResponseDTO(reply);
+                    BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElse(null);
+                    if (boardRuling != null) {
+                        dto.setTitle(boardRuling.getTitle());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {

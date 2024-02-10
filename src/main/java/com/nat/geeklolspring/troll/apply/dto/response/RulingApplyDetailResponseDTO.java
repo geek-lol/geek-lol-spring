@@ -20,9 +20,10 @@ public class RulingApplyDetailResponseDTO {
     private String title;
     private int upCount;
     private int reportCount;
-    private LocalDateTime apply_date;
-    private String applyPosterId;
-    private String applyPosterName;
+    private LocalDateTime localDateTime;
+    private String posterId;
+    private String posterName;
+    private int viewCount;
 
     public RulingApplyDetailResponseDTO(BoardApply boardApply){
         this.applyId = boardApply.getApplyId();
@@ -31,8 +32,9 @@ public class RulingApplyDetailResponseDTO {
         this.title = boardApply.getTitle();
         this.upCount = boardApply.getUpCount();
         this.reportCount = boardApply.getReportCount();
-        this.apply_date = boardApply.getApplyDate();
-        this.applyPosterId = boardApply.getApplyPosterId();
-        this.applyPosterName = boardApply.getApplyPosterName();
+        this.localDateTime = boardApply.getApplyDate();
+        this.posterId = boardApply.getApplyPosterId();
+        this.posterName = boardApply.getApplyPosterName();
+        this.viewCount = boardApply.getViewCount();
     }
 }

@@ -153,15 +153,18 @@ public class ApplyReplyService {
         // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
         Page<ApplyReply> replyList = applyReplyRepository.findByWriterId(applyId,pageable);
 
-        // 정보를 가공하여 List<DTO>형태로 저장
         List<ApplyReplyResponseDTO> allReply = replyList.stream()
-                .map(ApplyReplyResponseDTO::new)
-                .peek(dto -> {
-                    BoardApply boardApply = rulingApplyRepository.findById(dto.getReplyId()).orElseThrow();
-                    dto.setApplyTitle(boardApply.getTitle());
-                } )
+                .map(reply -> {
+                    ApplyReplyResponseDTO dto = new ApplyReplyResponseDTO(reply);
+                    BoardApply boardApply = rulingApplyRepository.findById(dto.getApplyId()).orElse(null);
+                    if (boardApply != null) {
+                        dto.setTitle(boardApply.getTitle());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
+        log.warn("replyList:{}",allReply);
         if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {
             // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
             throw new BadRequestException("비정상적인 접근입니다!");

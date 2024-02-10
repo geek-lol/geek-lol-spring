@@ -20,6 +20,8 @@ public class RulingReplyResponseDTO {
     private String writerName;
     private String context;
     private LocalDateTime replyDate;
+    private Long rulingId;
+    private String title;
     private int modify;
 
     public RulingReplyResponseDTO(RulingReply reply) {
@@ -29,5 +31,6 @@ public class RulingReplyResponseDTO {
         this.context = reply.getContext();
         this.replyDate = reply.getReplyDate();
         this.modify = reply.getModify();
+        this.rulingId = reply.getRulingId();
     }
 }

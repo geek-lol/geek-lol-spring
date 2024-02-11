@@ -115,6 +115,8 @@ public class UserService {
 
     public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
 
+        log.info("modifyDTO : {}",dto);
+
         if (dto == null && profilePath == null) {
             throw new RuntimeException("수정된 회원정보가 없습니다!");
         }

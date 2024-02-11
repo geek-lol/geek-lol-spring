@@ -105,7 +105,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/modify")
+    @PutMapping("/modify")
     public ResponseEntity<?> modify(
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @Validated @RequestPart(value = "user") UserModifyRequestDTO dto,

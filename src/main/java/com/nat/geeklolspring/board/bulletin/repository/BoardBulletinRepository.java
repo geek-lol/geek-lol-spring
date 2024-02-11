@@ -9,5 +9,24 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface BoardBulletinRepository extends JpaRepository<BoardBulletin,Long> {
-    Page<BoardBulletin> findByTitleContaining(String title, Pageable pageable);
+    Page<BoardBulletin> findAllByOrderByBoardDateDesc(Pageable pageable);
+    Page<BoardBulletin> findByTitleContainingOrderByBoardDateDesc(String title, Pageable pageable);
+    Page<BoardBulletin> findByPosterIdContainingOrderByBoardDateDesc(String posterKeyword, Pageable pageable);
+    Page<BoardBulletin> findByBoardContentContainingOrderByBoardDateDesc(String contentKeyword, Pageable pageable);
+
+    Page<BoardBulletin> findAllByOrderByUpCountDesc(Pageable pageable);
+    Page<BoardBulletin> findByTitleContainingOrderByUpCountDesc(String title, Pageable pageable);
+    Page<BoardBulletin> findByPosterIdContainingOrderByUpCountDesc(String posterKeyword, Pageable pageable);
+    Page<BoardBulletin> findByBoardContentContainingOrderByUpCountDesc(String contentKeyword, Pageable pageable);
+
+    @Modifying
+    @Query("update BoardBulletin s set s.upCount = s.upCount + 1 where s.bulletinId = :bulletinId")
+    void plusUpCount(Long bulletinId);
+
+    @Modifying
+    @Query("update BoardBulletin s set s.upCount = s.upCount - 1 where s.bulletinId = :bulletinId")
+    void downUpCount(Long bulletinId);
+
+
+
 }

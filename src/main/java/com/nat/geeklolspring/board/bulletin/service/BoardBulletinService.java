@@ -37,9 +37,7 @@ public class BoardBulletinService {
     @Value("${upload.path}")
     private String rootPath;
 
-
     private final BoardBulletinRepository boardBulletinRepository;
-    private final UserRepository userRepository;
 
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve() {
@@ -103,17 +101,31 @@ public class BoardBulletinService {
 
 
     // 목록 불러오기
-    public BoardBulletinResponseDTO retrieve(String keyword, Pageable pageInfo) {
+    public BoardBulletinResponseDTO retrieve(String titleKeyword,String posterKeyword,String contentKeyword, Pageable pageInfo,int upCountView) {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardBulletin> boardBulletinList;
-        // DB에서 모든 쇼츠 영상을 찾아 shortsList에 저장
-        if(keyword == null)
-            // keyword가 없으면 전체를 리턴
-            boardBulletinList = boardBulletinRepository.findAll(pageable);
-        else
-            // keyword가 있으면 타이틀안에 키워드가 들어간 목록만 리턴
-            boardBulletinList = boardBulletinRepository.findByTitleContaining(keyword, pageable);
+        log.info("upCount : {}",upCountView);
+
+        if (upCountView == 0){
+            if(titleKeyword != null)
+                boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByBoardDateDesc(titleKeyword, pageable);
+            else if(posterKeyword != null)
+                boardBulletinList = boardBulletinRepository.findByPosterIdContainingOrderByBoardDateDesc(posterKeyword,pageable);
+            else if(contentKeyword != null)
+                boardBulletinList = boardBulletinRepository.findByBoardContentContainingOrderByBoardDateDesc(contentKeyword,pageable);
+            else
+                boardBulletinList = boardBulletinRepository.findAllByOrderByBoardDateDesc(pageable);
+        }else {
+            if(titleKeyword != null)
+                boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByUpCountDesc(titleKeyword, pageable);
+            else if(posterKeyword != null)
+                boardBulletinList = boardBulletinRepository.findByPosterIdContainingOrderByUpCountDesc(posterKeyword,pageable);
+            else if(contentKeyword != null)
+                boardBulletinList = boardBulletinRepository.findByBoardContentContainingOrderByUpCountDesc(contentKeyword,pageable);
+            else
+                boardBulletinList = boardBulletinRepository.findAllByOrderByUpCountDesc(pageable);
+        }
 
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
@@ -163,10 +175,17 @@ public class BoardBulletinService {
             dto.setContent(boardBulletin.get().getBoardContent());
         }
 
+        dto.setBoardDate(boardBulletin.get().getBoardDate());
+        dto.setPosterName(boardBulletin.get().getPosterName());
+        dto.setViewCount(boardBulletin.get().getViewCount());
+        dto.setBoardReportCount(boardBulletin.get().getBoardReportCount());
+        dto.setUpCount(boardBulletin.get().getUpCount());
 
-        BoardBulletin save = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath));
+        log.info("dto : {}",dto);
 
-        return new BoardBulletinDetailResponseDTO(save);
+        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath,dto.getTitle(),dto.getContent()));
+
+        return new BoardBulletinDetailResponseDTO(saveData);
 
     }
 

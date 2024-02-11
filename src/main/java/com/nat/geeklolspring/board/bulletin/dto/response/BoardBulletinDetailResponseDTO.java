@@ -24,6 +24,7 @@ public class BoardBulletinDetailResponseDTO {
     private int viewCount;
     private String posterName;
     private LocalDateTime localDateTime;
+    private int upCount;
 
     public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {
         this.bulletinId = boardBulletin.getBulletinId();
@@ -34,6 +35,7 @@ public class BoardBulletinDetailResponseDTO {
         this.boardMedia = boardBulletin.getBoardMedia();
         this.viewCount = boardBulletin.getViewCount();
         this.localDateTime = boardBulletin.getBoardDate();
+        this.upCount = boardBulletin.getUpCount();
     }
 
 }

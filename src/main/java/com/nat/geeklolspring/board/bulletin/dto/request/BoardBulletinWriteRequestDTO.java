@@ -18,17 +18,15 @@ public class BoardBulletinWriteRequestDTO {
 
     @NotBlank
     private String title;
-
     @NotBlank
     private String content;
-
     private String boardMedia;
-
     private String posterId;
-
     private String posterName;
-
+    @Builder.Default
     private LocalDateTime boardDate = LocalDateTime.now();
+    @Builder.Default
+    private int boardReportCount = 0;
 
     public BoardBulletin toEntity(String fileUrl) {
         return BoardBulletin.builder()
@@ -37,6 +35,7 @@ public class BoardBulletinWriteRequestDTO {
                 .posterId(posterId)
                 .posterName(posterName)
                 .boardMedia(fileUrl)
+                .boardReportCount(boardReportCount)
                 .build();
     }
 

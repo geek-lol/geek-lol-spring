@@ -38,7 +38,8 @@ public class BoardBulletin {
     private String boardMedia;
 
     @Column(name = " board_report_count")
-    private String boardReportCount;
+    @Builder.Default
+    private int boardReportCount = 0;
 
     @Column(name = "poster_id")
     private String posterId;
@@ -46,19 +47,24 @@ public class BoardBulletin {
     @Column(name = "poster_name")
     private String posterName;
 
+    @Builder.Default
     @Column(name = "view_count")
-    private int viewCount;
+    private int viewCount = 0;
+
+    @Builder.Default
+    @Column(name = "up_count")
+    private int upCount = 0;
 
 
 
     //----------------------------------------
 
-    @OneToMany(mappedBy = "bulletinId")
-    private List<BoardReply> boardReply = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "boardBulletinId")
-    private List<BulletinCheck> boardBulletinId = new ArrayList<>();
-
+//    @OneToMany(mappedBy = "bulletinId")
+//    private List<BoardReply> boardReply = new ArrayList<>();
+//
+//
+//    @OneToMany(mappedBy = "boardBulletinId")
+//    private List<BulletinCheck> boardBulletinId = new ArrayList<>();
+//
 
 }

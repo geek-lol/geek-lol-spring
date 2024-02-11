@@ -180,4 +180,18 @@ public class ShortsReplyController {
                     .body(ShortsListResponseDTO.builder().error(e.getMessage()));
         }
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> myReply(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        try {
+            ShortsReplyListResponseDTO myReply = shortsReplyService.findMyReply(userInfo);
+            return ResponseEntity.ok().body(myReply);
+
+        }catch (Exception e){
+            return ResponseEntity.internalServerError()
+                    .body(ShortsReplyListResponseDTO.builder().error(e.getMessage()).build());
+        }
+    }
 }

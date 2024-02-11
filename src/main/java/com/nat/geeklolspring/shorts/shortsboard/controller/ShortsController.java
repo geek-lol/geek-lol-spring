@@ -6,18 +6,22 @@ import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
+import com.nat.geeklolspring.utils.files.Videos;
 import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -150,4 +154,55 @@ public class ShortsController {
                             .build());
         }
     }
+
+
+    //동영상 파일 불러오기
+    @GetMapping("/load-video/{shortsId}")
+    public ResponseEntity<?> loadVideo(
+            @PathVariable Long shortsId){
+        log.error("shortsId : {}", shortsId);
+        try {
+            String shortPath = shortsService.getShortPath(shortsId);
+
+            File videoFile = new File(shortPath);
+
+            if (!videoFile.exists()) return ResponseEntity.notFound().build();
+
+            byte[] fileData = FileCopyUtils.copyToByteArray(videoFile);
+
+            HttpHeaders headers = new HttpHeaders();
+
+
+            MediaType mediaType = Videos.extractFileExtension(shortPath);
+            if (mediaType == null){
+                return ResponseEntity.internalServerError().body("비디오가 아닙니다");
+            }
+
+            headers.setContentType(mediaType);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> myShorts(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        try {
+            ShortsListResponseDTO shortsListResponseDTO = shortsService.myUploadShort(userInfo);
+            return ResponseEntity.ok().body(shortsListResponseDTO);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(ShortsListResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build());
+        }
+    }
+
 }

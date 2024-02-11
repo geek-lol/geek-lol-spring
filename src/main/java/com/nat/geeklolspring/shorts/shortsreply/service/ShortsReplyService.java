@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsreply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.BadRequestException;
@@ -9,8 +10,10 @@ import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
+import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyMyPageResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
+import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -133,5 +136,27 @@ public class ShortsReplyService {
             });
         } else
             throw new NotEqualTokenException("댓글 작성자만 수정할 수 있습니다!");
+    }
+
+    //내가 쓴 댓글 조회
+    public ShortsReplyListResponseDTO findMyReply(TokenUserInfo userInfo){
+        List<ShortsReply> shortsList = shortsReplyRepository.findAllByWriterId(userInfo.getUserId());
+
+        List<ShortsReplyMyPageResponseDTO> myShorts = shortsList.stream()
+                .map(reply -> {
+                    ShortsReplyMyPageResponseDTO dto = new ShortsReplyMyPageResponseDTO(reply);
+                    BoardShorts shorts = shortsRepository.findById(dto.getShortId()).orElse(null);
+                    if (shorts != null) {
+                        dto.setTitle(shorts.getTitle());
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        // shortsList를 정제해서 저장
+        return ShortsReplyListResponseDTO
+                .builder()
+                .myreplys(myShorts)
+                .build();
     }
 }

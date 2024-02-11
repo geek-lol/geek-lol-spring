@@ -4,6 +4,7 @@ import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyListResponseDTO;
@@ -26,17 +27,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class RulingReplyController {
     private final RulingReplyService rulingReplyService;
 
-    // 해당 쇼츠의 댓글 정보를 가져오는 컨트롤러
-    @GetMapping("/{applyId}")
+    // 댓글 정보를 가져오는 컨트롤러
+    @GetMapping("/{rulingId}")
     public ResponseEntity<?> replyList(
-            @PathVariable Long applyId,
+            @PathVariable Long rulingId,
             // 값이 주어지지 않으면 디폴트로 1페이지와 5개씩 로드하도록 전달
             @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
-        log.info("/api/shorts/reply/{} : Get!",applyId);
+        log.info("/api/shorts/reply/{} : Get!",rulingId);
 
         try {
             // 댓글 리스트를 가져오는 부분
-            RulingReplyListResponseDTO replyList = rulingReplyService.retrieve(applyId, pageInfo);
+            RulingReplyListResponseDTO replyList = rulingReplyService.retrieve(rulingId, pageInfo);
 
             if(replyList.getReply().isEmpty()) {
                 // 댓글 리스트가 비어있으면 실행되는 부분
@@ -69,15 +70,15 @@ public class RulingReplyController {
     }
 
     // 해당 쇼츠에 댓글을 등록하는 컨트롤러
-    @PostMapping("/{applyId}")
+    @PostMapping("/{rulingId}")
     public ResponseEntity<?> addReply(
-            @PathVariable Long applyId,
+            @PathVariable Long rulingId,
             @RequestBody RulingReplyPostRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @PageableDefault(page = 1, size = 5) Pageable pageInfo
     ) {
 
-        log.info("api/shorts/reply/{} : Post!", applyId);
+        log.info("api/shorts/reply/{} : Post!", rulingId);
         log.warn("전달받은 데이터 : {}", dto);
 
         try {
@@ -87,7 +88,7 @@ public class RulingReplyController {
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             // 댓글을 DB에 저장하는 service 호출, 새 댓글만 리턴받음
-            RulingReplyListResponseDTO replyList = rulingReplyService.insertShortsReply(applyId, dto, userInfo, pageInfo);
+            RulingReplyListResponseDTO replyList = rulingReplyService.insertShortsReply(rulingId, dto, userInfo, pageInfo);
             return ResponseEntity.ok().body(replyList);
 
         } catch (DTONotFoundException e) {
@@ -173,6 +174,24 @@ public class RulingReplyController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(RulingReplyListResponseDTO.builder().error(e.getMessage()));
+        }
+    }
+    //로그인한 사람 게시물 조회하기
+    @GetMapping("/my")
+    public ResponseEntity<?> findMyBoard(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ){
+        log.info("나의 페이지 트롤 지원 조회 실행");
+        try {
+            RulingReplyListResponseDTO applyBoardList = rulingReplyService.findMyReply(userInfo,pageInfo);
+            return ResponseEntity.ok().body(applyBoardList);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(RulingReplyListResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
         }
     }
 }

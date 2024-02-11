@@ -2,17 +2,20 @@ package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.ApplyReply;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
+import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,9 +36,9 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Transactional
 public class ApplyReplyService {
     private final ApplyReplyRepository applyReplyRepository;
+    private final RulingApplyRepository rulingApplyRepository;
 
     // 댓글 정보들을 돌려주는 서비스
-
     public ApplyReplyListResponseDTO retrieve(Long applyId, Pageable pageInfo) {
         log.warn("retreieve 페이징처리 실행! Id: {}, PageInfo: {}", applyId, pageInfo);
 
@@ -85,26 +88,37 @@ public class ApplyReplyService {
     }
 
     // 댓글 삭제 서비스
-    public void deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
-        // 전달받은 댓글Id의 모든 정보를 가져오기
-        ApplyReply reply = applyReplyRepository.findById(replyId).orElseThrow();
+    public void deleteShortsReply(ApplyDeleteRequestDTO dto, TokenUserInfo userInfo) {
 
-        try {
-            boolean flag = EqualsId(reply.getWriterId(), userInfo);
-            // 토큰의 id와 댓글의 작성자 id가 같으면 실행
-            if(flag)
-                // 삭제하지 못하면 Exception 발생
-                applyReplyRepository.deleteById(replyId);
-            else
-                throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
+        if (dto.getIdList() != null){
+            log.info("삭제할거유!! ");
+            dto.getIdList().stream()
+                    .filter(replyId -> {
+                        ApplyReply reply = applyReplyRepository.findById(replyId).orElseThrow();
+                        return reply.getWriterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
+                    })
+                    .forEach(applyReplyRepository::deleteById);
+        }
+        else{
+            ApplyReply reply = applyReplyRepository.findById(dto.getId()).orElseThrow();
 
-        } catch (Exception e) {
-            log.error("삭제에 실패했습니다. - ID: {}, Error: {}", replyId, e.getMessage());
-            throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
+            try {
+                boolean flag = EqualsId(reply.getWriterId(), userInfo) || userInfo.getRole().toString().equals("ADMIN");
+                // 토큰의 id와 댓글의 작성자 id가 같으면 실행
+                if (flag)
+                    // 삭제하지 못하면 Exception 발생
+                    applyReplyRepository.deleteById(dto.getId());
+                else
+                    throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");
+
+            } catch (Exception e) {
+                log.error("삭제에 실패했습니다. - ID: {}, Error: {}", dto.getId(), e.getMessage());
+                throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
+            }
         }
     }
 
-    // 쇼츠 댓글 수정 서비스
+    // 댓글 수정 서비스
     public void updateReply(ApplyReplyUpdateRequestDTO dto,
                             TokenUserInfo userInfo) {
 
@@ -127,5 +141,40 @@ public class ApplyReplyService {
             });
         } else
             throw new NotEqualTokenException("댓글 작성자만 수정할 수 있습니다!");
+    }
+
+    //내가 쓴 댓글 조회
+    public ApplyReplyListResponseDTO findMyReply(TokenUserInfo userInfo, Pageable pageInfo) {
+        String applyId = userInfo.getUserId();
+        // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+
+        log.warn("findMyReply 페이징처리 실행! Id: {}, PageInfo: {}", applyId, pageInfo);
+        // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
+        Page<ApplyReply> replyList = applyReplyRepository.findByWriterId(applyId,pageable);
+
+        List<ApplyReplyResponseDTO> allReply = replyList.stream()
+                .map(reply -> {
+                    ApplyReplyResponseDTO dto = new ApplyReplyResponseDTO(reply);
+                    BoardApply boardApply = rulingApplyRepository.findById(dto.getApplyId()).orElse(null);
+                    if (boardApply != null) {
+                        dto.setTitle(boardApply.getTitle());
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        log.warn("replyList:{}",allReply);
+        if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {
+            // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
+            throw new BadRequestException("비정상적인 접근입니다!");
+        } else {
+            return ApplyReplyListResponseDTO
+                    .builder()
+                    .reply(allReply)
+                    .totalPages(replyList.getTotalPages())
+                    .totalCount(replyList.getTotalElements())
+                    .build();
+        }
     }
 }

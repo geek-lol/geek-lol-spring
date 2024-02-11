@@ -1,16 +1,21 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
+import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
+import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -19,10 +24,12 @@ import java.util.List;
 public class RulingBoardService {
     private final BoardRulingRepository boardRulingRepository;
 
+    @Value("${upload.path}")
+    private String rootPath;
     // 최근 게시물 2건 조회
     public CurrentBoardListResponseDTO descRulingBoard(){
         //투표 게시판의 목록을 불러옴
-        List<BoardRuling> topTwo = boardRulingRepository.findTopByOrderByRulingDateDesc();
+        List<BoardRuling> topTwo = boardRulingRepository.findAllByOrderByRulingDateDesc();
 
         //목록이 비어있거나 1개인 경우
         if (topTwo.isEmpty()){
@@ -43,8 +50,37 @@ public class RulingBoardService {
     //게시물 상세조회
     public RulingBoardDetailResponseDTO findDetailBoard(Long rulingId){
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
+        boardRuling.setViewCount(boardRuling.getViewCount()+1);
+        boardRulingRepository.save(boardRuling);
         return new RulingBoardDetailResponseDTO(boardRuling);
     }
+    // 게시물 영상 주소
+    public String getVideoPath(Long rulingId){
+        BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
+        String applyLink = boardRuling.getRulingLink();
+        return rootPath+"/"+applyLink;
+    }
 
+
+    // 게시물 전체조회
+    public RulingBoardListResponseDTO findAllRulingBoard(){
+        //투표 게시판의 목록을 불러옴
+        List<BoardRuling> rulings = boardRulingRepository.findAllByOrderByRulingDateDesc();
+        List<RulingBoardDetailResponseDTO> rulingList = rulings.stream()
+                .map(RulingBoardDetailResponseDTO::new)
+                .collect(Collectors.toList());
+        return RulingBoardListResponseDTO.builder()
+                .rulingList(rulingList)
+                .build();
+    }
+    // 게시물 삭제
+    public void deleteBoard(TokenUserInfo userInfo,Long id){
+        BoardRuling targetBoard = boardRulingRepository.findById(id).orElseThrow();
+        if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getRulingPosterId().equals(userInfo.getUserId())){
+            boardRulingRepository.delete(targetBoard);
+        }else{
+            throw new IllegalStateException("삭제 권한이 없습니다.");
+        }
+    }
 
 }

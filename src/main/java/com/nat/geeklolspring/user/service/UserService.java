@@ -3,6 +3,7 @@ package com.nat.geeklolspring.user.service;
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
+import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserSignUpRequestDTO;
 import com.nat.geeklolspring.user.dto.response.LoginResponseDTO;
@@ -60,12 +61,13 @@ public class UserService {
     }
 
 
-    public void delete(User user) {
+    public void delete(UserDeleteRequestDTO dto) {
 
-        if (!userRepository.existsById(user.getId())) {
-            log.warn("삭제할 회원이 없습니다!! - {}", user.getId());
+        if (!userRepository.existsById(dto.getId())) {
+            log.warn("삭제할 회원이 없습니다!! - {}", dto.getId());
             throw new RuntimeException("중복된 아이디입니다!!");
         }
+        User user = userRepository.findById(dto.getId()).orElseThrow();
 
         userRepository.delete(user);
 
@@ -73,6 +75,13 @@ public class UserService {
 
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);
+    }
+    public boolean isDupilcatePw(String pw,TokenUserInfo userInfo){
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        if (!passwordEncoder.matches(pw,user.getPassword())){
+            return false;
+        }
+        return true;
     }
 
 
@@ -105,6 +114,8 @@ public class UserService {
 
 
     public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
+
+        log.info("modifyDTO : {}",dto);
 
         if (dto == null && profilePath == null) {
             throw new RuntimeException("수정된 회원정보가 없습니다!");

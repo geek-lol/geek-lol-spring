@@ -8,9 +8,11 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseD
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyPostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyReplyUpdateRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyListResponseDTO;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.service.ApplyReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,9 +107,10 @@ public class RulingApplyReplyController {
     }
 
     // 댓글Id에 해당하는 댓글을 삭제하는 컨트롤러
-    @DeleteMapping("/{replyId}")
-    public ResponseEntity<?> deleteReply(@PathVariable Long replyId,
-                                         @AuthenticationPrincipal TokenUserInfo userInfo) {
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteReply(
+            @RequestBody ApplyDeleteRequestDTO replyId,
+            @AuthenticationPrincipal TokenUserInfo userInfo) {
         log.info("api/shorts/reply/{} : Delete!", replyId);
 
         // 데이터를 정상적으로 전달받았는지 확인
@@ -178,6 +181,26 @@ public class RulingApplyReplyController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(ApplyReplyListResponseDTO.builder().error(e.getMessage()));
+        }
+    }
+
+    //로그인한 사람 댓글 조회하기
+    @GetMapping("/my")
+    public ResponseEntity<?> findMyBoard(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ){
+        log.info("나의 페이지 트롤 지원 댓글 조회 실행");
+        try {
+            ApplyReplyListResponseDTO applyApplyList = applyReplyService.findMyReply(userInfo,pageInfo);
+            return ResponseEntity.ok().body(applyApplyList);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(ApplyReplyListResponseDTO
+                            .builder()
+                            .error(e.getMessage())
+                            .build());
         }
     }
 }

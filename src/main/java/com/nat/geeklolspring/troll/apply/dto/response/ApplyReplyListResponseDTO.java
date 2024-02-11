@@ -1,6 +1,5 @@
 package com.nat.geeklolspring.troll.apply.dto.response;
 
-import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyResponseDTO;
 import lombok.*;
 
 import java.util.List;

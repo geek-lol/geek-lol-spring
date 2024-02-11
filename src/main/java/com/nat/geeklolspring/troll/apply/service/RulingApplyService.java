@@ -1,17 +1,22 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.ApplyReply;
 import com.nat.geeklolspring.entity.BoardApply;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
+import com.nat.geeklolspring.troll.apply.dto.request.ApplySearchRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
-import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,19 +32,27 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
-
 @RequiredArgsConstructor
 public class RulingApplyService {
+
     private final RulingApplyRepository rar;
     private final BoardRulingRepository boardRulingRepository;
-    private final ApplyVoteCheckRepository applyVoteCheckRepository;
 
     @Value("${upload.path}")
     private String rootPath;
 
-    // 목록 불러오기
-    public RulingApplyResponseDTO findAllBoard() {
-        List<BoardApply> boardApplyList = rar.findAll();
+    // 목록 전체 조회
+    public RulingApplyResponseDTO findAllBoard(Pageable pageInfo, String orderType) {
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardApply> boardApplyList;
+
+        switch (orderType){
+            case "like":
+                boardApplyList = rar.findAllByOrderByUpCountDesc(pageable);
+                break;
+            default:
+                boardApplyList = rar.findAllByOrderByApplyDateDesc(pageable);
+        }
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
                 .map(RulingApplyDetailResponseDTO::new)
@@ -47,6 +60,8 @@ public class RulingApplyService {
 
         return RulingApplyResponseDTO.builder()
                 .boardApply(list)
+                .totalPages(boardApplyList.getTotalPages())
+                .totalCount(boardApplyList.getTotalElements())
                 .build();
 
     }
@@ -71,7 +86,7 @@ public class RulingApplyService {
 
 
     // 게시물 저장
-    public RulingApplyResponseDTO createBoard(
+    public RulingApplyDetailResponseDTO createBoard(
             RulingApplyRequestDTO dto,
             TokenUserInfo userInfo,
             MultipartFile boardFile) throws IOException {
@@ -80,18 +95,27 @@ public class RulingApplyService {
             log.info(" file-name:{}",boardFile.getOriginalFilename());
             boardImg = uploadBoardImage(boardFile);
         }
-        rar.save(dto.toEntity(boardImg,userInfo.getUserId()));
-        return findAllBoard();
+        BoardApply boardApply = rar.save(dto.toEntity(boardImg, userInfo));
+        return new RulingApplyDetailResponseDTO(boardApply);
     }
 
     // 글 삭제
-    public RulingApplyResponseDTO deleteBoard(TokenUserInfo userInfo, Long bno){
-        BoardApply targetBoard = rar.findById(bno).orElseThrow();
-        if (targetBoard.getApplyPosterId().equals(userInfo.getUserId())){
-            rar.delete(targetBoard);
-            return findAllBoard();
-        }else{
-            throw new IllegalStateException("삭제 권한이 없습니다.");
+    public void deleteBoard(TokenUserInfo userInfo, ApplyDeleteRequestDTO dto) {
+        if (dto.getIdList() != null) {
+            dto.getIdList().stream()
+                    .filter(boardId -> {
+                        BoardApply boardApply = rar.findById(boardId).orElseThrow();
+                        return boardApply.getApplyPosterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
+                    })
+                    .forEach(rar::deleteById);
+
+        } else {
+            BoardApply targetBoard = rar.findById(dto.getId()).orElseThrow();
+            if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getApplyPosterId().equals(userInfo.getUserId())) {
+                rar.delete(targetBoard);
+            } else {
+                throw new IllegalStateException("삭제 권한이 없습니다.");
+            }
         }
     }
 
@@ -99,8 +123,20 @@ public class RulingApplyService {
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rar.findById(applyId).orElseThrow();
-        RulingApplyDetailResponseDTO dto = new RulingApplyDetailResponseDTO(boardApply);
-        return dto;
+        return new RulingApplyDetailResponseDTO(viewCountUp(boardApply));
+    }
+
+    // 게시물 영상 주소
+    public String getVideoPath(Long applyId){
+        BoardApply boardApply = rar.findById(applyId).orElseThrow();
+        String applyLink = boardApply.getApplyLink();
+        return rootPath+"/"+applyLink;
+    }
+
+    //조회수 증가
+    public BoardApply viewCountUp(BoardApply boardApply){
+        boardApply.setViewCount(boardApply.getViewCount()+1);
+        return rar.save(boardApply);
     }
 
     // 게시물 수정
@@ -128,6 +164,52 @@ public class RulingApplyService {
         RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
         boardRulingRepository.save(rulingDto.toEntity());
 
+    }
+
+    // 게시물 검색
+    public RulingApplyResponseDTO serchToBoard(ApplySearchRequestDTO dto, Pageable pageInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardApply> boardApplyList;
+
+        switch (dto.getType()){
+            case "title":
+                boardApplyList = rar.findByTitleContaining(dto.getKeyword(),pageable);
+                break;
+            case "writer":
+                boardApplyList = rar.findByApplyPosterNameContaining(dto.getKeyword(), pageable);
+                break;
+            case "mix":
+                boardApplyList = rar.findByTitleContainingAndContentContaining(dto.getKeyword(),dto.getKeyword(),pageable);
+                break;
+            default:
+                boardApplyList = rar.findAllByOrderByApplyDateDesc(pageable);
+        }
+
+        List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
+                .map(RulingApplyDetailResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return RulingApplyResponseDTO.builder()
+                .boardApply(list)
+                .totalPages(boardApplyList.getTotalPages())
+                .totalCount(boardApplyList.getTotalElements())
+                .build();
+    }
+
+    //로그인 한 사람의 게시물 조회
+    public RulingApplyResponseDTO findByUserId(TokenUserInfo userInfo, Pageable pageInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardApply> boardApplyList = rar.findByApplyPosterId(userInfo.getUserId(), pageable);
+
+        List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
+                .map(RulingApplyDetailResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return RulingApplyResponseDTO.builder()
+                .boardApply(list)
+                .totalPages(boardApplyList.getTotalPages())
+                .totalCount(boardApplyList.getTotalElements())
+                .build();
     }
 
 }

@@ -155,12 +155,12 @@ public class ShortsController {
         }
     }
 
-    //비디오 파일 불러오기
-    @PostMapping("/load-video/{shortsId}")
-    public ResponseEntity<?> loadVideo(
-            @PathVariable Long shortsId
-    ){
 
+    //동영상 파일 불러오기
+    @GetMapping("/load-video/{shortsId}")
+    public ResponseEntity<?> loadVideo(
+            @PathVariable Long shortsId){
+        log.error("shortsId : {}", shortsId);
         try {
             String shortPath = shortsService.getShortPath(shortsId);
 

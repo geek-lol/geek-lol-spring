@@ -44,14 +44,15 @@ public class RulingApplyService {
     // 목록 전체 조회
     public RulingApplyResponseDTO findAllBoard(Pageable pageInfo, String orderType) {
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-        Page<BoardApply> boardApplyList;
+        Page<BoardApply> boardApplyList = rar.findAllByOrderByApplyDateDesc(pageable);;
+        if(orderType == null)
+            orderType = "";
 
-        switch (orderType){
-            case "like":
-                boardApplyList = rar.findAllByOrderByUpCountDesc(pageable);
-                break;
-            default:
-                boardApplyList = rar.findAllByOrderByApplyDateDesc(pageable);
+        if (orderType.equals("like")) {
+            boardApplyList = rar.findAllByOrderByUpCountDesc(pageable);
+        }
+        else {
+            boardApplyList = rar.findAllByOrderByApplyDateDesc(pageable);
         }
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()

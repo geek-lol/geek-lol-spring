@@ -37,7 +37,7 @@ public class RulingApplyController {
     @GetMapping
     public ResponseEntity<?> findAllBoard(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo,
-            @RequestHeader(name = "Apply-Order-Header") String orderType
+            @RequestHeader(name = "Apply-Order-Header", required = false) String orderType
     ){
         log.info("트롤 지원 조회 실행");
         try {

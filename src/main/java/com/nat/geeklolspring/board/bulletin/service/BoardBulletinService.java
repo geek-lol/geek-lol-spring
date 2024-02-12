@@ -8,10 +8,6 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResp
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
-import com.nat.geeklolspring.entity.BoardShorts;
-import com.nat.geeklolspring.entity.User;
-import com.nat.geeklolspring.user.repository.UserRepository;
-import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -189,6 +185,20 @@ public class BoardBulletinService {
 
     }
 
+    //내가 쓴 글 조회 하기
+    public BoardBulletinResponseDTO findByMyBullentin(Pageable pageInfo, TokenUserInfo userInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardBulletin> boardBulletinList = boardBulletinRepository.findAllByPosterId(userInfo.getUserId(), pageable);
+        List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
+                .map(BoardBulletinDetailResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return BoardBulletinResponseDTO.builder()
+                .board(list)
+                .totalPages(boardBulletinList.getTotalPages())
+                .build();
+
+    }
     public String uploadImage(MultipartFile originalFile) throws IOException {
 
         // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다

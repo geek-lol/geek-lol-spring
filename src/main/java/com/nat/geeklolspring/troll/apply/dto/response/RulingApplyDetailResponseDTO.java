@@ -24,6 +24,7 @@ public class RulingApplyDetailResponseDTO {
     private String posterId;
     private String posterName;
     private int viewCount;
+    private int replyCount;
 
     public RulingApplyDetailResponseDTO(BoardApply boardApply){
         this.applyId = boardApply.getApplyId();
@@ -36,5 +37,18 @@ public class RulingApplyDetailResponseDTO {
         this.posterId = boardApply.getApplyPosterId();
         this.posterName = boardApply.getApplyPosterName();
         this.viewCount = boardApply.getViewCount();
+    }
+    public RulingApplyDetailResponseDTO(BoardApply boardApply,int replyCount){
+        this.applyId = boardApply.getApplyId();
+        this.applyLink = boardApply.getApplyLink();
+        this.content = boardApply.getContent();
+        this.title = boardApply.getTitle();
+        this.upCount = boardApply.getUpCount();
+        this.reportCount = boardApply.getReportCount();
+        this.localDateTime = boardApply.getApplyDate();
+        this.posterId = boardApply.getApplyPosterId();
+        this.posterName = boardApply.getApplyPosterName();
+        this.viewCount = boardApply.getViewCount();
+        this.replyCount = replyCount;
     }
 }

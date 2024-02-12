@@ -5,6 +5,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
 @ToString (exclude = {"applyPosterId"})
@@ -53,8 +56,7 @@ public class BoardApply {
     @Column(name = "applyPosterName")
     private String applyPosterName;
     // fk가 필요한 곳
-//
-//    @OneToOne(mappedBy = "boardApply")
-//    private BoardRuling boardRuling;
+    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteApply> voteApplies = new ArrayList<>();
 
 }

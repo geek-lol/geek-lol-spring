@@ -7,6 +7,8 @@ import com.nat.geeklolspring.troll.ruling.service.RulingBoardService;
 import com.nat.geeklolspring.utils.files.Videos;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +40,15 @@ public class RulingBoardController {
 
     // 투표게시물 전체 반환
     @GetMapping("/all")
-    public ResponseEntity<?> findAllBoard(){
+    public ResponseEntity<?> findAllBoard(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ){
         log.info("/troll/ruling/board : 게시물 전체조회 실행");
         try {
-            RulingBoardListResponseDTO allRulingBoard = rulingBoardService.findAllRulingBoard();
+            RulingBoardListResponseDTO allRulingBoard = rulingBoardService.findAllRulingBoard(pageInfo);
             return ResponseEntity.ok().body(allRulingBoard);
         }catch (Exception e){
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body("서버 에러에용 놀라지마새용ㅎㅎ");
         }
     }
 

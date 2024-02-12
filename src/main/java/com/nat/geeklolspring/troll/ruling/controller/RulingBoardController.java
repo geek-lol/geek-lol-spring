@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.troll.ruling.controller;
 
+import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardListResponseDTO;
@@ -12,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +62,24 @@ public class RulingBoardController {
         log.info("/troll/ruling/board/{} !!",rulingId);
         RulingBoardDetailResponseDTO detailBoard = rulingBoardService.findDetailBoard(rulingId);
         return ResponseEntity.ok().body(detailBoard);
+    }
+
+    //내 게시글 조회
+    @GetMapping("/my")
+    public ResponseEntity<?> findMyBoards(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+            ,@AuthenticationPrincipal TokenUserInfo userInfo
+            ){
+        try {
+            RulingBoardListResponseDTO myBoard = rulingBoardService.findMyBoard(pageInfo, userInfo);
+            return ResponseEntity.ok().body(myBoard);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(
+                    RulingBoardListResponseDTO.builder()
+                            .error(e.getMessage())
+                            .build()
+            );
+        }
     }
 
     //비디오 파일 불러오기

@@ -12,4 +12,7 @@ public interface BoardRulingRepository extends JpaRepository<BoardRuling, Long> 
     Page<BoardRuling> findAllByOrderByRulingDateDesc(Pageable pageable);
     List<BoardRuling> findAllByOrderByRulingDateDesc();
 
+    //내꺼 조회
+    Page<BoardRuling> findAllByRulingPosterId(String id, Pageable pageable);
+
 }

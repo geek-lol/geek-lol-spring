@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
@@ -88,4 +87,18 @@ public class RulingBoardService {
         }
     }
 
+    //게시물 내껏만 조회
+    public RulingBoardListResponseDTO findMyBoard(Pageable pageInfo, TokenUserInfo userInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardRuling> rulings = boardRulingRepository.findAllByRulingPosterId(userInfo.getUserId(), pageable);
+        List<RulingBoardDetailResponseDTO> rulingList = rulings.stream()
+                .map(RulingBoardDetailResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return RulingBoardListResponseDTO.builder()
+                .rulingList(rulingList)
+                .totalPages(rulings.getTotalPages())
+                .build();
+
+    }
 }

@@ -3,17 +3,15 @@ package com.nat.geeklolspring.board.boardBulletinReply.service;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.board.boardBulletinReply.dto.request.BoardPostRequestDTO;
 import com.nat.geeklolspring.board.boardBulletinReply.dto.request.BoardUpdateRequestDTO;
+import com.nat.geeklolspring.board.boardBulletinReply.dto.response.BoardMyReplyResponseDTO;
 import com.nat.geeklolspring.board.boardBulletinReply.dto.response.BoardReplyListResponseDTO;
 import com.nat.geeklolspring.board.boardBulletinReply.dto.response.BoardReplyResponseDTO;
 import com.nat.geeklolspring.board.boardBulletinReply.repository.BoardReplyRepository;
 import com.nat.geeklolspring.entity.BoardReply;
-import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
-import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -125,5 +123,27 @@ public class BoardReplyService {
             });
         } else
             throw new NotEqualTokenException("댓글 작성자만 수정할 수 있습니다!");
+    }
+
+    // 내 댓글 조회
+    public BoardReplyListResponseDTO findMyReply(Pageable pageInfo, TokenUserInfo userInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+
+        Page<BoardReply> replyList = boardReplyRepository.findAllByReplyWriterId(userInfo.getUserId(), pageable);
+        // 정보를 가공하여 List<DTO>형태로 저장
+        List<BoardMyReplyResponseDTO> allReply = replyList.stream()
+                .map(BoardMyReplyResponseDTO::new)
+                .collect(Collectors.toList());
+
+        if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {
+            // 페이징 처리된 페이지의 최대값보다 높게 요청시 에러 발생시키기
+            throw new BadRequestException("비정상적인 접근입니다!");
+        } else {
+            return BoardReplyListResponseDTO
+                    .builder()
+                    .myReply(allReply)
+                    .totalPages(replyList.getTotalPages())
+                    .build();
+        }
     }
 }

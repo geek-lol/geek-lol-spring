@@ -176,7 +176,7 @@ public class BoardBulletinController {
     }
     @GetMapping("/my")
     public ResponseEntity<?> myBoardList(
-            @PageableDefault(page = 1, size = 20) Pageable pageInfo
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
             ,@AuthenticationPrincipal TokenUserInfo userInfo
     ) {
         log.info("/board/bulletin/my : Get!");

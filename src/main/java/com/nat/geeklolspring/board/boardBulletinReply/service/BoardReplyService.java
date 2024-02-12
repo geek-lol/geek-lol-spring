@@ -7,9 +7,13 @@ import com.nat.geeklolspring.board.boardBulletinReply.dto.response.BoardMyReplyR
 import com.nat.geeklolspring.board.boardBulletinReply.dto.response.BoardReplyListResponseDTO;
 import com.nat.geeklolspring.board.boardBulletinReply.dto.response.BoardReplyResponseDTO;
 import com.nat.geeklolspring.board.boardBulletinReply.repository.BoardReplyRepository;
+import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
+import com.nat.geeklolspring.entity.BoardBulletin;
 import com.nat.geeklolspring.entity.BoardReply;
+import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
+import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +34,7 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Transactional
 public class BoardReplyService {
     private final BoardReplyRepository boardReplyRepository;
+    private final BoardBulletinRepository boardBulletinRepository;
 
     // 댓글 정보들을 돌려주는 서비스
 
@@ -132,7 +137,12 @@ public class BoardReplyService {
         Page<BoardReply> replyList = boardReplyRepository.findAllByReplyWriterId(userInfo.getUserId(), pageable);
         // 정보를 가공하여 List<DTO>형태로 저장
         List<BoardMyReplyResponseDTO> allReply = replyList.stream()
-                .map(BoardMyReplyResponseDTO::new)
+                .map(reply->{
+                    BoardMyReplyResponseDTO dto = new BoardMyReplyResponseDTO(reply);
+                    BoardBulletin boardBulletin = boardBulletinRepository.findById(dto.getBoardId()).orElseThrow();
+                    dto.setTitle(boardBulletin.getTitle());
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         if(pageInfo.getPageNumber() > 1 && allReply.isEmpty()) {

@@ -188,7 +188,9 @@ public class BoardBulletinService {
     //내가 쓴 글 조회 하기
     public BoardBulletinResponseDTO findByMyBullentin(Pageable pageInfo, TokenUserInfo userInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+
         Page<BoardBulletin> boardBulletinList = boardBulletinRepository.findAllByPosterId(userInfo.getUserId(), pageable);
+
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
                 .map(BoardBulletinDetailResponseDTO::new)
                 .collect(Collectors.toList());

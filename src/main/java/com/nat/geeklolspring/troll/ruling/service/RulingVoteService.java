@@ -46,8 +46,10 @@ public class RulingVoteService {
         float prosPercent = ((float) pros /total) * 100;
         float consPercent = ((float) cons /total) * 100;
         return ProsAndConsDTO.builder()
-                .pros(prosPercent)
-                .cons(consPercent)
+                .pros(pros)
+                .cons(cons)
+                .prosPercent(prosPercent)
+                .consPercent(consPercent)
                 .build();
     }
 

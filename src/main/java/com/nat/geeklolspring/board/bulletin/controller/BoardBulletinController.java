@@ -174,6 +174,24 @@ public class BoardBulletinController {
         }
 
     }
+    @GetMapping("/my")
+    public ResponseEntity<?> myBoardList(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
+            ,@AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
+        log.info("/board/bulletin/my : Get!");
+
+        try {
+            BoardBulletinResponseDTO myBullentin = boardBulletinService.findByMyBullentin(pageInfo, userInfo);
+            return ResponseEntity.ok().body(myBullentin);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(BoardBulletinResponseDTO
+                            .builder()
+                            .error(e.getMessage()));
+        }
+    }
 
     //이미지 파일 불러오기
     @GetMapping("/load-profile")

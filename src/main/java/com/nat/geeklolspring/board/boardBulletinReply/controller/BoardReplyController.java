@@ -180,4 +180,23 @@ public class BoardReplyController {
                     .body(BoardReplyListResponseDTO.builder().error(e.getMessage()));
         }
     }
+
+    //내 댓글 조회
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyReply(
+            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        try {
+            BoardReplyListResponseDTO myReply = boardReplyService.findMyReply(pageInfo, userInfo);
+            return ResponseEntity.ok().body(myReply);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(
+                    BoardReplyListResponseDTO.builder()
+                            .error(e.getMessage())
+                            .build()
+            );
+        }
+    }
 }

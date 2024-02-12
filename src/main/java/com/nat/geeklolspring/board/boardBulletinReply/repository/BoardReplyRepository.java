@@ -11,5 +11,6 @@ public interface BoardReplyRepository extends JpaRepository<BoardReply, Long> {
     // ShortsId에 달린 모든 댓글을 가져오는걸 JPA로 자동화해서 만든 코드
     Page<BoardReply> findAllByBulletinIdOrderByBoardReplyDate(Long bulletinId, Pageable pageable);
 
-
+    //해당 회원의 댓글 조회 하는 기능
+    Page<BoardReply> findAllByReplyWriterId(String id, Pageable pageable);
 }

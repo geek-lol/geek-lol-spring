@@ -1,7 +1,9 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
+import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardListResponseDTO;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class RulingBoardService {
     private final BoardRulingRepository boardRulingRepository;
+
 
     @Value("${upload.path}")
     private String rootPath;
@@ -70,7 +73,12 @@ public class RulingBoardService {
         //투표 게시판의 목록을 불러옴
         Page<BoardRuling> rulings = boardRulingRepository.findAllByOrderByRulingDateDesc(pageable);
         List<RulingBoardDetailResponseDTO> rulingList = rulings.stream()
-                .map(RulingBoardDetailResponseDTO::new)
+                .map(board->{
+                    RulingBoardDetailResponseDTO dto = new RulingBoardDetailResponseDTO(board);
+                    BoardRuling boardList = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
+                    dto.setApplyPosterName(boardList.getRulingPosterName());
+                    return dto;
+                })
                 .collect(Collectors.toList());
         return RulingBoardListResponseDTO.builder()
                 .rulingList(rulingList)

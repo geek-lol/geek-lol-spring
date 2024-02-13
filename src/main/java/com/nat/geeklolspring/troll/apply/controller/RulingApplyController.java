@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
@@ -188,6 +189,19 @@ public class RulingApplyController {
                     .body(RulingApplyResponseDTO
                             .builder()
                             .error(e.getMessage()));
+        }
+    }
+
+    //초기화 될 날짜 반환
+    @GetMapping("/endTime")
+    public ResponseEntity<?> endTime(){
+        log.info("endTime 실행함니다.");
+        try {
+            LocalDateTime localDateTime = rulingApplyService.threeDayAfter();
+            return ResponseEntity.ok().body(localDateTime);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError()
+                    .body(e.getMessage());
         }
     }
 }

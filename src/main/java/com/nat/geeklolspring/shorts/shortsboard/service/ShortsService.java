@@ -13,6 +13,9 @@ import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,8 +150,9 @@ public class ShortsService {
 
     }
 
-    public ShortsListResponseDTO myUploadShort(TokenUserInfo userInfo){
-        List<BoardShorts> shortsList = shortsRepository.findAllByUploaderId(userInfo.getUserId());
+    public ShortsListResponseDTO myUploadShort(TokenUserInfo userInfo, Pageable pageInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<BoardShorts> shortsList = shortsRepository.findAllByUploaderId(userInfo.getUserId(),pageable);
 
         List<ShortsMyPageResponseDTO> myShorts = shortsList.stream()
                 .map(ShortsMyPageResponseDTO::new)
@@ -158,6 +162,7 @@ public class ShortsService {
         return ShortsListResponseDTO
                 .builder()
                 .myshorts(myShorts)
+                .totalPages(shortsList.getTotalPages())
                 .build();
     }
 }

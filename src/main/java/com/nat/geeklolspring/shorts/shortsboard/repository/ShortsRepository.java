@@ -33,5 +33,5 @@ public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
 
     BoardShorts findByShortsId(Long id);
 
-    List<BoardShorts> findAllByUploaderId(String id);
+    Page<BoardShorts> findAllByUploaderId(String id,Pageable pageable);
 }

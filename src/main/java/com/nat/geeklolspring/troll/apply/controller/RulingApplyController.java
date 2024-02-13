@@ -137,9 +137,9 @@ public class RulingApplyController {
     }
 
     //비디오 파일 불러오기
-    @PostMapping("/load-video/{applyId}")
+    @GetMapping("/load-video")
     public ResponseEntity<?> loadVideo(
-            @PathVariable Long applyId
+            @RequestParam Long applyId
     ){
 
         try {

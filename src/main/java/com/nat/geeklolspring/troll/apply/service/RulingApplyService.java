@@ -178,7 +178,6 @@ public class RulingApplyService {
         if (BestBoard == null)
             return;
         RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
-        rulingDto.setApplyPosterName(BestBoard.getApplyPosterName());
         boardRulingRepository.save(rulingDto.toEntity());
 
     }

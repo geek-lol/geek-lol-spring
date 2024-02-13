@@ -49,6 +49,7 @@ public class RulingBoardDetailResponseDTO {
     public BoardRuling toEntity(){
         return BoardRuling.builder()
                 .rulingPosterId(applyPosterId)
+                .rulingPosterName(applyPosterName)
                 .rulingLink(rulingLink)
                 .rulingDate(rulingDate)
                 .content(content)

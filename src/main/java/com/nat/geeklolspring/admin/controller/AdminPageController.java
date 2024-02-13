@@ -10,9 +10,11 @@ import com.nat.geeklolspring.board.bulletin.service.BoardBulletinService;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.report.dto.response.ReportListResponseDTO;
 import com.nat.geeklolspring.report.service.ReportService;
+import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.service.RulingApplyService;
+import com.nat.geeklolspring.troll.ruling.dto.request.RulingDeleteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.service.RulingBoardService;
 import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.service.UserService;
@@ -130,7 +132,7 @@ public class AdminPageController {
 
     @DeleteMapping("/shorts")
     public ResponseEntity<?> shortsDetail(
-            @PathVariable Long shortsId,
+            @RequestBody ShortsDeleteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @PageableDefault(page = 1, size = 10) Pageable pageInfo
     ) {
@@ -138,7 +140,7 @@ public class AdminPageController {
             if (!userInfo.getRole().toString().equals("ADMIN")){
                 return ResponseEntity.badRequest().body("권한이 없습니다");
             }
-            shortsService.deleteShorts(shortsId);
+            shortsService.deleteShorts(dto);
             AdminPageShortsListResponseDTO shortsList = adminPageService.shortsView(pageInfo);
             return ResponseEntity.ok().body(shortsList);
         }catch (RuntimeException e){
@@ -215,9 +217,9 @@ public class AdminPageController {
         return ResponseEntity.ok().body(rulingList);
     }
 
-    @DeleteMapping("/ruling/{rulingId}")
+    @DeleteMapping("/ruling")
     public ResponseEntity<?> rulingDetail(
-            @PathVariable Long rulingId,
+            @RequestBody RulingDeleteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @PageableDefault(page = 1, size = 10) Pageable pageInfo
     ) {
@@ -225,7 +227,7 @@ public class AdminPageController {
             if (!userInfo.getRole().toString().equals("ADMIN")){
                 return ResponseEntity.badRequest().body("권한이 없습니다");
             }
-            rulingBoardService.deleteBoard(userInfo,rulingId);
+            rulingBoardService.deleteBoard(userInfo,dto);
             AdminPageRulingListResponseDTO applyList = adminPageService.rulingView(pageInfo);
             return ResponseEntity.ok().body(applyList);
         }catch (RuntimeException e){

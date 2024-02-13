@@ -3,7 +3,9 @@ package com.nat.geeklolspring.troll.ruling.service;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
+import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
+import com.nat.geeklolspring.troll.ruling.dto.request.RulingDeleteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardListResponseDTO;
@@ -86,10 +88,15 @@ public class RulingBoardService {
                 .build();
     }
     // 게시물 삭제
-    public void deleteBoard(TokenUserInfo userInfo,Long id){
-        BoardRuling targetBoard = boardRulingRepository.findById(id).orElseThrow();
-        if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getRulingPosterId().equals(userInfo.getUserId())){
-            boardRulingRepository.delete(targetBoard);
+    public void deleteBoard(TokenUserInfo userInfo, RulingDeleteRequestDTO dto){
+        BoardRuling targetBoard = boardRulingRepository.findById(dto.getId()).orElseThrow();
+        if (userInfo.getRole().equals(Role.ADMIN)){
+            if (dto.getIds() != null){
+                dto.getIds()
+                        .forEach(boardRulingRepository::deleteById);
+            }else{
+                boardRulingRepository.deleteById(dto.getId());
+            }
         }else{
             throw new IllegalStateException("삭제 권한이 없습니다.");
         }

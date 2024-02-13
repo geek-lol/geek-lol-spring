@@ -3,6 +3,7 @@ package com.nat.geeklolspring.shorts.shortsboard.service;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
+import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
@@ -57,15 +58,13 @@ public class ShortsService {
         }
     }
 
-    public void deleteShorts(Long id) {
-        BoardShorts shorts = shortsRepository.findById(id).orElseThrow();
+    public void deleteShorts(ShortsDeleteRequestDTO dto) {
         try {
-            shortsRepository.deleteById(id);
+            dto.getIds().forEach(shortsRepository::deleteById);
         } catch (Exception e) {
             // 보통 해당 아이디 값이 없을 때 발생
             // 다만 다른 예외적인 오류가 있을 수 있으므로 취급주의
-            log.error("삭제에 실패했습니다. - ID: {}, error: {}",
-                    id, e.getMessage());
+            log.error("삭제에 실패했습니다. - error: {}", e.getMessage());
             throw new RuntimeException("해당 아이디 값을 가진 쇼츠가 없습니다!");
         }
     }

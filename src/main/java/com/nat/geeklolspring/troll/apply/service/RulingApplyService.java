@@ -102,11 +102,7 @@ public class RulingApplyService {
     // 글 삭제
     public void deleteBoard(TokenUserInfo userInfo, ApplyDeleteRequestDTO dto) {
         if (dto.getIdList() != null) {
-            dto.getIdList().stream()
-                    .filter(boardId -> {
-                        BoardApply boardApply = rulingApplyRepository.findById(boardId).orElseThrow();
-                        return boardApply.getApplyPosterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
-                    })
+            dto.getIdList()
                     .forEach(rulingApplyRepository::deleteById);
 
         } else {

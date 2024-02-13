@@ -156,24 +156,27 @@ public class RulingApplyService {
     }
     @PostConstruct
     public void init() {
-        startServerTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        startServerTime = LocalDateTime.now().withSecond(0).withNano(0);
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
-    @Scheduled(initialDelay = 0, fixedDelay = 3* 60 * 1000 ) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+    @Scheduled(initialDelay = 0, fixedDelay = 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");
         // 현재 시간
-        LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+
         // 현재 시간으로부터 3일전
         LocalDateTime threeDaysAgo = now.minusDays(3);
 
         // 현재 시간으로부터 3일후
         threeDayafter = now.plusDays(3);
-
+        log.info("now Time :{} ",now);
         if (now.isEqual(startServerTime))
             return;
         // 3일 동안 추천수가 가장 많은 게시물
         BoardApply BestBoard = rulingApplyRepository.findFirstByApplyDateBetweenOrderByUpCountDescReportCountDesc(threeDaysAgo, now);
+        if (BestBoard == null)
+            return;
         RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
         rulingDto.setApplyPosterName(BestBoard.getApplyPosterName());
         boardRulingRepository.save(rulingDto.toEntity());

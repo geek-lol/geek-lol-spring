@@ -69,13 +69,33 @@ public class AdminPageController {
                 return ResponseEntity.badRequest().body("권한이 없습니다");
             }
 
-            userService.delete(dto);
+            userService.delete(dto.getIds());
             log.info("delete user : {}",dto.getId());
             AdminPageUserListResponseDTO userList = adminPageService.userView(pageInfo);
             return ResponseEntity.ok().body(userList);
         }catch (RuntimeException e){
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().body("삭제에 실패했습니다");
+        }
+    }
+    @PostMapping("/change")
+    public ResponseEntity<?> adminPageChangeAuth(
+            @RequestParam String id,
+            @RequestParam String newAuth,
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo){
+        log.info("/admin/change POST id={},newAuth={} ",id,newAuth);
+
+        if (!userInfo.getRole().equals(Role.ADMIN)){
+            return ResponseEntity.badRequest().body("권한이 없습니다");
+        }
+        try {
+            userService.changeAuth(id,newAuth);
+            AdminPageUserListResponseDTO userList = adminPageService.userView(pageInfo);
+            return ResponseEntity.ok().body(userList);
+        }catch (RuntimeException e){
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().body("권한 수정에 실패 하였습니다.");
         }
     }
 
@@ -185,7 +205,7 @@ public class AdminPageController {
 
     @DeleteMapping("/applys")
     public ResponseEntity<?> applysDetail(
-            @PathVariable ApplyDeleteRequestDTO dto,
+            @RequestBody ApplyDeleteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @PageableDefault(page = 1, size = 10) Pageable pageInfo
     ) {

@@ -2,6 +2,7 @@ package com.nat.geeklolspring.user.service;
 
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
@@ -18,14 +19,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     @Value("${upload.path}")
@@ -73,10 +77,18 @@ public class UserService {
             User user = userRepository.findById(dto.getId()).orElseThrow();
             userRepository.delete(user);
         }
-
+    }
+    public void delete(List<String> ids) {
+        if (ids == null) {
+        log.warn("삭제할 회원이 없습니다!!");
+        }
+        try {
+            ids.forEach(userRepository::deleteById);
+        }catch (NullPointerException e) {
+            throw new RuntimeException("삭제 안도ㅐ유");
+        }
 
     }
-
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);
     }
@@ -153,8 +165,6 @@ public class UserService {
 
     }
 
-
-
     public String uploadProfileImage(MultipartFile originalFile) throws IOException {
 
         // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다
@@ -181,5 +191,26 @@ public class UserService {
 
     }
 
+    public void changeAuth(String userId, String newAuth){
+        if (!userRepository.existsById(userId)){
+            throw new RuntimeException("존재하지 않는 회원입니다.");
+        }
+        log.info("newAuth:{}",newAuth);
+        try {
+            switch (newAuth){
+                case "ADMIN":
+                    userRepository.updateAuthority(userId, Role.ADMIN);
+                    break;
+                case "COMMON":
+                    userRepository.updateAuthority(userId, Role.COMMON);
+                    break;
+                default:
+                    throw new RuntimeException("없는 권한입니다.");
+            }
+        }catch (Exception e){
+            log.warn("권한 변경 에러! :{}",e.getMessage());
+            throw new RuntimeException("회원 권한 변경에 실패하였습니다.");
+        }
+    }
 
 }

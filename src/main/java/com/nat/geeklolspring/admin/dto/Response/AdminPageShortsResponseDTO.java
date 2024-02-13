@@ -17,6 +17,7 @@ public class AdminPageShortsResponseDTO {
     private String title;
     private int viewCount;
     private LocalDateTime uploadDate;
+    private int upCount;
 
     public AdminPageShortsResponseDTO(BoardShorts shorts) {
         this.shortsId = shorts.getShortsId();
@@ -24,5 +25,6 @@ public class AdminPageShortsResponseDTO {
         this.title = shorts.getTitle();
         this.viewCount = shorts.getViewCount();
         this.uploadDate = shorts.getUploadDate();
+        this.upCount = shorts.getUpCount();
     }
 }

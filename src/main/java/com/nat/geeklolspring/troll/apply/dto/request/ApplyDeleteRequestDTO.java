@@ -13,5 +13,5 @@ import java.util.List;
 @Builder
 public class ApplyDeleteRequestDTO {
     Long id;
-    List<Long> idList;
+    List<Long> ids;
 }

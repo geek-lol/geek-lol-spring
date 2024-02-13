@@ -114,8 +114,8 @@ public class RulingApplyService {
 
     // 글 삭제
     public void deleteBoard(TokenUserInfo userInfo, ApplyDeleteRequestDTO dto) {
-        if (dto.getIdList() != null) {
-            dto.getIdList()
+        if (dto.getIds() != null) {
+            dto.getIds()
                     .forEach(rulingApplyRepository::deleteById);
 
         } else {
@@ -159,7 +159,7 @@ public class RulingApplyService {
         startServerTime = LocalDateTime.now().withSecond(0).withNano(0);
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
-    @Scheduled(initialDelay = 0, fixedDelay = 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+    @Scheduled(initialDelay = 0, fixedDelay =  24 *60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");
         // 현재 시간

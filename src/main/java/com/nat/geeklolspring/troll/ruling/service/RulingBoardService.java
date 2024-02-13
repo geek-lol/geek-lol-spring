@@ -90,7 +90,6 @@ public class RulingBoardService {
     }
     // 게시물 삭제
     public void deleteBoard(TokenUserInfo userInfo, RulingDeleteRequestDTO dto){
-        BoardRuling targetBoard = boardRulingRepository.findById(dto.getId()).orElseThrow();
         if (userInfo.getRole().equals(Role.ADMIN)){
             if (dto.getIds() != null){
                 dto.getIds()

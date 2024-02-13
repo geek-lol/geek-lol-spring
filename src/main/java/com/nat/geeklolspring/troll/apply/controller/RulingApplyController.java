@@ -37,9 +37,10 @@ public class RulingApplyController {
     @GetMapping
     public ResponseEntity<?> findAllBoard(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo,
-            @RequestHeader(name = "Apply-Order-Header", required = false) String orderType
+            @RequestParam(name = "type", required = false) String orderType
     ){
         log.info("트롤 지원 조회 실행");
+        log.info("{}",orderType);
         try {
             RulingApplyResponseDTO applyBoardList = rulingApplyService.findAllBoard(pageInfo,orderType);
             return ResponseEntity.ok().body(applyBoardList);
@@ -110,7 +111,7 @@ public class RulingApplyController {
     }
 
     // 게시판 검색하기
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<?> searchBoard(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo,
             @RequestBody ApplySearchRequestDTO dto

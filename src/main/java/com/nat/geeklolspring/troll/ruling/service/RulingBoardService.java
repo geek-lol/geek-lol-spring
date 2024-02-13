@@ -11,6 +11,7 @@ import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponse
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
+import com.nat.geeklolspring.troll.ruling.repository.RulingReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class RulingBoardService {
     private final BoardRulingRepository boardRulingRepository;
+    private final RulingReplyRepository rulingReplyRepository;
 
 
     @Value("${upload.path}")
@@ -77,8 +79,7 @@ public class RulingBoardService {
         List<RulingBoardDetailResponseDTO> rulingList = rulings.stream()
                 .map(board->{
                     RulingBoardDetailResponseDTO dto = new RulingBoardDetailResponseDTO(board);
-                    BoardRuling boardList = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
-                    dto.setApplyPosterName(boardList.getRulingPosterName());
+                    dto.setReplyCount(rulingReplyRepository.countByRulingId(dto.getRulingId()));
                     return dto;
                 })
                 .collect(Collectors.toList());

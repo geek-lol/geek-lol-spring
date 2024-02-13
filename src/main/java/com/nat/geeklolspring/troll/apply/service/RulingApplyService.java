@@ -7,6 +7,7 @@ import com.nat.geeklolspring.troll.apply.dto.request.ApplySearchRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
+import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
@@ -40,6 +41,7 @@ public class RulingApplyService {
 
     private final RulingApplyRepository rulingApplyRepository;
     private final BoardRulingRepository boardRulingRepository;
+    private final ApplyReplyRepository applyReplyRepository;
 
     @Value("${upload.path}")
     private String rootPath;
@@ -62,7 +64,11 @@ public class RulingApplyService {
         }
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
-                .map(RulingApplyDetailResponseDTO::new)
+                .map(apply->{
+                    RulingApplyDetailResponseDTO dto = new RulingApplyDetailResponseDTO(apply);
+                    dto.setReplyCount(applyReplyRepository.countByApplyId(dto.getApplyId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         return RulingApplyResponseDTO.builder()

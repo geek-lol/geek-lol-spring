@@ -22,6 +22,7 @@ public class RulingBoardDetailResponseDTO {
     private String content;
     private String title;
     private String applyPosterId;
+    private String applyPosterName;
     private int viewCount;
 
     public RulingBoardDetailResponseDTO(BoardApply boardApply) {

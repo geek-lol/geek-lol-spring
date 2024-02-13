@@ -183,10 +183,11 @@ public class ShortsReplyController {
 
     @GetMapping("/my")
     public ResponseEntity<?> myReply(
-            @AuthenticationPrincipal TokenUserInfo userInfo
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo
     ){
         try {
-            ShortsReplyListResponseDTO myReply = shortsReplyService.findMyReply(userInfo);
+            ShortsReplyListResponseDTO myReply = shortsReplyService.findMyReply(userInfo,pageInfo);
             return ResponseEntity.ok().body(myReply);
 
         }catch (Exception e){

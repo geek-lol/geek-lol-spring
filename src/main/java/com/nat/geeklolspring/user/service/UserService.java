@@ -67,9 +67,13 @@ public class UserService {
             log.warn("삭제할 회원이 없습니다!! - {}", dto.getId());
             throw new RuntimeException("중복된 아이디입니다!!");
         }
-        User user = userRepository.findById(dto.getId()).orElseThrow();
+        if (dto.getIds() != null){
+            dto.getIds().forEach(userRepository::deleteById);
+        }else {
+            User user = userRepository.findById(dto.getId()).orElseThrow();
+            userRepository.delete(user);
+        }
 
-        userRepository.delete(user);
 
     }
 

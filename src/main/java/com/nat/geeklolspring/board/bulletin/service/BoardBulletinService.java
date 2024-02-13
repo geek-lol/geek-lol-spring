@@ -92,7 +92,12 @@ public class BoardBulletinService {
 
         log.info("dto : {}",dto.getBulletinId());
 
-        boardBulletinRepository.deleteById(dto.getBulletinId());
+        if (dto.getIds() != null){
+            dto.getIds().forEach(boardBulletinRepository::deleteById);
+        }else{
+            boardBulletinRepository.deleteById(dto.getBulletinId());
+        }
+
     }
 
 

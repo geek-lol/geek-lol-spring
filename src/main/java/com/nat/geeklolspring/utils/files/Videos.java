@@ -14,6 +14,9 @@ public class Videos {
                 return MediaType.valueOf("video/x-matroska");
             case "AVI":
                 return MediaType.valueOf("video/x-msvideo");
+            case "WEBM":
+                return MediaType.valueOf("video/webm");
+
             default:
                 return null;
         }

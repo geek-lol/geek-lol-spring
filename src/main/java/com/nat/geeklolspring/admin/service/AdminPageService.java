@@ -77,10 +77,12 @@ public class AdminPageService {
 
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardBulletin> boardListAll = boardBulletinRepository.findAll(pageable);
-
+        log.warn("boardListAll 있어유? :{}",boardListAll);
         List<AdminPageBoardBulletinResponseDTO> boardList = boardListAll.stream()
                 .map(AdminPageBoardBulletinResponseDTO::new)
                 .collect(Collectors.toList());
+
+        log.warn("boardList 있어유? :{}",boardList);
 
         if(pageInfo.getPageNumber() > 1 && boardList.isEmpty()) {
             throw new BadRequestException("비정상적인 접근입니다!");

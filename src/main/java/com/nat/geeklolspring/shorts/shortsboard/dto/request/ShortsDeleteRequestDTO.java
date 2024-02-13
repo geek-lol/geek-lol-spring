@@ -1,4 +1,4 @@
-package com.nat.geeklolspring.user.dto.request;
+package com.nat.geeklolspring.shorts.shortsboard.dto.request;
 
 import lombok.*;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDeleteRequestDTO {
-    private String id;
-    private List<String> ids;
+public class ShortsDeleteRequestDTO {
+    private List<Long> ids;
 }
+

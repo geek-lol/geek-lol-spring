@@ -184,7 +184,7 @@ public class BoardReplyController {
     //내 댓글 조회
     @GetMapping("/my")
     public ResponseEntity<?> getMyReply(
-            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         try {

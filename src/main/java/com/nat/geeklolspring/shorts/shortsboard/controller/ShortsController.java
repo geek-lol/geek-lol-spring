@@ -11,6 +11,8 @@ import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -193,10 +195,11 @@ public class ShortsController {
 
     @GetMapping("/my")
     public ResponseEntity<?> myShorts(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         try {
-            ShortsListResponseDTO shortsListResponseDTO = shortsService.myUploadShort(userInfo);
+            ShortsListResponseDTO shortsListResponseDTO = shortsService.myUploadShort(userInfo,pageInfo);
             return ResponseEntity.ok().body(shortsListResponseDTO);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(ShortsListResponseDTO.builder()

@@ -24,6 +24,7 @@ public class RulingApplyDetailResponseDTO {
     private String posterId;
     private String posterName;
     private int viewCount;
+    private int replyCount;
 
     public RulingApplyDetailResponseDTO(BoardApply boardApply){
         this.applyId = boardApply.getApplyId();

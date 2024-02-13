@@ -11,4 +11,7 @@ public interface ApplyReplyRepository extends JpaRepository<ApplyReply,Long> {
 
     //내가 쓴 댓글 전체조회
     Page<ApplyReply> findByWriterId(String id,Pageable pageable);
+
+    //게시판별 댓글 수 조회
+    int countByApplyId(Long id);
 }

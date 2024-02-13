@@ -159,7 +159,7 @@ public class RulingApplyService {
         startServerTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
-    @Scheduled(initialDelay = 0, fixedDelay = 3 * 24 * 60 * 60 * 1000) // 3일(밀리초 단위)
+    @Scheduled(initialDelay = 0, fixedDelay = 3* 60 * 1000 ) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");
         // 현재 시간

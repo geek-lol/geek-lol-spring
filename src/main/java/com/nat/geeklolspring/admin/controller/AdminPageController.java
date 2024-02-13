@@ -7,6 +7,7 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDeleteResp
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResponseDTO;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.service.BoardBulletinService;
+import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.report.dto.response.ReportListResponseDTO;
 import com.nat.geeklolspring.report.service.ReportService;
@@ -85,7 +86,7 @@ public class AdminPageController {
     ){
         log.info("/adminPage/board POST ");
 
-        if (!userInfo.getRole().toString().equals("ADMIN")){
+        if (!userInfo.getRole().equals(Role.ADMIN)){
             return ResponseEntity.badRequest().body("권한이 없습니다");
         }
 

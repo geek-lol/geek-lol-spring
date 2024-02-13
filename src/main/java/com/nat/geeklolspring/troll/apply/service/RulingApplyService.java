@@ -10,12 +10,14 @@ import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
+import com.nat.geeklolspring.utils.files.Videos;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,9 +137,6 @@ public class RulingApplyService {
         return rulingApplyRepository.save(boardApply);
     }
 
-    // 게시물 수정
-    public void modityBoard(Long applyId){}
-
     //게시물 추천수 증가
     public void agrees(Long applyId){
         BoardApply targetBoard = rulingApplyRepository.findById(applyId).orElseThrow();
@@ -209,4 +208,12 @@ public class RulingApplyService {
                 .build();
     }
 
+    // 비디오 파일인지 체크
+    public int CheckFile(MultipartFile boardFile) {
+        MediaType mediaType = Videos.extractFileExtension(boardFile.getOriginalFilename());
+        if (mediaType != null)
+            return 1; //true - 비디오 파일임
+        else
+            return 0; //false -비디오 파일 아님
+    }
 }

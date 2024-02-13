@@ -56,7 +56,7 @@ public class RulingApplyController {
     @PostMapping
     public ResponseEntity<?> createBoard(
             @Validated @RequestPart("board") RulingApplyRequestDTO dto,
-            @RequestPart(value = "boardFile", required = false) MultipartFile boardFile,
+            @RequestPart(value = "boardFile") MultipartFile boardFile,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         log.info("트롤 지원 만들기 실행");
@@ -125,6 +125,15 @@ public class RulingApplyController {
                             .builder()
                             .error(e.getMessage()));
         }
+    }
+
+    //비디오인지 체크하는 패치
+    @PostMapping("/check-video")
+    public ResponseEntity<?> checkVideo(
+            @RequestPart(value = "boardFile") MultipartFile boardFile
+    ){
+        int i = rulingApplyService.CheckFile(boardFile);
+        return ResponseEntity.ok().body(i);
     }
 
     //비디오 파일 불러오기

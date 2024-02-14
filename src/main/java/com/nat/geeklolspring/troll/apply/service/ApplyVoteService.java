@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.board.vote.dto.response.BoardVoteResponseDTO;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.VoteApply;
 import com.nat.geeklolspring.exception.DTONotFoundException;
@@ -20,7 +21,6 @@ import javax.transaction.Transactional;
 @Transactional
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
-    private final RulingApplyService rulingApplyService;
     private final RulingApplyRepository rulingApplyRepository;
 
 
@@ -38,7 +38,8 @@ public class ApplyVoteService {
 
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
-        rulingApplyService.agrees(dto.getApplyId());
+        rulingApplyRepository.plusUpCount(applyId);
+
         BoardApply boardApply = rulingApplyRepository.findById(dto.getApplyId()).orElseThrow();
         int i = boardApply.getUpCount();
         log.info("좋아요 정보 저장 성공! 정보 : {}", i);

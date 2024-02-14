@@ -8,7 +8,6 @@ import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,7 +21,7 @@ public class ApplyVoteService {
     private final RulingApplyService rulingApplyService;
 
 
-    public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
+    public int createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("좋아요 저장 서비스 실행!");
 
         // 필요한 정보가 잘 입력되어 있는지 확인
@@ -36,10 +35,10 @@ public class ApplyVoteService {
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
         rulingApplyService.agrees(dto.getApplyId());
+        int i = voteCheckRepository.countByApplyId(dto.getApplyId());
+        log.info("좋아요 정보 저장 성공! 정보 : {}", i);
 
-        log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
-
-        return new ApplyVoteResponseDTO(saved);
+        return i;
     }
 
     public ApplyVoteResponseDTO getVote(long applyId, TokenUserInfo userInfo) {

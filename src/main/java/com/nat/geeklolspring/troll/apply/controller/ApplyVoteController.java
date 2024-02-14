@@ -75,7 +75,7 @@ public class ApplyVoteController {
             if (!flag) {
                 // 좋아요 정보 생성
                 // 리턴은 생성된 좋아요 정보
-                ApplyVoteResponseDTO vote = voteService.createVote(dto, userInfo);
+                int vote = voteService.createVote(dto, userInfo);
                 return ResponseEntity.ok().body(vote);
             }
 

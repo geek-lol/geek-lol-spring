@@ -66,10 +66,15 @@ public class ApplyVoteService {
 
     public ApplyVoteResponseDTO changeVote(VoteApply vote) {
         // vote 값 수정
-        if (vote.getUp() == 1)
+        if (vote.getUp() == 1) {
+            rulingApplyRepository.downUpCount(vote.getApplyId());
             vote.setUp(0);
-        else
+        }
+        else{
+            rulingApplyRepository.plusUpCount(vote.getApplyId());
             vote.setUp(1);
+
+        }
 
         // 수정한 vote 값 DB에 저장
         VoteApply saved = voteCheckRepository.save(vote);

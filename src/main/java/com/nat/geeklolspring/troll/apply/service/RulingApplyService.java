@@ -64,10 +64,9 @@ public class RulingApplyService {
         }
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
-                .map(apply->{
-                    RulingApplyDetailResponseDTO dto = new RulingApplyDetailResponseDTO(apply);
-                    dto.setReplyCount(applyReplyRepository.countByApplyId(dto.getApplyId()));
-                    return dto;
+                .map(boardApply -> {
+                    int i = applyReplyRepository.countByApplyId(boardApply.getApplyId());
+                    return new RulingApplyDetailResponseDTO(boardApply,i);
                 })
                 .collect(Collectors.toList());
 
@@ -114,8 +113,12 @@ public class RulingApplyService {
 
     // 글 삭제
     public void deleteBoard(TokenUserInfo userInfo, ApplyDeleteRequestDTO dto) {
-        if (dto.getIds() != null) {
-            dto.getIds()
+        if (dto.getIdList() != null) {
+            dto.getIdList().stream()
+                    .filter(boardId -> {
+                        BoardApply boardApply = rulingApplyRepository.findById(boardId).orElseThrow();
+                        return boardApply.getApplyPosterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
+                    })
                     .forEach(rulingApplyRepository::deleteById);
 
         } else {
@@ -132,7 +135,8 @@ public class RulingApplyService {
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
-        return new RulingApplyDetailResponseDTO(viewCountUp(boardApply));
+        int replyCount = applyReplyRepository.countByApplyId(boardApply.getApplyId());
+        return new RulingApplyDetailResponseDTO(viewCountUp(boardApply),replyCount);
     }
 
     // 게시물 영상 주소
@@ -157,6 +161,7 @@ public class RulingApplyService {
     @PostConstruct
     public void init() {
         startServerTime = LocalDateTime.now().withSecond(0).withNano(0);
+
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
     @Scheduled(initialDelay = 0, fixedDelay =  24 *60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000

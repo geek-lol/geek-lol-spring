@@ -18,9 +18,9 @@ public class ApplyVotePostRequestDTO {
     @NotNull
     private Long applyId;
 
-    public VoteApply toEntity(ApplyVotePostRequestDTO dto) {
-        return VoteApply.builder()
-                .applyId(dto.applyId)
-                .build();
-    }
+//    public VoteApply toEntity(ApplyVotePostRequestDTO dto) {
+//        return VoteApply.builder()
+//                .applyId(dto.applyId)
+//                .build();
+//    }
 }

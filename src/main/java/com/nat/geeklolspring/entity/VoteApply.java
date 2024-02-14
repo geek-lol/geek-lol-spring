@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Setter
 @Getter
-@ToString
+@ToString(exclude = "applyId")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -23,10 +23,15 @@ public class VoteApply {
     @Column(name = "user_id")
     private String receiver;
 
-    @Column(name = "apply_id")
-    private Long applyId;
+//    @Column(name = "apply_id")
+//    private Long applyId;
 
     @Builder.Default
     @Column(name = "vote_up")
     private int up = 1;
+
+    //fk
+    @ManyToOne
+    @JoinColumn(name = "apply_id", referencedColumnName = "apply_id")
+    private BoardApply applyId;
 }

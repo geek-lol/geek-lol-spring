@@ -1,11 +1,13 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.VoteApply;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyVotePostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
+import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import javax.transaction.Transactional;
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
     private final RulingApplyService rulingApplyService;
+    private final RulingApplyRepository rulingApplyRepository;
+
 
 
     public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
@@ -30,9 +34,11 @@ public class ApplyVoteService {
             throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
         }
 
-        VoteApply entity = dto.toEntity(dto);
-        entity.setReceiver(userInfo.getUserId());
-
+        VoteApply entity = VoteApply.builder()
+                .receiver(userInfo.getUserId())
+                .applyId(rulingApplyRepository.findById(dto.getApplyId()).orElseThrow())
+                .build();
+        log.info("voteApplt entity:{}",entity);
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
         rulingApplyService.agrees(dto.getApplyId());
@@ -44,8 +50,8 @@ public class ApplyVoteService {
 
     public ApplyVoteResponseDTO getVote(long applyId, TokenUserInfo userInfo) {
         String userId = userInfo.getUserId();
-
-        VoteApply voteCheck = voteCheckRepository.findByApplyIdAndReceiver(applyId, userId);
+        BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
+        VoteApply voteCheck = voteCheckRepository.findByApplyIdAndReceiver(boardApply, userId);
 
         // 해당 동영상에 대한 나의 좋아요 정보가 없다면 null을 리턴
         if(voteCheck == null) {
@@ -87,7 +93,8 @@ public class ApplyVoteService {
     }
 
     public VoteApply findVote(long applyId, String accountId) {
+        BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
         // 쇼츠 아이디와 계정명이 일치하는 vote정보를 리턴
-        return voteCheckRepository.findByApplyIdAndReceiver(applyId, accountId);
+        return voteCheckRepository.findByApplyIdAndReceiver(boardApply, accountId);
     }
 }

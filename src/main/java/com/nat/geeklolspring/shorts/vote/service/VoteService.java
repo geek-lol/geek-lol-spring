@@ -62,6 +62,8 @@ public class VoteService {
     }
 
     public VoteResponseDTO changeVote(VoteCheck vote) {
+
+
         // vote 값 수정
         if (vote.getUp() == 1) {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
@@ -74,12 +76,16 @@ public class VoteService {
             vote.setUp(1);
         }
 
+        BoardShorts shorts = shortsRepository.findByShortsId(vote.getShortsId());
+        int i = shorts.getUpCount();
+
         // 수정한 vote 값 DB에 저장
         VoteCheck saved = voteCheckRepository.save(vote);
 
         // 수정된 정보를 저장해서 Controller에 전달
         return VoteResponseDTO.builder()
                 .up(saved.getUp())
+                .total(i)
                 .build();
     }
 

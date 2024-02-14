@@ -39,7 +39,7 @@ public class ApplyVoteService {
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", i);
 
-        return ApplyVoteResponseDTO.builder().up(i).build();
+        return new ApplyVoteResponseDTO(saved,i);
     }
 
     public ApplyVoteResponseDTO getVote(long applyId, TokenUserInfo userInfo) {

@@ -21,7 +21,7 @@ public class ApplyVoteService {
     private final RulingApplyService rulingApplyService;
 
 
-    public int createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
+    public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("좋아요 저장 서비스 실행!");
 
         // 필요한 정보가 잘 입력되어 있는지 확인
@@ -36,9 +36,10 @@ public class ApplyVoteService {
         VoteApply saved = voteCheckRepository.save(entity);
         rulingApplyService.agrees(dto.getApplyId());
         int i = voteCheckRepository.countByApplyId(dto.getApplyId());
+
         log.info("좋아요 정보 저장 성공! 정보 : {}", i);
 
-        return i;
+        return ApplyVoteResponseDTO.builder().up(i).build();
     }
 
     public ApplyVoteResponseDTO getVote(long applyId, TokenUserInfo userInfo) {

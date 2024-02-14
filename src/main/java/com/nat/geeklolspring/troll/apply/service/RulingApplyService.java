@@ -2,6 +2,8 @@ package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardApply;
+import com.nat.geeklolspring.entity.Role;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplySearchRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
@@ -11,6 +13,7 @@ import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import com.nat.geeklolspring.utils.files.Videos;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +45,7 @@ public class RulingApplyService {
     private final RulingApplyRepository rulingApplyRepository;
     private final BoardRulingRepository boardRulingRepository;
     private final ApplyReplyRepository applyReplyRepository;
+    private final UserRepository userRepository;
 
     @Value("${upload.path}")
     private String rootPath;
@@ -65,7 +69,7 @@ public class RulingApplyService {
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
                 .map(boardApply -> {
-                    int i = applyReplyRepository.countByApplyId(boardApply.getApplyId());
+                    int i = applyReplyRepository.countByApplyId(boardApply);
                     return new RulingApplyDetailResponseDTO(boardApply,i);
                 })
                 .collect(Collectors.toList());
@@ -102,28 +106,30 @@ public class RulingApplyService {
             RulingApplyRequestDTO dto,
             TokenUserInfo userInfo,
             MultipartFile boardFile) throws IOException {
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         String boardImg = null;
         if (boardFile !=null){
             log.info(" file-name:{}",boardFile.getOriginalFilename());
             boardImg = uploadBoardImage(boardFile);
         }
-        BoardApply boardApply = rulingApplyRepository.save(dto.toEntity(boardImg, userInfo));
+        BoardApply boardApply = rulingApplyRepository.save(dto.toEntity(boardImg, user));
         return new RulingApplyDetailResponseDTO(boardApply);
     }
 
     // 글 삭제
     public void deleteBoard(TokenUserInfo userInfo, ApplyDeleteRequestDTO dto) {
-        if (dto.getIdList() != null) {
-            dto.getIdList().stream()
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        if (dto.getIds() != null) {
+            dto.getIds().stream()
                     .filter(boardId -> {
                         BoardApply boardApply = rulingApplyRepository.findById(boardId).orElseThrow();
-                        return boardApply.getApplyPosterId().equals(userInfo.getUserId()) || userInfo.getRole().toString().equals("ADMIN");
+                        return boardApply.getUserId().equals(user) || userInfo.getRole().equals(Role.ADMIN);
                     })
                     .forEach(rulingApplyRepository::deleteById);
 
         } else {
             BoardApply targetBoard = rulingApplyRepository.findById(dto.getId()).orElseThrow();
-            if (userInfo.getRole().toString().equals("ADMIN") || targetBoard.getApplyPosterId().equals(userInfo.getUserId())) {
+            if (userInfo.getRole().equals(Role.ADMIN) || targetBoard.getUserId().equals(user)) {
                 rulingApplyRepository.delete(targetBoard);
             } else {
                 throw new IllegalStateException("삭제 권한이 없습니다.");
@@ -135,7 +141,7 @@ public class RulingApplyService {
     // 게시물 개별조회
     public RulingApplyDetailResponseDTO detailBoard(Long applyId){
         BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
-        int replyCount = applyReplyRepository.countByApplyId(boardApply.getApplyId());
+        int replyCount = applyReplyRepository.countByApplyId(boardApply);
         return new RulingApplyDetailResponseDTO(viewCountUp(boardApply),replyCount);
     }
 
@@ -179,7 +185,7 @@ public class RulingApplyService {
         if (now.isEqual(startServerTime))
             return;
         // 3일 동안 추천수가 가장 많은 게시물
-        BoardApply BestBoard = rulingApplyRepository.findFirstByApplyDateBetweenOrderByUpCountDescReportCountDesc(threeDaysAgo, now);
+        BoardApply BestBoard = rulingApplyRepository.findFirstByApplyDateBetweenOrderByUpCountDescViewCountDesc(threeDaysAgo, now);
         if (BestBoard == null)
             return;
         RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
@@ -200,7 +206,7 @@ public class RulingApplyService {
                 boardApplyList = rulingApplyRepository.findByTitleContaining(dto.getKeyword(),pageable);
                 break;
             case "writer":
-                boardApplyList = rulingApplyRepository.findByApplyPosterNameContaining(dto.getKeyword(), pageable);
+                boardApplyList = rulingApplyRepository.findBoardsByUserName(dto.getKeyword(), pageable);
                 break;
             case "mix":
                 boardApplyList = rulingApplyRepository.findByTitleContainingAndContentContaining(dto.getKeyword(),dto.getKeyword(),pageable);
@@ -223,7 +229,8 @@ public class RulingApplyService {
     //로그인 한 사람의 게시물 조회
     public RulingApplyResponseDTO findByUserId(TokenUserInfo userInfo, Pageable pageInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-        Page<BoardApply> boardApplyList = rulingApplyRepository.findByApplyPosterId(userInfo.getUserId(), pageable);
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        Page<BoardApply> boardApplyList = rulingApplyRepository.findByUserId(user, pageable);
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
                 .map(RulingApplyDetailResponseDTO::new)

@@ -2,6 +2,7 @@ package com.nat.geeklolspring.troll.apply.dto.request;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardApply;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 @Setter
@@ -15,13 +16,12 @@ public class RulingApplyRequestDTO {
     private String content;
     private String title;
 
-    public BoardApply toEntity(String applyLink, TokenUserInfo userInfo){
+    public BoardApply toEntity(String applyLink, User user){
         return BoardApply.builder()
                 .applyLink(applyLink)
                 .content(content)
                 .title(title)
-                .applyPosterId(userInfo.getUserId())
-                .applyPosterName(userInfo.getUserName())
+                .userId(user)
                 .build();
     }
 }

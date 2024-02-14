@@ -32,8 +32,8 @@ public class RulingBoardDetailResponseDTO {
         this.rulingDate = boardApply.getApplyDate();
         this.title = boardApply.getTitle();
         this.content = boardApply.getContent();
-        this.applyPosterId = boardApply.getApplyPosterId();
-        this.applyPosterName = boardApply.getApplyPosterName();
+        this.applyPosterId = boardApply.getUserId().getId();
+        this.applyPosterName = boardApply.getUserId().getUserName();
 
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling) {

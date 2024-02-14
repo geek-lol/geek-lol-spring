@@ -14,4 +14,6 @@ public interface ShortsReplyRepository extends JpaRepository<ShortsReply, Long> 
 
     //특정 아이디가 쓴 댓글을 조회
     Page<ShortsReply> findAllByWriterId(String id,Pageable pageable);
+    //내꺼 갯수 반환
+    int countByWriterId(String id);
 }

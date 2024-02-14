@@ -14,4 +14,6 @@ public interface ApplyReplyRepository extends JpaRepository<ApplyReply,Long> {
 
     //게시판별 댓글 수 조회
     int countByApplyId(Long id);
+    //내꺼 갯수 반환
+    int countByWriterId(String id);
 }

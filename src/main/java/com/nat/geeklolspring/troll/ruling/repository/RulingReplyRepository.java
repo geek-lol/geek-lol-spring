@@ -16,5 +16,7 @@ public interface RulingReplyRepository extends JpaRepository<RulingReply,Long> {
 
     //게시글 별 댓글조회
     int countByRulingId(Long id);
+    //내꺼 갯수 반환
+    int countByWriterId(String id);
 
 }

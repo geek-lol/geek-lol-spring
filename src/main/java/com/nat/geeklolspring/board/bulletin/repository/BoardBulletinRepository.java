@@ -30,4 +30,7 @@ public interface BoardBulletinRepository extends JpaRepository<BoardBulletin,Lon
     //해당 유저가 쓴 글 조회
     Page<BoardBulletin> findAllByPosterId(String id, Pageable pageable);
 
+    //내꺼 갯수 반환
+    int countByPosterId(String id);
+
 }

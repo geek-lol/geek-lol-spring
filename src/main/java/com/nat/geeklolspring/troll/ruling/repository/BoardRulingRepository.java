@@ -14,5 +14,7 @@ public interface BoardRulingRepository extends JpaRepository<BoardRuling, Long> 
 
     //내꺼 조회
     Page<BoardRuling> findAllByRulingPosterId(String id, Pageable pageable);
+    //내꺼 갯수 반환
+    int countByRulingPosterId(String id);
 
 }

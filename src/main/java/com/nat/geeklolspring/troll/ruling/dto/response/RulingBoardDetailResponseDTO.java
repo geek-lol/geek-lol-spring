@@ -46,6 +46,17 @@ public class RulingBoardDetailResponseDTO {
         this.viewCount = boardRuling.getViewCount();
         this.applyPosterName = boardRuling.getRulingPosterName();
     }
+    public RulingBoardDetailResponseDTO(BoardRuling boardRuling,int replyCount) {
+        this.rulingId = boardRuling.getRulingId();
+        this.rulingLink =boardRuling.getRulingLink();
+        this.rulingDate = boardRuling.getRulingDate();
+        this.title = boardRuling.getTitle();
+        this.content = boardRuling.getContent();
+        this.applyPosterId = boardRuling.getRulingPosterId();
+        this.viewCount = boardRuling.getViewCount();
+        this.applyPosterName = boardRuling.getRulingPosterName();
+        this.replyCount = replyCount;
+    }
     public BoardRuling toEntity(){
         return BoardRuling.builder()
                 .rulingPosterId(applyPosterId)

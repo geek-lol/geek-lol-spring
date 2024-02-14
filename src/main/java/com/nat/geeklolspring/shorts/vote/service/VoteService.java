@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.vote.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
@@ -22,7 +23,8 @@ public class VoteService {
         String userId = userInfo.getUserId();
 
         VoteCheck voteCheck = voteCheckRepository.findByShortsIdAndReceiver(shortsId, userId);
-
+        BoardShorts shorts = shortsRepository.findByShortsId(shortsId);
+        int i = shorts.getUpCount();
         // 해당 동영상에 대한 나의 좋아요 정보가 없다면 null을 리턴
         if(voteCheck == null) {
             log.warn("vote 정보가 없습니다.");
@@ -31,6 +33,7 @@ public class VoteService {
         else
             return VoteResponseDTO.builder()
                     .up(voteCheck.getUp())
+                    .total(i)
                     .build();
 
     }
@@ -51,9 +54,11 @@ public class VoteService {
         // 좋아요 등록에 따른 좋아요 카운트 증가
         shortsRepository.plusUpCount(dto.getShortsId());
 
+        BoardShorts shorts = shortsRepository.findByShortsId(dto.getShortsId());
+        int i = shorts.getUpCount();
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 
-        return new VoteResponseDTO(saved);
+        return new VoteResponseDTO(saved,i);
     }
 
     public VoteResponseDTO changeVote(VoteCheck vote) {

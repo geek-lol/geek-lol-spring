@@ -36,8 +36,8 @@ public class MyPageService {
     public MyPageResponseDTO showCount(TokenUserInfo userInfo){
         String id = userInfo.getUserId();
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
-        int b = countBoard(id,user);
-        int r = countReply(id,user);
+        int b = countBoard(user);
+        int r = countReply(user);
 
         return MyPageResponseDTO.builder()
                 .boardCount(b)
@@ -45,13 +45,12 @@ public class MyPageService {
                 .build();
     }
     //내 게시글 갯수 세기
-    public int countBoard(String id,User user){
+    public int countBoard(User user){
         try {
-            Integer board = boardBulletinRepository.countByPosterId(id);
+            Integer board = boardBulletinRepository.countByUser(user);
             Integer ruling = boardRulingRepository.countByRulingPosterId(user);
             Integer apply = rulingApplyRepository.countByUserId(user);
-            Integer shorts = shortsRepository.countByUploaderId(id);
-            log.warn("board,ruling,apply,shorts:{},{},{},{}",board,ruling,apply,shorts);
+            Integer shorts = shortsRepository.countByUploaderId(user);
 
             return board+ruling+apply+shorts;
         }catch (NullPointerException e){
@@ -60,8 +59,8 @@ public class MyPageService {
         }
     }
     //내 댓글 갯수 세기
-    public int countReply(String id,User user){
-        Integer board = boardReplyRepository.countByReplyWriterId(id);
+    public int countReply(User user){
+        Integer board = boardReplyRepository.countByWriterUser(user);
         Integer ruling = rulingReplyRepository.countByRulingWriterId(user);
         Integer apply = applyReplyRepository.countByUserId(user);
         Integer shorts = shortsReplyRepository.countByWriterId(user);

@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsboard.repository;
 
 import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,8 +34,8 @@ public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
 
     BoardShorts findByShortsId(Long id);
 
-    Page<BoardShorts> findAllByUploaderId(String id,Pageable pageable);
+    Page<BoardShorts> findAllByUploaderId(User uploaderId, Pageable pageable);
 
     //내꺼 갯수 반환
-    int countByUploaderId(String id);
+    int countByUploaderId(User uploaderId);
 }

@@ -1,6 +1,8 @@
 package com.nat.geeklolspring.board.vote.dto.request;
 
+import com.nat.geeklolspring.entity.BoardBulletin;
 import com.nat.geeklolspring.entity.BulletinCheck;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -17,9 +19,10 @@ public class BoardVotePostRequestDTO {
     @NotNull
     private Long boardId;
 
-    public BulletinCheck toEntity(BoardVotePostRequestDTO dto) {
+    public BulletinCheck toEntity(BoardBulletin bulletin, User user) {
         return BulletinCheck.builder()
-                .bulletinId(dto.boardId)
+                .bulletin(bulletin)
+                .user(user)
                 .build();
     }
 }

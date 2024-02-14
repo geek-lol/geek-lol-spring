@@ -155,7 +155,8 @@ public class ShortsService {
 
     public ShortsListResponseDTO myUploadShort(TokenUserInfo userInfo, Pageable pageInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-        Page<BoardShorts> shortsList = shortsRepository.findAllByUploaderId(userInfo.getUserId(),pageable);
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        Page<BoardShorts> shortsList = shortsRepository.findAllByUploaderId(user,pageable);
 
         List<ShortsMyPageResponseDTO> myShorts = shortsList.stream()
                 .map(ShortsMyPageResponseDTO::new)

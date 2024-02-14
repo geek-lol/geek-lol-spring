@@ -2,6 +2,7 @@ package com.nat.geeklolspring.game.dto.response;
 
 import com.nat.geeklolspring.entity.CsGameRank;
 import com.nat.geeklolspring.entity.ResGameRank;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,33 +25,31 @@ public class GameRankResponseDTO {
 
     public GameRankResponseDTO(ResGameRank rank){
         this.gameId = rank.getGameId();
-        this.userId = rank.getUserId();
-        this.userName = rank.getUserName();
+        this.userId = rank.getUser().getId();
+        this.userName = rank.getUser().getUserName();
         this.score = rank.getScore();
         recordDate = rank.getRecordDate();
     }
     public GameRankResponseDTO(CsGameRank rank){
         this.gameId = rank.getGameId();
-        this.userId = rank.getUserId();
-        this.userName = rank.getUserName();
+        this.userId = rank.getUser().getId();
+        this.userName = rank.getUser().getUserName();
         this.score = rank.getScore();
         recordDate = rank.getRecordDate();
     }
-    public ResGameRank resToEntity(){
+    public ResGameRank resToEntity(User user){
         return ResGameRank.builder()
                 .gameId(gameId)
-                .userId(userId)
+                .user(user)
                 .score(score)
-                .userName(userName)
                 .recordDate(recordDate)
                 .build();
     }
-    public CsGameRank csToEntity(){
+    public CsGameRank csToEntity(User user){
         return CsGameRank.builder()
                 .gameId(gameId)
-                .userId(userId)
+                .user(user)
                 .score(score)
-                .userName(userName)
                 .recordDate(recordDate)
                 .build();
     }

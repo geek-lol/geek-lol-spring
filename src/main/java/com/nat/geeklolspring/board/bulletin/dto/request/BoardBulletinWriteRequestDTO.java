@@ -28,14 +28,12 @@ public class BoardBulletinWriteRequestDTO {
     @Builder.Default
     private int boardReportCount = 0;
 
-    public BoardBulletin toEntity(String fileUrl) {
+    public BoardBulletin toEntity(String fileUrl,User user) {
         return BoardBulletin.builder()
                 .title(title)
                 .boardContent(content)
-                .posterId(posterId)
-                .posterName(posterName)
                 .boardMedia(fileUrl)
-                .boardReportCount(boardReportCount)
+                .user(user)
                 .build();
     }
 

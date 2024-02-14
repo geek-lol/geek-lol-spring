@@ -8,6 +8,8 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResp
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
+import com.nat.geeklolspring.entity.User;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +36,7 @@ public class BoardBulletinService {
     private String rootPath;
 
     private final BoardBulletinRepository boardBulletinRepository;
-
+    private final UserRepository userRepository;
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve() {
 
@@ -55,12 +57,8 @@ public class BoardBulletinService {
                                                  TokenUserInfo userInfo
                                                  , String fileUrl
                                                  ){
-
-        BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(fileUrl));
-
-        boardBulletin.setPosterId(userInfo.getUserId());
-
-        boardBulletin.setPosterName(userInfo.getUserName());
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(fileUrl,user));
 
         BoardBulletin save = boardBulletinRepository.save(boardBulletin);
 
@@ -74,7 +72,6 @@ public class BoardBulletinService {
     // 글 삭제
 
     public void delete(TokenUserInfo userInfo, BoardBulletinDeleteResponseDTO dto) {
-
         if (!Objects.equals(dto.getPosterId(), userInfo.getUserId())) {
             log.warn("삭제할 권한이 없습니다!! - {}", dto.getPosterId());
             throw new RuntimeException("삭제 권한이 없습니다");
@@ -112,7 +109,7 @@ public class BoardBulletinService {
             if(titleKeyword != null)
                 boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByBoardDateDesc(titleKeyword, pageable);
             else if(posterKeyword != null)
-                boardBulletinList = boardBulletinRepository.findByPosterIdContainingOrderByBoardDateDesc(posterKeyword,pageable);
+                boardBulletinList = boardBulletinRepository.findByUserContainingOrderByBoardDateDesc(posterKeyword,pageable);
             else if(contentKeyword != null)
                 boardBulletinList = boardBulletinRepository.findByBoardContentContainingOrderByBoardDateDesc(contentKeyword,pageable);
             else
@@ -121,7 +118,7 @@ public class BoardBulletinService {
             if(titleKeyword != null)
                 boardBulletinList = boardBulletinRepository.findByTitleContainingOrderByUpCountDesc(titleKeyword, pageable);
             else if(posterKeyword != null)
-                boardBulletinList = boardBulletinRepository.findByPosterIdContainingOrderByUpCountDesc(posterKeyword,pageable);
+                boardBulletinList = boardBulletinRepository.findByUserContainingOrderByUpCountDesc(posterKeyword,pageable);
             else if(contentKeyword != null)
                 boardBulletinList = boardBulletinRepository.findByBoardContentContainingOrderByUpCountDesc(contentKeyword,pageable);
             else
@@ -152,10 +149,10 @@ public class BoardBulletinService {
         boardBulletinRepository.save(boardBulletin);
 
         return BoardBulletinDetailResponseDTO.builder()
-                .posterName(boardBulletin.getPosterName())
+                .posterName(boardBulletin.getUser().getUserName())
                 .bulletinId(boardBulletin.getBulletinId())
                 .title(boardBulletin.getTitle())
-                .posterId(boardBulletin.getPosterId())
+                .posterId(boardBulletin.getUser().getId())
                 .content(boardBulletin.getBoardContent())
                 .boardMedia(boardBulletin.getBoardMedia())
                 .localDateTime(boardBulletin.getBoardDate())
@@ -177,14 +174,13 @@ public class BoardBulletinService {
         }
 
         dto.setBoardDate(boardBulletin.get().getBoardDate());
-        dto.setPosterName(boardBulletin.get().getPosterName());
+        dto.setPosterName(boardBulletin.get().getUser().getUserName());
         dto.setViewCount(boardBulletin.get().getViewCount());
-        dto.setBoardReportCount(boardBulletin.get().getBoardReportCount());
         dto.setUpCount(boardBulletin.get().getUpCount());
 
         log.info("dto : {}",dto);
 
-        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath,dto.getTitle(),dto.getContent()));
+        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(filePath,boardBulletin.get().getUser()));
 
         return new BoardBulletinDetailResponseDTO(saveData);
 
@@ -193,8 +189,8 @@ public class BoardBulletinService {
     //내가 쓴 글 조회 하기
     public BoardBulletinResponseDTO findByMyBullentin(Pageable pageInfo, TokenUserInfo userInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-
-        Page<BoardBulletin> boardBulletinList = boardBulletinRepository.findAllByPosterId(userInfo.getUserId(), pageable);
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        Page<BoardBulletin> boardBulletinList = boardBulletinRepository.findAllByUser(user, pageable);
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
                 .map(BoardBulletinDetailResponseDTO::new)

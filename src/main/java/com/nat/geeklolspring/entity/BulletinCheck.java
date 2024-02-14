@@ -23,20 +23,12 @@ public class BulletinCheck {
     @Column(name = "check_good")
     private int good = 0;
 
-    @Column(name = "user_id")
-    private String receiver;
-
-    @Column(name = "board_id")
-    private Long bulletinId;
-
-
-
     // fk가 필요한 곳
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "bulletin_checker_id")
-//    private User bulletinCheckerId;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "bulletin_id")
-//    private BoardBulletin boardBulletinId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bulletin_id")
+    private BoardBulletin bulletin;
 }

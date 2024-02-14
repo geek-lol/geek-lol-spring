@@ -22,7 +22,7 @@ public class AdminPageBoardBulletinResponseDTO {
 
     public AdminPageBoardBulletinResponseDTO (BoardBulletin boardBulletin){
         this.bulletinId = boardBulletin.getBulletinId();
-        this.posterName = boardBulletin.getPosterName();
+        this.posterName = boardBulletin.getUser().getUserName();
         this.title = boardBulletin.getTitle();
         this.viewCount = boardBulletin.getViewCount();
         this.localDateTime = boardBulletin.getBoardDate();

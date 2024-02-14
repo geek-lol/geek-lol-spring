@@ -2,10 +2,12 @@ package com.nat.geeklolspring.game.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.CsGameRank;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.game.dto.request.GameRankRequestDTO;
 import com.nat.geeklolspring.game.dto.response.GameRankListResponseDTO;
 import com.nat.geeklolspring.game.dto.response.GameRankResponseDTO;
 import com.nat.geeklolspring.game.repository.CsGameRankRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class CsGameRankService {
     private final CsGameRankRepository csGameRankRepository;
+    private final UserRepository userRepository;
 
     // 랭킹 조회
     public GameRankListResponseDTO findRank(){
@@ -35,6 +38,7 @@ public class CsGameRankService {
     }
     // 랭킹 저장
     public GameRankListResponseDTO addRank(GameRankRequestDTO dto, TokenUserInfo userInfo){
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // 근데 랭킹에 이미 있고, 원래 점수보다 높으면 수정해서 저장
         CsGameRank userRankInfo = csGameRankRepository.findByUserId(userInfo.getUserId());
         GameRankResponseDTO gameRankResponseDTO;
@@ -52,7 +56,7 @@ public class CsGameRankService {
                     .build();
         }
         // DB에 저장된 스코어보다 새로 저장될 스코어가 클 경우
-        csGameRankRepository.save(gameRankResponseDTO.csToEntity());
+        csGameRankRepository.save(gameRankResponseDTO.csToEntity(user));
         return findRank();
 
     }

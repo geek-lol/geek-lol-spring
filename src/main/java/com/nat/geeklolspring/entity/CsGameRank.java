@@ -22,18 +22,17 @@ public class CsGameRank {
     @Column(name = "csgame_id")
     private Long gameId;
 
-    @Column(name = "user_id")
-    private String userId;
-
-    @Column(name = "user_name")
-    private String userName;
-
     @Column(name = "csgame_score")
     private float score;
 
     @CreationTimestamp
     @Column(name = "record_date", updatable = false)
     private LocalDateTime recordDate;
+
+    // fk가 필요한 곳
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 }

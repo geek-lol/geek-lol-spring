@@ -2,6 +2,7 @@ package com.nat.geeklolspring.shorts.shortsboard.dto.request;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,13 +19,12 @@ public class ShortsPostRequestDTO {
     private String context;
     private MultipartFile videoLink;
 
-    public BoardShorts toEntity(String videoLink, TokenUserInfo userInfo) {
+    public BoardShorts toEntity(String videoLink, User user) {
         return BoardShorts.builder()
                 .title(title)
                 .context(context)
                 .videoLink(videoLink)
-                .uploaderId(userInfo.getUserId())
-                .uploaderName(userInfo.getUserName())
+                .uploaderId(user)
                 .build();
     }
 }

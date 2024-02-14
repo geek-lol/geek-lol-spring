@@ -23,15 +23,6 @@ public class ShortsReply {
     @Column(name = "reply_id")
     private Long id; // 댓글 고유 Id
 
-    @Column(name = "user_id")
-    private String writerId; // 작성자
-
-    @Column(name = "user_name")
-    private String writerName; // 작성자 닉네임
-
-    @Column(name = "shorts_id")
-    private Long shortsId; // 해당 댓글이 쓰인 쇼츠의 Id
-
     @Column(name = "reply_text")
     private String context; // 댓글 내용
 
@@ -39,20 +30,12 @@ public class ShortsReply {
     @Column(name = "shorts_reply_date")
     private LocalDateTime replyDate; // 작성날짜
 
-    @Builder.Default
-    @Column(name = "shorts_reply_modify")
-    private int modify = 0; // 댓글 수정 횟수
-
-
-
-
-
     // fk가 필요한 곳
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-//    private User user;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "shorts_id", insertable = false, updatable = false)
-//    private BoardShorts boardShorts;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", updatable = false)
+    private User writerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shorts_id", updatable = false)
+    private BoardShorts shortsId;
 }

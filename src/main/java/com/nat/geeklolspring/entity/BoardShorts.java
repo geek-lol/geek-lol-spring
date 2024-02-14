@@ -24,12 +24,6 @@ public class BoardShorts {
     @Column(name = "shorts_id")
     private Long shortsId; // 쇼츠 고유 아이디, 자동생성
 
-    @Column(name = "poster_id")
-    private String uploaderId; // 작성자 아이디
-
-    @Column(name = "poster_name")
-    private String uploaderName; // 작성자 닉네임
-
     @CreationTimestamp
     @Column(name = "shorts_date", updatable = false)
     private LocalDateTime uploadDate;
@@ -55,22 +49,8 @@ public class BoardShorts {
     @Column(name = "vote_up")
     private int upCount = 0;
 
-    @Builder.Default
-    @Column(name = "shorts_report_count")
-    private int reportCount = 0;
-
-
-
-
-
     // fk가 필요한 곳
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
-
-//    @OneToMany(mappedBy = "shortsId")
-//    private List<ShortsReply> shortsReplyId = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "shortsId")
-//    private List<VoteCheck> shortsVoteId = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User uploaderId;
 }

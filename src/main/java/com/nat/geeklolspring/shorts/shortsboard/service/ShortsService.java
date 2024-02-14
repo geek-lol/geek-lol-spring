@@ -2,6 +2,7 @@ package com.nat.geeklolspring.shorts.shortsboard.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
@@ -9,6 +10,7 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailRespons
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsMyPageResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,23 +32,24 @@ import java.util.stream.Collectors;
 @Transactional  // JPA 사용시 필수
 public class ShortsService {
     private final ShortsRepository shortsRepository;
+    private final UserRepository userRepository;
 
     @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;
 
     public void insertVideo(ShortsPostRequestDTO dto, String videoPath, TokenUserInfo userInfo) {
         log.debug("쇼츠 등록 서비스 실행!");
-
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // DB에 저장될 형식에 맞게 엔티티화
-        BoardShorts shorts = dto.toEntity(videoPath, userInfo);
+        BoardShorts shorts = dto.toEntity(videoPath, user);
         // DB에 저장
         shortsRepository.save(shorts);
     }
 
     public void deleteShorts(Long id, TokenUserInfo userInfo) {
         BoardShorts shorts = shortsRepository.findById(id).orElseThrow();
-
-        boolean flag = TokenUtil.EqualsId(shorts.getUploaderId(), userInfo);
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        boolean flag = shorts.getUploaderId().equals(user);
         try {
             if(flag) {
                 // id값에 해당하는 동영상 삭제

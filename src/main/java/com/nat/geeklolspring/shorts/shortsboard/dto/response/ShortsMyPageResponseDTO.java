@@ -23,7 +23,7 @@ public class ShortsMyPageResponseDTO {
 
     public ShortsMyPageResponseDTO(BoardShorts shorts) {
         this.shortsId = shorts.getShortsId();
-        this.uploaderId = shorts.getUploaderId();
+        this.uploaderId = shorts.getUploaderId().getId();
         this.title = shorts.getTitle();
         this.viewCount = shorts.getViewCount();
         this.upCount = shorts.getUpCount();

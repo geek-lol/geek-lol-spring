@@ -53,12 +53,6 @@ public class MyPageService {
             Integer shorts = shortsRepository.countByUploaderId(id);
             log.warn("board,ruling,apply,shorts:{},{},{},{}",board,ruling,apply,shorts);
 
-            // Null checks
-            board = (board != null) ? board : 0;
-            ruling = (ruling != null) ? ruling : 0;
-            apply = (apply != null) ? apply : 0;
-            shorts = (shorts != null) ? shorts : 0;
-
             return board+ruling+apply+shorts;
         }catch (NullPointerException e){
             log.warn("뭐가 null이게~,{}",e.getMessage());
@@ -70,7 +64,7 @@ public class MyPageService {
         Integer board = boardReplyRepository.countByReplyWriterId(id);
         Integer ruling = rulingReplyRepository.countByRulingWriterId(user);
         Integer apply = applyReplyRepository.countByUserId(user);
-        Integer shorts = shortsReplyRepository.countByWriterId(id);
+        Integer shorts = shortsReplyRepository.countByWriterId(user);
 
         return board+ruling+apply+shorts;
     }

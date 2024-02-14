@@ -46,15 +46,7 @@ public class BoardApply {
     @Column(name = "view_count")
     private int viewCount = 0;
 
-//    @Column(name = "applyPosterId")
-//    private String applyPosterId;
-//
-//    @Column(name = "applyPosterName")
-//    private String applyPosterName;
     // fk가 필요한 곳
-//    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<VoteApply> voteApplies = new ArrayList<>();
-
     //작성자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", updatable = false)

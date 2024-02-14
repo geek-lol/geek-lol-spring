@@ -1,12 +1,15 @@
 package com.nat.geeklolspring.shorts.vote.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.vote.dto.request.VotePostRequestDTO;
 import com.nat.geeklolspring.shorts.vote.dto.response.VoteResponseDTO;
 import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.shorts.vote.repository.VoteCheckRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,12 @@ import org.springframework.stereotype.Service;
 public class VoteService {
     private final VoteCheckRepository voteCheckRepository;
     private final ShortsRepository shortsRepository;
-
+    private final UserRepository userRepository;
     public VoteResponseDTO getVote(long shortsId, TokenUserInfo userInfo) {
-        String userId = userInfo.getUserId();
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        BoardShorts shorts = shortsRepository.findByShortsId(shortsId);
 
-        VoteCheck voteCheck = voteCheckRepository.findByShortsIdAndReceiver(shortsId, userId);
+        VoteCheck voteCheck = voteCheckRepository.findByShortsAndUser(shorts,user);
 
         // 해당 동영상에 대한 나의 좋아요 정보가 없다면 null을 리턴
         if(voteCheck == null) {
@@ -37,15 +41,15 @@ public class VoteService {
 
     public VoteResponseDTO createVote(VotePostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("좋아요 저장 서비스 실행!");
-
+        BoardShorts shorts = shortsRepository.findByShortsId(dto.getShortsId());
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // 필요한 정보가 잘 입력되어 있는지 확인
-        if (dto.getShortsId() == null) {
-            throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
+        if (shorts == null || user == null) {
+            throw new DTONotFoundException("shortsId or userInfo를 확인하세요 ");
         }
 
-        VoteCheck entity = dto.toEntity(dto);
-        entity.setReceiver(userInfo.getUserId());
-
+        VoteCheck entity = dto.toEntity(shorts,user);
+        log.error("쇼츠 좋아요 저장될 엔터티 : {},{}",entity.getShorts(),entity.getUser());
         // 좋아요 등록
         VoteCheck saved = voteCheckRepository.save(entity);
         // 좋아요 등록에 따른 좋아요 카운트 증가
@@ -60,12 +64,12 @@ public class VoteService {
         // vote 값 수정
         if (vote.getUp() == 1) {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
-            shortsRepository.downUpCount(vote.getShortsId());
+            shortsRepository.downUpCount(vote.getShorts().getShortsId());
             vote.setUp(0);
         }
         else {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
-            shortsRepository.plusUpCount(vote.getShortsId());
+            shortsRepository.plusUpCount(vote.getShorts().getShortsId());
             vote.setUp(1);
         }
 
@@ -90,7 +94,9 @@ public class VoteService {
     }
 
     public VoteCheck findVote(long shortsId, String accountId) {
+        BoardShorts shorts = shortsRepository.findByShortsId(shortsId);
+        User user = userRepository.findById(accountId).orElseThrow();
         // 쇼츠 아이디와 계정명이 일치하는 vote정보를 리턴
-        return voteCheckRepository.findByShortsIdAndReceiver(shortsId, accountId);
+        return voteCheckRepository.findByShortsAndUser(shorts,user);
     }
 }

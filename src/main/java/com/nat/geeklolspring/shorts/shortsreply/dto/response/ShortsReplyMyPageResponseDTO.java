@@ -24,10 +24,10 @@ public class ShortsReplyMyPageResponseDTO {
 
     public ShortsReplyMyPageResponseDTO(ShortsReply reply) {
         this.replyId = reply.getId();
-        this.writerId = reply.getWriterId();
-        this.writerName = reply.getWriterName();
+        this.writerId = reply.getWriterId().getId();
+        this.writerName = reply.getWriterId().getUserName();
         this.context = reply.getContext();
         this.replyDate = reply.getReplyDate();
-        this.shortId = reply.getShortsId();
+        this.shortId = reply.getShortsId().getShortsId();
     }
 }

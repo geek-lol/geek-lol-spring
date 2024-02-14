@@ -48,7 +48,7 @@ public class MyPageService {
     public int countBoard(String id,User user){
         try {
             Integer board = boardBulletinRepository.countByPosterId(id);
-            Integer ruling = boardRulingRepository.countByRulingPosterId(id);
+            Integer ruling = boardRulingRepository.countByRulingPosterId(user);
             Integer apply = rulingApplyRepository.countByUserId(user);
             Integer shorts = shortsRepository.countByUploaderId(id);
             log.warn("board,ruling,apply,shorts:{},{},{},{}",board,ruling,apply,shorts);
@@ -68,7 +68,7 @@ public class MyPageService {
     //내 댓글 갯수 세기
     public int countReply(String id,User user){
         Integer board = boardReplyRepository.countByReplyWriterId(id);
-        Integer ruling = rulingReplyRepository.countByWriterId(id);
+        Integer ruling = rulingReplyRepository.countByRulingWriterId(user);
         Integer apply = applyReplyRepository.countByUserId(user);
         Integer shorts = shortsReplyRepository.countByWriterId(id);
 

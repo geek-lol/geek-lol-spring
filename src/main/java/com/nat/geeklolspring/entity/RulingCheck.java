@@ -27,18 +27,12 @@ public class RulingCheck {
     @Column(name = "vote_cons")
     private int cons = 0;
 
-    @Column(name = "voter_id")
-    private String rulingVoter;
-
-    @Column(name = "ruling_id")
-    private Long rulingId;
-
 //    // fk가 필요한 곳
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "voter_id")
-//    private User rulingVoter;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "ruling_id")
-//    private BoardRuling rulingId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voter_id")
+    private User rulingVoter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ruling_id")
+    private BoardRuling rulingId;
 }

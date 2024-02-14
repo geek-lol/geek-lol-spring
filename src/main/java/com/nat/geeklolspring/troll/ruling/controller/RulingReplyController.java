@@ -51,7 +51,9 @@ public class RulingReplyController {
             }
 
             // 정상적으로 실행되서 댓글 리스트를 리턴하는 부분
-            return ResponseEntity.ok().body(replyList);
+            ResponseEntity<RulingReplyListResponseDTO> body = ResponseEntity.ok().body(replyList);
+//            log.error("body replyList : {}",body);
+            return body;
 
         } catch (BadRequestException e) {
             return ResponseEntity
@@ -140,42 +142,6 @@ public class RulingReplyController {
     }
 
 
-    // 댓글 수정 컨트롤러
-    @RequestMapping(method = {PUT, PATCH})
-    public ResponseEntity<?> updateShortsReply(@RequestBody RulingReplyUpdateRequestDTO dto,
-                                               @AuthenticationPrincipal TokenUserInfo userInfo) {
-        log.info("api/shorts/reply : PATCH");
-        log.debug("서버에서 받은 값 : {}", dto);
-
-        // 데이터를 정상적으로 전달받았는지 확인
-        if(dto.getReplyId() == null || dto.getContext().isEmpty()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(RulingReplyListResponseDTO
-                            .builder()
-                            .error("필요한 값 중에 비어있는 값이 있습니다!")
-                            .build());
-        }
-
-        try {
-            // 댓글을 DB에서 수정하는 서비스 호출
-            rulingReplyService.updateReply(dto, userInfo);
-
-            return ResponseEntity.ok().body(null);
-
-        } catch (NotEqualTokenException e) {
-            log.warn("댓글 작성자만 수정할 수 있습니다!");
-            return ResponseEntity
-                    .badRequest()
-                    .body(RulingReplyListResponseDTO
-                            .builder()
-                            .error(e.getMessage())
-                            .build());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(RulingReplyListResponseDTO.builder().error(e.getMessage()));
-        }
-    }
     //로그인한 사람 게시물 조회하기
     @GetMapping("/my")
     public ResponseEntity<?> findMyBoard(

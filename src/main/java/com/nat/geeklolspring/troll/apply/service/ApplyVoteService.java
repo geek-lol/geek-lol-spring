@@ -1,11 +1,13 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.VoteApply;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyVotePostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
+import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,9 +21,11 @@ import javax.transaction.Transactional;
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
     private final RulingApplyService rulingApplyService;
+    private final RulingApplyRepository rulingApplyRepository;
 
 
     public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
+        Long applyId = dto.getApplyId();
         log.debug("좋아요 저장 서비스 실행!");
 
         // 필요한 정보가 잘 입력되어 있는지 확인
@@ -35,8 +39,8 @@ public class ApplyVoteService {
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
         rulingApplyService.agrees(dto.getApplyId());
-        int i = voteCheckRepository.countByApplyId(dto.getApplyId());
-
+        BoardApply boardApply = rulingApplyRepository.findById(dto.getApplyId()).orElseThrow();
+        int i = boardApply.getUpCount();
         log.info("좋아요 정보 저장 성공! 정보 : {}", i);
 
         return new ApplyVoteResponseDTO(saved,i);

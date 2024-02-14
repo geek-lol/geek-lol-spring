@@ -23,7 +23,6 @@ public class AdminPageUserResponseDTO {
     private String profileImage;
     private int reportCount;
     private Role role;
-    @JsonProperty("join-date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime joinDate;
 

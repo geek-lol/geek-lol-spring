@@ -16,7 +16,6 @@ public class ShortsMyPageResponseDTO {
     // 웹사이트에 보내줄(보여줄) 정보들
     private Long shortsId;
     private String uploaderId;
-    private String posterName;
     private String title;
     private int viewCount;
     private int upCount;
@@ -28,5 +27,6 @@ public class ShortsMyPageResponseDTO {
         this.title = shorts.getTitle();
         this.viewCount = shorts.getViewCount();
         this.upCount = shorts.getUpCount();
+        this.localDateTime = shorts.getUploadDate();
     }
 }

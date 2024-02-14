@@ -29,5 +29,8 @@ public interface RulingApplyRepository extends JpaRepository<BoardApply,Long> {
 
     Page<BoardApply> findByApplyPosterId(String id, Pageable pageable);
 
+    //내꺼 갯수 반환
+    int countByApplyPosterId(String id);
+
 
 }

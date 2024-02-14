@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
@@ -37,9 +38,10 @@ public class RulingApplyController {
     @GetMapping
     public ResponseEntity<?> findAllBoard(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo,
-            @RequestHeader(name = "Apply-Order-Header", required = false) String orderType
+            @RequestParam(name = "type", required = false) String orderType
     ){
         log.info("트롤 지원 조회 실행");
+        log.info("{}",orderType);
         try {
             RulingApplyResponseDTO applyBoardList = rulingApplyService.findAllBoard(pageInfo,orderType);
             return ResponseEntity.ok().body(applyBoardList);
@@ -56,7 +58,7 @@ public class RulingApplyController {
     @PostMapping
     public ResponseEntity<?> createBoard(
             @Validated @RequestPart("board") RulingApplyRequestDTO dto,
-            @RequestPart(value = "boardFile", required = false) MultipartFile boardFile,
+            @RequestPart(value = "boardFile") MultipartFile boardFile,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
         log.info("트롤 지원 만들기 실행");
@@ -110,7 +112,7 @@ public class RulingApplyController {
     }
 
     // 게시판 검색하기
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<?> searchBoard(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo,
             @RequestBody ApplySearchRequestDTO dto
@@ -127,10 +129,19 @@ public class RulingApplyController {
         }
     }
 
+    //비디오인지 체크하는 패치
+    @PostMapping("/check-video")
+    public ResponseEntity<?> checkVideo(
+            @RequestPart(value = "boardFile") MultipartFile boardFile
+    ){
+        int i = rulingApplyService.CheckFile(boardFile);
+        return ResponseEntity.ok().body(i);
+    }
+
     //비디오 파일 불러오기
-    @PostMapping("/load-video/{applyId}")
+    @GetMapping("/load-video")
     public ResponseEntity<?> loadVideo(
-            @PathVariable Long applyId
+            @RequestParam Long applyId
     ){
 
         try {
@@ -179,6 +190,19 @@ public class RulingApplyController {
                     .body(RulingApplyResponseDTO
                             .builder()
                             .error(e.getMessage()));
+        }
+    }
+
+    //초기화 될 날짜 반환
+    @GetMapping("/endTime")
+    public ResponseEntity<?> endTime(){
+        log.info("endTime 실행함니다.");
+        try {
+            LocalDateTime localDateTime = rulingApplyService.threeDayAfter();
+            return ResponseEntity.ok().body(localDateTime);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError()
+                    .body(e.getMessage());
         }
     }
 }

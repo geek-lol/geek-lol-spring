@@ -139,8 +139,9 @@ public class ShortsReplyService {
     }
 
     //내가 쓴 댓글 조회
-    public ShortsReplyListResponseDTO findMyReply(TokenUserInfo userInfo){
-        List<ShortsReply> shortsList = shortsReplyRepository.findAllByWriterId(userInfo.getUserId());
+    public ShortsReplyListResponseDTO findMyReply(TokenUserInfo userInfo, Pageable pageInfo){
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Page<ShortsReply> shortsList = shortsReplyRepository.findAllByWriterId(userInfo.getUserId(),pageable);
 
         List<ShortsReplyMyPageResponseDTO> myShorts = shortsList.stream()
                 .map(reply -> {
@@ -157,6 +158,7 @@ public class ShortsReplyService {
         return ShortsReplyListResponseDTO
                 .builder()
                 .myreplys(myShorts)
+                .totalPages(shortsList.getTotalPages())
                 .build();
     }
 }

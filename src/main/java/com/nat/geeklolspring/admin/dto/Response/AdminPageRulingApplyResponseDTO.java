@@ -15,15 +15,19 @@ public class AdminPageRulingApplyResponseDTO {
 
     private Long applyId;
     private String title;
-    private int reportCount;
-    private LocalDateTime apply_date;
+    private LocalDateTime localDateTime;
     private String applyPosterId;
+    private String posterName;
+    private int viewCount;
+    private int upCount;
 
     public AdminPageRulingApplyResponseDTO(BoardApply boardApply){
         this.applyId = boardApply.getApplyId();
         this.title = boardApply.getTitle();
-        this.reportCount = boardApply.getReportCount();
-        this.apply_date = boardApply.getApplyDate();
+        this.localDateTime = boardApply.getApplyDate();
         this.applyPosterId = boardApply.getApplyPosterId().toString();
+        this.posterName = boardApply.getApplyPosterName();
+        this.viewCount = boardApply.getViewCount();
+        this.upCount = boardApply.getUpCount();
     }
 }

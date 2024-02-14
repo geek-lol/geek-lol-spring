@@ -22,6 +22,9 @@ public class RulingBoardDetailResponseDTO {
     private String content;
     private String title;
     private String applyPosterId;
+    private String applyPosterName;
+    private int viewCount;
+    private int replyCount;
 
     public RulingBoardDetailResponseDTO(BoardApply boardApply) {
         this.rulingId = boardApply.getApplyId();
@@ -30,6 +33,8 @@ public class RulingBoardDetailResponseDTO {
         this.title = boardApply.getTitle();
         this.content = boardApply.getContent();
         this.applyPosterId = boardApply.getApplyPosterId();
+        this.applyPosterName = boardApply.getApplyPosterName();
+
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling) {
         this.rulingId = boardRuling.getRulingId();
@@ -38,14 +43,18 @@ public class RulingBoardDetailResponseDTO {
         this.title = boardRuling.getTitle();
         this.content = boardRuling.getContent();
         this.applyPosterId = boardRuling.getRulingPosterId();
+        this.viewCount = boardRuling.getViewCount();
+        this.applyPosterName = boardRuling.getRulingPosterName();
     }
     public BoardRuling toEntity(){
         return BoardRuling.builder()
                 .rulingPosterId(applyPosterId)
+                .rulingPosterName(applyPosterName)
                 .rulingLink(rulingLink)
                 .rulingDate(rulingDate)
                 .content(content)
                 .title(title)
+                .viewCount(viewCount)
                 .build();
     }
 }

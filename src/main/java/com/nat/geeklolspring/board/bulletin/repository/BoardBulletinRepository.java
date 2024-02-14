@@ -27,6 +27,10 @@ public interface BoardBulletinRepository extends JpaRepository<BoardBulletin,Lon
     @Query("update BoardBulletin s set s.upCount = s.upCount - 1 where s.bulletinId = :bulletinId")
     void downUpCount(Long bulletinId);
 
+    //해당 유저가 쓴 글 조회
+    Page<BoardBulletin> findAllByPosterId(String id, Pageable pageable);
 
+    //내꺼 갯수 반환
+    int countByPosterId(String id);
 
 }

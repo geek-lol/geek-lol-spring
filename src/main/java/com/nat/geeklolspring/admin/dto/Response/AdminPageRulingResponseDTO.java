@@ -18,11 +18,16 @@ public class AdminPageRulingResponseDTO {
     private LocalDateTime rulingDate;
     private String title;
     private String applyPosterId;
+    private String applyPosterName;
+    private int viewCount;
 
     public AdminPageRulingResponseDTO(BoardRuling boardRuling) {
+        this.rulingId = boardRuling.getRulingId();
         this.title = boardRuling.getTitle();
         this.rulingDate = boardRuling.getRulingDate();
         this.applyPosterId = boardRuling.getRulingPosterId();
+        this.applyPosterName = boardRuling.getRulingPosterName();
+        this.viewCount = boardRuling.getViewCount();
     }
 
 }

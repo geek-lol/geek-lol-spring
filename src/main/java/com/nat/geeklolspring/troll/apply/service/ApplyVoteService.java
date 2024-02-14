@@ -40,18 +40,16 @@ public class ApplyVoteService {
         VoteApply saved = voteCheckRepository.save(entity);
         rulingApplyRepository.plusUpCount(applyId);
 
-        BoardApply boardApply = rulingApplyRepository.findById(dto.getApplyId()).orElseThrow();
-        int i = boardApply.getUpCount();
-        log.info("좋아요 정보 저장 성공! 정보 : {}", i);
 
-        return new ApplyVoteResponseDTO(saved,i);
+        return new ApplyVoteResponseDTO(saved);
     }
 
     public ApplyVoteResponseDTO getVote(long applyId, TokenUserInfo userInfo) {
         String userId = userInfo.getUserId();
 
         VoteApply voteCheck = voteCheckRepository.findByApplyIdAndReceiver(applyId, userId);
-
+        BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
+        int i = boardApply.getUpCount();
         // 해당 동영상에 대한 나의 좋아요 정보가 없다면 null을 리턴
         if(voteCheck == null) {
             log.warn("vote 정보가 없습니다.");
@@ -60,6 +58,7 @@ public class ApplyVoteService {
         else
             return ApplyVoteResponseDTO.builder()
                     .up(voteCheck.getUp())
+                    .total(i)
                     .build();
 
     }

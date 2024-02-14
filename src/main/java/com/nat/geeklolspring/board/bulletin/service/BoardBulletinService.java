@@ -8,6 +8,8 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResp
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
+import com.nat.geeklolspring.entity.User;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -34,6 +37,7 @@ public class BoardBulletinService {
     private String rootPath;
 
     private final BoardBulletinRepository boardBulletinRepository;
+    private final UserRepository userRepository;
 
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve() {
@@ -58,9 +62,11 @@ public class BoardBulletinService {
 
         BoardBulletin boardBulletin = boardBulletinRepository.save(dto.toEntity(fileUrl));
 
-        boardBulletin.setPosterId(userInfo.getUserId());
+        Optional<User> userOptional = userRepository.findById(userInfo.getUserId());
 
-        boardBulletin.setPosterName(userInfo.getUserName());
+        Stream<User> user = userOptional.stream();
+
+        boardBulletin.setPosterId((User) user);
 
         BoardBulletin save = boardBulletinRepository.save(boardBulletin);
 
@@ -152,10 +158,10 @@ public class BoardBulletinService {
         boardBulletinRepository.save(boardBulletin);
 
         return BoardBulletinDetailResponseDTO.builder()
-                .posterName(boardBulletin.getPosterName())
+                .posterName(boardBulletin.getPosterId().getUserName())
                 .bulletinId(boardBulletin.getBulletinId())
                 .title(boardBulletin.getTitle())
-                .posterId(boardBulletin.getPosterId())
+                .posterId(boardBulletin.getPosterId().getId())
                 .content(boardBulletin.getBoardContent())
                 .boardMedia(boardBulletin.getBoardMedia())
                 .localDateTime(boardBulletin.getBoardDate())
@@ -167,7 +173,7 @@ public class BoardBulletinService {
     //글 수정
     public BoardBulletinDetailResponseDTO modify(BoardBulletinModifyRequestDTO dto,String filePath){
 
-        Optional<BoardBulletin> boardBulletin = boardBulletinRepository.findById(dto.getBulletinId());
+        Optional<BoardBulletin> boardBulletin = boardBulletinRepository.findById(dto.getBulletinId().getBulletinId());
 
         if (dto.getTitle() == null){
             dto.setTitle(boardBulletin.get().getTitle());
@@ -177,14 +183,14 @@ public class BoardBulletinService {
         }
 
         dto.setBoardDate(boardBulletin.get().getBoardDate());
-        dto.setPosterName(boardBulletin.get().getPosterName());
+        dto.setPosterId(boardBulletin.get().getPosterId());
         dto.setViewCount(boardBulletin.get().getViewCount());
         dto.setBoardReportCount(boardBulletin.get().getBoardReportCount());
         dto.setUpCount(boardBulletin.get().getUpCount());
 
         log.info("dto : {}",dto);
 
-        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId(),filePath,dto.getTitle(),dto.getContent()));
+        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(dto.getBulletinId().getBulletinId(),filePath,dto.getTitle(),dto.getContent()));
 
         return new BoardBulletinDetailResponseDTO(saveData);
 

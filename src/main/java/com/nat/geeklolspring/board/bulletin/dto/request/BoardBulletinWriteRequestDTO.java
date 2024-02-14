@@ -21,8 +21,9 @@ public class BoardBulletinWriteRequestDTO {
     @NotBlank
     private String content;
     private String boardMedia;
-    private String posterId;
-    private String posterName;
+
+    private User poster;
+
     @Builder.Default
     private LocalDateTime boardDate = LocalDateTime.now();
     @Builder.Default
@@ -32,8 +33,7 @@ public class BoardBulletinWriteRequestDTO {
         return BoardBulletin.builder()
                 .title(title)
                 .boardContent(content)
-                .posterId(posterId)
-                .posterName(posterName)
+                .posterId(poster)
                 .boardMedia(fileUrl)
                 .boardReportCount(boardReportCount)
                 .build();

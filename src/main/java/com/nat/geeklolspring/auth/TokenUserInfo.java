@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.auth;
 
 import com.nat.geeklolspring.entity.Role;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 @Setter
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Builder
-public class TokenUserInfo {
+public class TokenUserInfo{
 
     private String userId;
     private String userName;

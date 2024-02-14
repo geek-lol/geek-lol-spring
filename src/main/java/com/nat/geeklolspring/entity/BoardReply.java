@@ -32,13 +32,24 @@ public class BoardReply {
     @Column(name = "board_reply_modify")
     private int boardReplyModify;
 
-    @Column(name = "reply_writer_id")
-    private String replyWriterId;
+//    @Column(name = "reply_writer_id")
+//    private String replyWriterId;
 
-    @Column(name = "reply_writer_name")
-    private String replyWriterName;
+//    @Column(name = "reply_writer_name")
+//    private String replyWriterName;
+//
+//    @Column(name = "bulletin_id")
+//    private Long bulletinId;
 
-    @Column(name = "bulletin_id")
-    private Long bulletinId;
+//    --------------------------------
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bulletin_id")
+    private BoardBulletin boardBulletinId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_writer_id")
+    private User replyWriterId;
 
 }

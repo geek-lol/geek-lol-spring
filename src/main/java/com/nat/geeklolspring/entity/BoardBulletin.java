@@ -41,11 +41,6 @@ public class BoardBulletin {
     @Builder.Default
     private int boardReportCount = 0;
 
-    @Column(name = "poster_id")
-    private String posterId;
-
-    @Column(name = "poster_name")
-    private String posterName;
 
     @Builder.Default
     @Column(name = "view_count")
@@ -55,16 +50,29 @@ public class BoardBulletin {
     @Column(name = "up_count")
     private int upCount = 0;
 
+//    @Column(name = "poster_id")
+//    private String posterId;
+
+//    @Column(name = "poster_name")
+//    private String posterName;
+
 
 
     //----------------------------------------
 
-//    @OneToMany(mappedBy = "bulletinId")
-//    private List<BoardReply> boardReply = new ArrayList<>();
-//
-//
-//    @OneToMany(mappedBy = "boardBulletinId")
-//    private List<BulletinCheck> boardBulletinId = new ArrayList<>();
-//
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id")
+    private User posterId;
+
+
+    //----------------------------------------
+
+    @OneToMany(mappedBy = "boardBulletinId")
+    private List<BoardReply> boardReply = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "boardBulletinId")
+    private List<BulletinCheck> boardBulletinId = new ArrayList<>();
+
 
 }

@@ -11,9 +11,11 @@ import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
 import com.nat.geeklolspring.entity.BoardReply;
 import com.nat.geeklolspring.entity.BoardRuling;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingReplyResponseDTO;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 
@@ -35,6 +38,7 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 public class BoardReplyService {
     private final BoardReplyRepository boardReplyRepository;
     private final BoardBulletinRepository boardBulletinRepository;
+    private final UserRepository userRepository;
 
     // 댓글 정보들을 돌려주는 서비스
 
@@ -44,8 +48,12 @@ public class BoardReplyService {
         // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
 
+        Optional<BoardBulletin> boardBulletin = boardBulletinRepository.findById(bulletinId);
+
+        Stream<BoardBulletin> bulletin = boardBulletin.stream();
+
         // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
-        Page<BoardReply> replyList = boardReplyRepository.findAllByBulletinIdOrderByBoardReplyDate(bulletinId, pageable);
+        Page<BoardReply> replyList = boardReplyRepository.findAllByBoardBulletinIdOrderByBoardReplyDate((BoardBulletin) bulletin, pageable);
 
         // 정보를 가공하여 List<DTO>형태로 저장
         List<BoardReplyResponseDTO> allReply = replyList.stream()
@@ -73,11 +81,17 @@ public class BoardReplyService {
             Pageable pageInfo) {
         log.debug("쇼츠 댓글 저장 서비스 실행!");
 
+        BoardBulletin boardBulletin = boardBulletinRepository.findById(id).get();
+
         // dto에 담겨 있던 내용을 Reply 형식으로 변환해 reply에 저장
-        BoardReply reply = dto.toEntity(id);
+        BoardReply reply = dto.toEntity(boardBulletin);
         // 현재 유저 정보의 id와 닉네임을 꺼내서 reply에 저장
-        reply.setReplyWriterId(userInfo.getUserId());
-        reply.setReplyWriterName(userInfo.getUserName());
+
+        Optional<User> userOptional = userRepository.findById(userInfo.getUserId());
+
+        Stream<User> user = userOptional.stream();
+
+        reply.setReplyWriterId((User) user);
 
         // DB에 저장
         boardReplyRepository.save(reply);
@@ -92,7 +106,7 @@ public class BoardReplyService {
         BoardReply reply = boardReplyRepository.findById(replyId).orElseThrow();
 
         try {
-            boolean flag = EqualsId(reply.getReplyWriterId(), userInfo);
+            boolean flag = EqualsId(reply.getReplyWriterId().getId(), userInfo);
             // 토큰의 id와 댓글의 작성자 id가 같으면 실행
             if(flag)
                 // 삭제하지 못하면 Exception 발생
@@ -115,7 +129,7 @@ public class BoardReplyService {
         // 현재 접속한 유저의 id와 쓴 사람의 id를 비교
         // 일치하면 true
         // 일치하지 않으면 false
-        boolean flag = EqualsId(reply.getReplyWriterId(), userInfo);
+        boolean flag = EqualsId(reply.getReplyWriterId().getId(), userInfo);
 
         if(flag) {
             // dto 안에 들어가있는 id값으로 찾은 댓글의 모든 정보를 target에 저장

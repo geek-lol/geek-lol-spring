@@ -53,12 +53,15 @@ public class User {
 //-----------------------------------------
 //    @OneToMany(mappedBy = "reportUserId")
 //    private List<Report> reportUser = new ArrayList<>();
+
+    @OneToMany(mappedBy = "bulletinCheckerId")
+    private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "bulletinCheckerId")
-//    private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "replyWriter")
-//    private List<BoardReply> replyWriter = new ArrayList<>();
+    @OneToMany(mappedBy = "posterId")
+    private List<BoardBulletin> bulletinId = new ArrayList<>();
+
+    @OneToMany(mappedBy = "replyWriterId")
+    private List<BoardReply> replyWriterId = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "uploaderId")
 //    private List<BoardShorts> uploaderId = new ArrayList<>();

@@ -28,8 +28,8 @@ public class BoardBulletinDetailResponseDTO {
 
     public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {
         this.bulletinId = boardBulletin.getBulletinId();
-        this.posterId = String.valueOf(boardBulletin.getPosterId());
-        this.posterName = boardBulletin.getPosterName();
+        this.posterId = boardBulletin.getPosterId().getId();
+        this.posterName = boardBulletin.getPosterId().getUserName();
         this.title = boardBulletin.getTitle();
         this.content = boardBulletin.getBoardContent();
         this.boardMedia = boardBulletin.getBoardMedia();

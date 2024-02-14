@@ -1,5 +1,6 @@
 package com.nat.geeklolspring.board.vote.dto.request;
 
+import com.nat.geeklolspring.entity.BoardBulletin;
 import lombok.*;
 
 @Setter
@@ -11,5 +12,5 @@ import lombok.*;
 @Builder
 public class BoardVotePatchRequestDTO {
     // 좋아요를 수정하는데 필요한 정보들
-    private Long boardId;
+    private BoardBulletin boardId;
 }

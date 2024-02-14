@@ -23,10 +23,10 @@ public class BoardMyReplyResponseDTO {
     private String title;
     public BoardMyReplyResponseDTO(BoardReply reply) {
         this.replyId = reply.getReplyId();
-        this.writerId = reply.getReplyWriterId();
-        this.writerName = reply.getReplyWriterName();
+        this.writerId = reply.getBoardBulletinId().getPosterId().getId();
+        this.writerName = reply.getBoardBulletinId().getPosterId().getUserName();
         this.context = reply.getReplyText();
         this.replyDate = reply.getBoardReplyDate();
-        this.boardId = reply.getBulletinId();
+        this.boardId = reply.getBoardBulletinId().getBulletinId();
     }
 }

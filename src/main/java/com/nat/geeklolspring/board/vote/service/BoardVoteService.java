@@ -5,11 +5,19 @@ import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.board.vote.dto.request.BoardVotePostRequestDTO;
 import com.nat.geeklolspring.board.vote.dto.response.BoardVoteResponseDTO;
 import com.nat.geeklolspring.board.vote.repository.BoardVoteCheckRepository;
+import com.nat.geeklolspring.entity.BoardBulletin;
 import com.nat.geeklolspring.entity.BulletinCheck;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.exception.DTONotFoundException;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -17,11 +25,18 @@ import org.springframework.stereotype.Service;
 public class BoardVoteService {
     private final BoardVoteCheckRepository voteCheckRepository;
     private final BoardBulletinRepository boardBulletinRepository;
+    private final UserRepository userRepository;
 
-    public BoardVoteResponseDTO getVote(long boardId, TokenUserInfo userInfo) {
+    public BoardVoteResponseDTO getVote(Long boardId, TokenUserInfo userInfo) {
         String userId = userInfo.getUserId();
 
-        BulletinCheck voteCheck = voteCheckRepository.findByBulletinIdAndReceiver(boardId, userId);
+        Optional<BoardBulletin> boardBulletin = boardBulletinRepository.findById(boardId);
+        Stream<BoardBulletin> bulletin = boardBulletin.stream();
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        Stream<User> user = userOptional.stream();
+
+        BulletinCheck voteCheck = voteCheckRepository.findByBoardBulletinIdAndBulletinCheckerId((BoardBulletin) bulletin, (User) user);
 
         // 해당 동영상에 대한 나의 좋아요 정보가 없다면 null을 리턴
         if(voteCheck == null) {
@@ -44,12 +59,17 @@ public class BoardVoteService {
         }
 
         BulletinCheck entity = dto.toEntity(dto);
-        entity.setReceiver(userInfo.getUserId());
+
+        Optional<User> userOptional = userRepository.findById(userInfo.getUserId());
+
+        Stream<User> user = userOptional.stream();
+
+        entity.setBulletinCheckerId((User) user);
 
         // 좋아요 등록
         BulletinCheck saved = voteCheckRepository.save(entity);
         // 좋아요 등록에 따른 좋아요 카운트 증가
-        boardBulletinRepository.plusUpCount(dto.getBoardId());
+        boardBulletinRepository.plusUpCount(dto.getBoardId().getBulletinId());
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 
@@ -60,12 +80,12 @@ public class BoardVoteService {
         // vote 값 수정
         if (vote.getGood() == 1) {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
-            boardBulletinRepository.downUpCount(vote.getBulletinId());
+            boardBulletinRepository.downUpCount(vote.getBoardBulletinId().getBulletinId());
             vote.setGood(0);
         }
         else {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
-            boardBulletinRepository.plusUpCount(vote.getBulletinId());
+            boardBulletinRepository.plusUpCount(vote.getBoardBulletinId().getBulletinId());
             vote.setGood(1);
         }
 
@@ -79,7 +99,7 @@ public class BoardVoteService {
     }
 
     public boolean VoteCheck(BoardVotePostRequestDTO dto, TokenUserInfo userInfo) {
-        BulletinCheck vote = findVote(dto.getBoardId(), userInfo.getUserId());
+        BulletinCheck vote = findVote(dto.getBoardId().getBulletinId(), userInfo.getUserId());
 
         log.info("vote : {}", vote);
 
@@ -89,8 +109,16 @@ public class BoardVoteService {
             return false;
     }
 
-    public BulletinCheck findVote(long bulletinId, String accountId) {
+    public BulletinCheck findVote(Long bulletinId, String accountId) {
+
+
+        Optional<BoardBulletin> boardBulletin = boardBulletinRepository.findById(bulletinId);
+        Stream<BoardBulletin> bulletin = boardBulletin.stream();
+
+        Optional<User> userOptional = userRepository.findById(accountId);
+        Stream<User> user = userOptional.stream();
+
         // 쇼츠 아이디와 계정명이 일치하는 vote정보를 리턴
-        return voteCheckRepository.findByBulletinIdAndReceiver(bulletinId, accountId);
+        return voteCheckRepository.findByBoardBulletinIdAndBulletinCheckerId((BoardBulletin) bulletin, (User) user);
     }
 }

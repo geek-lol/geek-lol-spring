@@ -116,7 +116,7 @@ public class BoardVoteController {
 
         try {
             // 내 vote 정보 가져오는 서비스 실행
-            BulletinCheck voteCheck = voteService.findVote(dto.getBoardId(), userInfo.getUserId());
+            BulletinCheck voteCheck = voteService.findVote(dto.getBoardId().getBulletinId(), userInfo.getUserId());
             // 내 vote 정보 수정하는 서비스 실행
             BoardVoteResponseDTO vote = voteService.changeVote(voteCheck);
             

@@ -57,17 +57,17 @@ public class RulingApplyService {
     // 목록 전체 조회
     public RulingApplyResponseDTO findAllBoard(Pageable pageInfo, String orderType) {
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-        Page<BoardApply> boardApplyList = rulingApplyRepository.findAllByOrderByApplyDateDesc(pageable);;
+        Page<BoardApply> boardApplyList = rulingApplyRepository.findAllByOrderByApplyDateDesc(pageable);
         if(orderType == null)
             orderType = "";
-
+        log.warn("orderType:{}",orderType);
         if (orderType.equals("like")) {
             boardApplyList = rulingApplyRepository.findAllByOrderByUpCountDesc(pageable);
         }
         else {
             boardApplyList = rulingApplyRepository.findAllByOrderByApplyDateDesc(pageable);
         }
-
+        log.warn("정렬된 boardList : {} ",boardApplyList);
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
                 .map(boardApply -> {
                     int i = applyReplyRepository.countByApplyId(boardApply);
@@ -171,7 +171,7 @@ public class RulingApplyService {
 
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
-    @Scheduled(initialDelay = 0, fixedDelay = 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+    @Scheduled(initialDelay = 0, fixedDelay = 30 * 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");
         // 현재 시간

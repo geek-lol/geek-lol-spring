@@ -40,7 +40,7 @@ public class RulingVoteController {
             ProsAndConsDTO prosAndConsDTO = rulingVoteService.rulingVoteSave(dto, userInfo);
             if (prosAndConsDTO == null){
                 return ResponseEntity.ok().body(ProsAndConsDTO.builder()
-                        .error("이미 투표한 회원입니다. 투표 수정이 불가합니다.")
+                        .error("이미 투표한 회원이거나 지난 투표게시물입니다")
                         .build());
             }
             return ResponseEntity.ok().body(prosAndConsDTO);

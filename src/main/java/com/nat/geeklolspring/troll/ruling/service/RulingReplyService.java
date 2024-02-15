@@ -79,8 +79,9 @@ public class RulingReplyService {
         log.debug("투표 댓글 저장 서비스 실행!");
 
         BoardRuling boardRuling = boardRulingRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // dto에 담겨 있던 내용을 ShortsReply 형식으로 변환해 reply에 저장
-        RulingReply reply = dto.toEntity(boardRuling);
+        RulingReply reply = dto.toEntity(boardRuling,user);
 
         // DB에 저장
         rulingReplyRepository.save(reply);

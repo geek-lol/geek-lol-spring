@@ -26,9 +26,15 @@ public class RulingVoteService {
         BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
 
+        //현재 투표중인 보드
+        BoardRuling board = boardRulingRepository.findTopByOrderByRulingDateDesc();
+
         //저장된 정보가 있는지 여부
         boolean flag = rvr.existsByRulingVoter(user);
-        if (flag) {
+        // 보드가 같으면 false
+        boolean boardFlag = !board.equals(boardRuling);
+
+        if (flag ||boardFlag) {
             return null;
         }
 

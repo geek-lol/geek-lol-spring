@@ -32,7 +32,7 @@ public class RulingCheck {
     @JoinColumn(name = "voter_id")
     private User rulingVoter;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "ruling_id")
     private BoardRuling rulingId;
 }

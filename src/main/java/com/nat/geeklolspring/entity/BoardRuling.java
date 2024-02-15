@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"votes","Replies"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -45,12 +45,12 @@ public class BoardRuling {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poster_id")
     private User rulingPosterId;
-//
-//    @OneToOne(fetch = FetchType.LAZY, optional = true)
-//    @JoinColumn(name = "apply_id", referencedColumnName = "apply_id")
-//    private BoardApply ApplyId;
-//
-//    @OneToMany(mappedBy = "rulingId")
-//    private List<RulingReply> rulingReplyId = new ArrayList<>();
 
+    // Reply와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RulingReply> Replies = new ArrayList<>();
+
+    // Vote와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "rulingVoteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RulingCheck> votes = new ArrayList<>();
 }

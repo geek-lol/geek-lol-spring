@@ -12,7 +12,10 @@ import java.util.List;
 import static com.nat.geeklolspring.entity.Role.COMMON;
 
 @Setter @Getter
-@ToString
+@ToString(exclude = {
+        "bulletinList","rulingList","applyList","shortsList","csGameRanksList","resGameRankList"
+        ,"rulingReplyList"
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -51,35 +54,28 @@ public class User {
 
 
 //-----------------------------------------
-//    @OneToMany(mappedBy = "reportUserId")
-//    private List<Report> reportUser = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "bulletinCheckerId")
-//    private List<BulletinCheck> bulletinCheckerId = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "replyWriter")
-//    private List<BoardReply> replyWriter = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "uploaderId")
-//    private List<BoardShorts> uploaderId = new ArrayList<>();
+//    // board와의 OneToMany 관계 설정
+//    @OneToMany(mappedBy = "bulletinId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardBulletin> bulletinList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "writerId")
-//    private List<ShortsReply> writerId = new ArrayList<>();
+//    @OneToMany(mappedBy = "rulingId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardRuling> rulingList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardApply> applyList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "shortsId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardShorts> shotsList = new ArrayList<>();
+//
+//    // game rank와의 관계설정
+//    @OneToMany(mappedBy = "gameId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<CsGameRank> csGameRanksList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "gameId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ResGameRank> resGameRanksList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "receiver")
-//    private List<VoteCheck> receiver = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "rulingPosterId")
-//    private List<BoardRuling> rulingPoster = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "rulingVoter")
-//    private List<RulingCheck> rulingVoter = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "rulingWriterId")
-//    private List<RulingReply> rulingWriter = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "applyPosterId")
-//    private List<BoardApply> applyPosterId = new ArrayList<>();
+
 
 
 }

@@ -28,7 +28,7 @@ public class BulletinCheck {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "bulletin_id")
     private BoardBulletin bulletin;
 }

@@ -23,4 +23,6 @@ public interface BoardRulingRepository extends JpaRepository<BoardRuling, Long> 
     //내꺼 갯수 반환
     int countByRulingPosterId(User user);
 
+    //사용자의 board 삭제
+    void deleteAllByRulingPosterId(User user);
 }

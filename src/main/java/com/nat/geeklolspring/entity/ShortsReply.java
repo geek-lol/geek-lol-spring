@@ -35,7 +35,7 @@ public class ShortsReply {
     @JoinColumn(name = "user_id", updatable = false)
     private User writerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "shorts_id", updatable = false)
     private BoardShorts shortsId;
 }

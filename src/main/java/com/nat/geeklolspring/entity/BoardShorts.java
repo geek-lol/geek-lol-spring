@@ -10,7 +10,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"votes","Replies"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -53,4 +53,12 @@ public class BoardShorts {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User uploaderId;
+
+    // Reply와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShortsReply> Replies = new ArrayList<>();
+
+    // Vote와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "voteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteCheck> votes = new ArrayList<>();
 }

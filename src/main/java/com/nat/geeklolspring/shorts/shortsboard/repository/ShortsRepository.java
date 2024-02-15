@@ -38,4 +38,6 @@ public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
 
     //내꺼 갯수 반환
     int countByUploaderId(User uploaderId);
+
+    void deleteAllByUploaderId(User uploaderId);
 }

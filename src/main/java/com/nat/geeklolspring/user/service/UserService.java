@@ -2,7 +2,13 @@ package com.nat.geeklolspring.user.service;
 
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.Role;
+import com.nat.geeklolspring.game.repository.CsGameRankRepository;
+import com.nat.geeklolspring.game.repository.ResGameRankRepository;
+import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
+import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
+import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
@@ -39,6 +45,15 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
+    private final BoardRulingRepository boardRulingRepository;
+    private final BoardBulletinRepository boardBulletinRepository;
+    private final RulingApplyRepository rulingApplyRepository;
+    private final ShortsRepository shortsRepository;
+
+    private final CsGameRankRepository csGameRankRepository;
+    private final ResGameRankRepository resGameRankRepository;
+
+
     public UserResponseDTO findByUserInfo(TokenUserInfo userInfo){
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         return new UserResponseDTO(user);
@@ -72,9 +87,14 @@ public class UserService {
             throw new RuntimeException("중복된 아이디입니다!!");
         }
         if (dto.getIds() != null){
-            dto.getIds().forEach(userRepository::deleteById);
+            dto.getIds().forEach(id->{
+                User user = userRepository.findById(id).orElseThrow();
+                deleteChildren(user);
+                userRepository.delete(user);
+            });
         }else {
             User user = userRepository.findById(dto.getId()).orElseThrow();
+            deleteChildren(user);
             userRepository.delete(user);
         }
     }
@@ -83,11 +103,22 @@ public class UserService {
         log.warn("삭제할 회원이 없습니다!!");
         }
         try {
-            ids.forEach(userRepository::deleteById);
+            ids.forEach(id->{
+                User user = userRepository.findById(id).orElseThrow();
+                deleteChildren(user);
+                userRepository.delete(user);
+            });
         }catch (NullPointerException e) {
             throw new RuntimeException("삭제 안도ㅐ유");
         }
 
+    }
+    void deleteChildren(User user){
+        boardBulletinRepository.deleteAllByUser(user);
+        rulingApplyRepository.deleteAllByUserId(user);
+        shortsRepository.deleteAllByUploaderId(user);
+        csGameRankRepository.deleteAllByUser(user);
+        resGameRankRepository.deleteAllByUser(user);
     }
     public boolean isDupilcateId(String id){
         return userRepository.existsById(id);

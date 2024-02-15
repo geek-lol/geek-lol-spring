@@ -43,5 +43,7 @@ public interface RulingApplyRepository extends JpaRepository<BoardApply,Long> {
     @Query("update BoardApply s set s.upCount = s.upCount - 1 where s.applyId = :applyId")
     void downUpCount(Long applyId);
 
+    //사용자 board 삭제
+    void deleteAllByUserId(User userId);
 
 }

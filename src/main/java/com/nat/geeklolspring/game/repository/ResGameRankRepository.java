@@ -9,4 +9,6 @@ import java.util.List;
 public interface ResGameRankRepository extends JpaRepository<ResGameRank,Long> {
     List<ResGameRank> findAllByOrderByScore();
     ResGameRank findByUser(User user);
+
+    void deleteAllByUser(User user);
 }

@@ -28,7 +28,7 @@ public class VoteApply {
     private int up = 1;
 
     //fk
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "apply_id", referencedColumnName = "apply_id")
     private BoardApply applyId;
 

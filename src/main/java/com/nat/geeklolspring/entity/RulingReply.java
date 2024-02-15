@@ -34,7 +34,7 @@ public class RulingReply {
     @JoinColumn(name = "user_id")
     private User rulingWriterId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "ruling_id")
     private BoardRuling rulingId;
 }

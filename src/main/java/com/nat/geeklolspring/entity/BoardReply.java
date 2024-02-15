@@ -30,7 +30,7 @@ public class BoardReply {
     private String replyText;
 
     //fk
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "bulletin_id")
     private BoardBulletin bulletin; //댓글이 달릴 게시물 fk
 

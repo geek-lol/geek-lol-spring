@@ -37,4 +37,7 @@ public interface BoardBulletinRepository extends JpaRepository<BoardBulletin,Lon
     //내꺼 갯수 반환
     int countByUser(User user);
 
+    //사용자 board 삭제
+    void deleteAllByUser(User user);
+
 }

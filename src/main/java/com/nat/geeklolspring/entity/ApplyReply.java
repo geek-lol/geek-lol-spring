@@ -5,6 +5,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -30,7 +32,7 @@ public class ApplyReply {
     private LocalDateTime replyDate;
 
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "apply_id")
     private BoardApply applyId; //댓글이 달릴 게시물 fk
 
@@ -38,4 +40,5 @@ public class ApplyReply {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", updatable = false)
     private User userId;
+
 }

@@ -20,7 +20,7 @@ public class BoardBulletinDeleteResponseDTO {
 
     public BoardBulletinDeleteResponseDTO(BoardBulletin boardBulletin) {
         this.bulletinId = boardBulletin.getBulletinId();
-        this.posterId = String.valueOf(boardBulletin.getPosterId());
+        this.posterId = boardBulletin.getUser().getId();
         this.title = boardBulletin.getTitle();
     }
 

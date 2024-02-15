@@ -10,7 +10,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"votes","Replies"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -37,16 +37,6 @@ public class BoardBulletin {
     @Column(name = "board_media")
     private String boardMedia;
 
-    @Column(name = " board_report_count")
-    @Builder.Default
-    private int boardReportCount = 0;
-
-    @Column(name = "poster_id")
-    private String posterId;
-
-    @Column(name = "poster_name")
-    private String posterName;
-
     @Builder.Default
     @Column(name = "view_count")
     private int viewCount = 0;
@@ -55,16 +45,18 @@ public class BoardBulletin {
     @Column(name = "up_count")
     private int upCount = 0;
 
+    //---------------------------------------
+    // 작성자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", updatable = false)
+    private User user;
 
+    // Reply와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "replyId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardReply> Replies = new ArrayList<>();
 
-    //----------------------------------------
-
-//    @OneToMany(mappedBy = "bulletinId")
-//    private List<BoardReply> boardReply = new ArrayList<>();
-//
-//
-//    @OneToMany(mappedBy = "boardBulletinId")
-//    private List<BulletinCheck> boardBulletinId = new ArrayList<>();
-//
+    // Vote와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "bulletinCheckId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BulletinCheck> votes = new ArrayList<>();
 
 }

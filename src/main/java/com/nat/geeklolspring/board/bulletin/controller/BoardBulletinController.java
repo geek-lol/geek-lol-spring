@@ -53,6 +53,9 @@ public class BoardBulletinController {
         log.info("poster : {}",posterKeyword);
         log.info("contentKeyword : {}",contentKeyword);
         log.info("upCount : {}",upCountView);
+        if (upCountView == null){
+            upCountView = "0";
+        }
 
         try {
             BoardBulletinResponseDTO boardBulletinList = boardBulletinService.retrieve(titleKeyword,posterKeyword,contentKeyword,pageInfo, Integer.parseInt(upCountView));

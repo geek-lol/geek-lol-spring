@@ -4,6 +4,7 @@ import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.Role;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingDeleteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
@@ -12,6 +13,7 @@ import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardListResponseDT
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import com.nat.geeklolspring.troll.ruling.repository.RulingReplyRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class RulingBoardService {
     private final BoardRulingRepository boardRulingRepository;
     private final RulingReplyRepository rulingReplyRepository;
+    private final UserRepository userRepository;
 
 
     @Value("${upload.path}")
@@ -61,8 +64,9 @@ public class RulingBoardService {
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
         boardRuling.setViewCount(boardRuling.getViewCount()+1);
         boardRulingRepository.save(boardRuling);
-        int replyCount = rulingReplyRepository.countByRulingId(rulingId);
-        return new RulingBoardDetailResponseDTO(boardRuling,replyCount);
+
+        int i = rulingReplyRepository.countByRulingId(boardRuling);
+        return new RulingBoardDetailResponseDTO(boardRuling,i);
     }
     // 게시물 영상 주소
     public String getVideoPath(Long rulingId){
@@ -76,11 +80,12 @@ public class RulingBoardService {
     public RulingBoardListResponseDTO findAllRulingBoard(Pageable pageInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         //투표 게시판의 목록을 불러옴
-        Page<BoardRuling> rulings = boardRulingRepository.findAllByOrderByRulingDateDesc(pageable);
+        Page<BoardRuling> rulings = boardRulingRepository.findAllByOrderByRulingDateDescPageable(pageable);
         List<RulingBoardDetailResponseDTO> rulingList = rulings.stream()
                 .map(board->{
                     RulingBoardDetailResponseDTO dto = new RulingBoardDetailResponseDTO(board);
-                    dto.setReplyCount(rulingReplyRepository.countByRulingId(dto.getRulingId()));
+                    BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
+                    dto.setReplyCount(rulingReplyRepository.countByRulingId(boardRuling));
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -106,7 +111,8 @@ public class RulingBoardService {
     //게시물 내껏만 조회
     public RulingBoardListResponseDTO findMyBoard(Pageable pageInfo, TokenUserInfo userInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
-        Page<BoardRuling> rulings = boardRulingRepository.findAllByRulingPosterId(userInfo.getUserId(), pageable);
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+        Page<BoardRuling> rulings = boardRulingRepository.findAllByRulingPosterId(user, pageable);
         List<RulingBoardDetailResponseDTO> rulingList = rulings.stream()
                 .map(RulingBoardDetailResponseDTO::new)
                 .collect(Collectors.toList());

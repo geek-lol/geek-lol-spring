@@ -27,8 +27,8 @@ public class ShortsDetailResponseDTO {
 
     public ShortsDetailResponseDTO(BoardShorts shorts) {
         this.shortsId = shorts.getShortsId();
-        this.uploaderId = shorts.getUploaderId();
-        this.uploaderName = shorts.getUploaderName();
+        this.uploaderId = shorts.getUploaderId().getId();
+        this.uploaderName = shorts.getUploaderId().getUserName();
         this.title = shorts.getTitle();
         this.context = shorts.getContext();
         this.viewCount = shorts.getViewCount();

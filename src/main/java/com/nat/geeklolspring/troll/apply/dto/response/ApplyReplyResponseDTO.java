@@ -21,17 +21,15 @@ public class ApplyReplyResponseDTO {
     private String writerName;
     private String context;
     private LocalDateTime replyDate;
-    private int modify;
     private Long applyId;
     private String title;
 
     public ApplyReplyResponseDTO(ApplyReply reply) {
         this.replyId = reply.getId();
-        this.writerId = reply.getWriterId();
-        this.writerName = reply.getWriterName();
+        this.writerId = reply.getUserId().getId();
+        this.writerName = reply.getUserId().getUserName();
         this.context = reply.getContext();
         this.replyDate = reply.getReplyDate();
-        this.modify = reply.getModify();
-        this.applyId = reply.getApplyId();
+        this.applyId = reply.getApplyId().getApplyId();
     }
 }

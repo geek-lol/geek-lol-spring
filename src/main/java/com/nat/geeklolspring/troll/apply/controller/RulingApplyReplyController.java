@@ -33,7 +33,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class RulingApplyReplyController {
     private final ApplyReplyService applyReplyService;
 
-    // 해당 쇼츠의 댓글 정보를 가져오는 컨트롤러
+    // 댓글 정보를 가져오는 컨트롤러
     @GetMapping("/{applyId}")
     public ResponseEntity<?> replyList(
             @PathVariable Long applyId,
@@ -143,44 +143,6 @@ public class RulingApplyReplyController {
                             .builder()
                             .error(e.getMessage())
                             .build());
-        }
-    }
-
-
-    // 댓글 수정 컨트롤러
-    @RequestMapping(method = {PUT, PATCH})
-    public ResponseEntity<?> updateShortsReply(@RequestBody ApplyReplyUpdateRequestDTO dto,
-                                               @AuthenticationPrincipal TokenUserInfo userInfo) {
-        log.info("api/shorts/reply : PATCH");
-        log.debug("서버에서 받은 값 : {}", dto);
-
-        // 데이터를 정상적으로 전달받았는지 확인
-        if(dto.getReplyId() == null || dto.getContext().isEmpty()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApplyReplyListResponseDTO
-                            .builder()
-                            .error("필요한 값 중에 비어있는 값이 있습니다!")
-                            .build());
-        }
-
-        try {
-            // 댓글을 DB에서 수정하는 서비스 호출
-            applyReplyService.updateReply(dto, userInfo);
-
-            return ResponseEntity.ok().body(null);
-
-        } catch (NotEqualTokenException e) {
-            log.warn("댓글 작성자만 수정할 수 있습니다!");
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApplyReplyListResponseDTO
-                            .builder()
-                            .error(e.getMessage())
-                            .build());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApplyReplyListResponseDTO.builder().error(e.getMessage()));
         }
     }
 

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Setter
 @Getter
-@ToString
+@ToString(exclude = "applyId")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -20,13 +20,20 @@ public class VoteApply {
     @Column(name = "vote_id")
     private Long voteId;
 
-    @Column(name = "user_id")
-    private String receiver;
-
-    @Column(name = "apply_id")
-    private Long applyId;
+//    @Column(name = "apply_id")
+//    private Long applyId;
 
     @Builder.Default
     @Column(name = "vote_up")
     private int up = 1;
+
+    //fk
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "apply_id", referencedColumnName = "apply_id")
+    private BoardApply applyId;
+
+    //작성자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", updatable = false)
+    private User receiver;
 }

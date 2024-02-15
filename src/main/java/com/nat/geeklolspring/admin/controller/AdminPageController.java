@@ -9,8 +9,6 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDT
 import com.nat.geeklolspring.board.bulletin.service.BoardBulletinService;
 import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;
-import com.nat.geeklolspring.report.dto.response.ReportListResponseDTO;
-import com.nat.geeklolspring.report.service.ReportService;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
@@ -35,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminPageController {
 
     private final AdminPageService adminPageService;
-    private final ReportService reportService;
     private final UserService userService;
     private final BoardBulletinService boardBulletinService;
     private final ShortsService shortsService;
@@ -168,23 +165,6 @@ public class AdminPageController {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().body("삭제에 실패했습니다");
         }
-    }
-
-
-    @PostMapping("/report")
-    public ResponseEntity<?> adminPageReportContent(
-            @AuthenticationPrincipal TokenUserInfo userInfo,
-            @PageableDefault(page = 1, size = 10) Pageable pageInfo
-    ){
-        log.info("/adminPage/board POST ");
-
-        if (!userInfo.getRole().toString().equals("ADMIN")){
-            return ResponseEntity.badRequest().body("권한이 없습니다");
-        }
-
-        ReportListResponseDTO reportList = reportService.retrieveView(pageInfo);
-
-        return ResponseEntity.ok().body(reportList);
     }
 
     @PostMapping("/applys")

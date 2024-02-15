@@ -1,10 +1,14 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.RulingCheck;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingVoteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.ProsAndConsDTO;
+import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import com.nat.geeklolspring.troll.ruling.repository.RulingVoteRepository;
+import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,24 +18,28 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RulingVoteService {
     private final RulingVoteRepository rvr;
+    private final BoardRulingRepository boardRulingRepository;
+    private final UserRepository userRepository;
 
     // 투표한 내용을 저장
     public ProsAndConsDTO rulingVoteSave(RulingVoteRequestDTO dto,TokenUserInfo userInfo){
+        BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         if (dto.getVote().equals("pros")){
             RulingCheck check = RulingCheck.builder()
-                    .rulingVoter(userInfo.getUserId())
+                    .rulingVoter(user)
                     .pros(1)
                     .cons(0)
-                    .rulingId(dto.getRulingId())
+                    .rulingId(boardRuling)
                     .build();
             rvr.save(check);
         }
         if (dto.getVote().equals("cons")){
             RulingCheck check = RulingCheck.builder()
-                    .rulingVoter(userInfo.getUserId())
+                    .rulingVoter(user)
                     .pros(0)
                     .cons(1)
-                    .rulingId(dto.getRulingId())
+                    .rulingId(boardRuling)
                     .build();
             rvr.save(check);
         }
@@ -39,8 +47,9 @@ public class RulingVoteService {
     }
     //찬성,반대 총 득표율 계산
     public ProsAndConsDTO prosAndCons(Long rulingId){
-        int pros = rvr.countByRulingIdAndPros(rulingId,1);
-        int cons = rvr.countByRulingIdAndCons(rulingId,1);
+        BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
+        int pros = rvr.countByRulingIdAndPros(boardRuling,1);
+        int cons = rvr.countByRulingIdAndCons(boardRuling,1);
 
         int total = pros+cons;
         float prosPercent = ((float) pros /total) * 100;

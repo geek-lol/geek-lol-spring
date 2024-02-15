@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"votes","Replies"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -41,26 +41,16 @@ public class BoardRuling {
     @Column(name = "ruling_title")
     private String title;
 
-    @Column(name = "ruling_poster_id")
-    private String rulingPosterId;
-
-    @Column(name = "ruling_poster_name")
-    private String rulingPosterName;
-
-
-
     // fk가 필요한 곳
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "rulingPosterId")
-//    private User rulingPosterId;
-//
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "boardApplyId")
-//    private BoardApply boardApply;
-//
-//    @OneToMany(mappedBy = "rulingId")
-//    private List<RulingReply> rulingReplyId = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "rulingId")
-//    private List<RulingCheck> ruling_vote = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id")
+    private User rulingPosterId;
+
+    // Reply와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RulingReply> Replies = new ArrayList<>();
+
+    // Vote와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "rulingVoteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RulingCheck> votes = new ArrayList<>();
 }

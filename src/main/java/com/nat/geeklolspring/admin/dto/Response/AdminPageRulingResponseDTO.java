@@ -25,8 +25,8 @@ public class AdminPageRulingResponseDTO {
         this.rulingId = boardRuling.getRulingId();
         this.title = boardRuling.getTitle();
         this.rulingDate = boardRuling.getRulingDate();
-        this.applyPosterId = boardRuling.getRulingPosterId();
-        this.applyPosterName = boardRuling.getRulingPosterName();
+        this.applyPosterId = boardRuling.getRulingPosterId().getId();
+        this.applyPosterName = boardRuling.getRulingPosterId().getUserName();
         this.viewCount = boardRuling.getViewCount();
     }
 

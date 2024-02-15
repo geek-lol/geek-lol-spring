@@ -2,6 +2,7 @@ package com.nat.geeklolspring.troll.ruling.dto.response;
 
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -32,8 +33,8 @@ public class RulingBoardDetailResponseDTO {
         this.rulingDate = boardApply.getApplyDate();
         this.title = boardApply.getTitle();
         this.content = boardApply.getContent();
-        this.applyPosterId = boardApply.getApplyPosterId();
-        this.applyPosterName = boardApply.getApplyPosterName();
+        this.applyPosterId = boardApply.getUserId().getId();
+        this.applyPosterName = boardApply.getUserId().getUserName();
 
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling) {
@@ -42,9 +43,9 @@ public class RulingBoardDetailResponseDTO {
         this.rulingDate = boardRuling.getRulingDate();
         this.title = boardRuling.getTitle();
         this.content = boardRuling.getContent();
-        this.applyPosterId = boardRuling.getRulingPosterId();
+        this.applyPosterId = boardRuling.getRulingPosterId().getId();
         this.viewCount = boardRuling.getViewCount();
-        this.applyPosterName = boardRuling.getRulingPosterName();
+        this.applyPosterName = boardRuling.getRulingPosterId().getUserName();
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling,int replyCount) {
         this.rulingId = boardRuling.getRulingId();
@@ -52,19 +53,18 @@ public class RulingBoardDetailResponseDTO {
         this.rulingDate = boardRuling.getRulingDate();
         this.title = boardRuling.getTitle();
         this.content = boardRuling.getContent();
-        this.applyPosterId = boardRuling.getRulingPosterId();
+        this.applyPosterId = boardRuling.getRulingPosterId().getId();
         this.viewCount = boardRuling.getViewCount();
-        this.applyPosterName = boardRuling.getRulingPosterName();
+        this.applyPosterName = boardRuling.getRulingPosterId().getUserName();
         this.replyCount = replyCount;
     }
-    public BoardRuling toEntity(){
+    public BoardRuling toEntity(User user){
         return BoardRuling.builder()
-                .rulingPosterId(applyPosterId)
-                .rulingPosterName(applyPosterName)
+                .rulingId(rulingId)
+                .rulingPosterId(user)
                 .rulingLink(rulingLink)
-                .rulingDate(rulingDate)
-                .content(content)
                 .title(title)
+                .content(content)
                 .viewCount(viewCount)
                 .build();
     }

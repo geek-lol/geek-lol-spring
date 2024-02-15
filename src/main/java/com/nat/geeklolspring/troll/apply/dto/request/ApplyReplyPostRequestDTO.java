@@ -1,7 +1,9 @@
 package com.nat.geeklolspring.troll.apply.dto.request;
 
 import com.nat.geeklolspring.entity.ApplyReply;
+import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.ShortsReply;
+import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 @Setter
@@ -15,10 +17,11 @@ public class ApplyReplyPostRequestDTO {
     // Post 시 필요한 정보들
     private String context;
 
-    public ApplyReply toEntity(Long id) {
+    public ApplyReply toEntity(BoardApply apply, User user) {
         return ApplyReply.builder()
-                .applyId(id)
                 .context(context)
+                .applyId(apply)
+                .userId(user)
                 .build();
     }
 }

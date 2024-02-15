@@ -182,7 +182,40 @@ public class UserController {
         }
 
     }
+    //특정 유저의 이미지 파일 불러오기
+    @GetMapping("/profile")
+    public ResponseEntity<?> loadProfileByUserId(
+            @RequestParam String userId
+    ){
+        try {
+            String profilePath = userService.getProfilePath(userId);
 
+            File profileFile = new File(profilePath);
+
+            if (!profileFile.exists()) return ResponseEntity.notFound().build();
+
+            byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
+
+            HttpHeaders headers = new HttpHeaders();
+
+
+            MediaType mediaType = extractFileExtension(profilePath);
+            if (mediaType == null){
+                return ResponseEntity.internalServerError().body("이미지가 아닙니다");
+            }
+
+            headers.setContentType(mediaType);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
     private MediaType extractFileExtension(String filePath){
 
         String ext = filePath.substring(filePath.lastIndexOf(".") + 1);

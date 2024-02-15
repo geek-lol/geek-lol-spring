@@ -25,8 +25,8 @@ public class AdminPageRulingApplyResponseDTO {
         this.applyId = boardApply.getApplyId();
         this.title = boardApply.getTitle();
         this.localDateTime = boardApply.getApplyDate();
-        this.applyPosterId = boardApply.getApplyPosterId().toString();
-        this.posterName = boardApply.getApplyPosterName();
+        this.applyPosterId = boardApply.getUserId().getId();
+        this.posterName = boardApply.getUserId().getUserName();
         this.viewCount = boardApply.getViewCount();
         this.upCount = boardApply.getUpCount();
     }

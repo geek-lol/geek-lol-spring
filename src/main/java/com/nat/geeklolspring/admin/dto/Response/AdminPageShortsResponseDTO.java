@@ -21,7 +21,7 @@ public class AdminPageShortsResponseDTO {
 
     public AdminPageShortsResponseDTO(BoardShorts shorts) {
         this.shortsId = shorts.getShortsId();
-        this.uploaderName = shorts.getUploaderName();
+        this.uploaderName = shorts.getUploaderId().getUserName();
         this.title = shorts.getTitle();
         this.viewCount = shorts.getViewCount();
         this.uploadDate = shorts.getUploadDate();

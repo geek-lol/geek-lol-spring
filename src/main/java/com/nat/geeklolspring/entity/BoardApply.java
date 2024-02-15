@@ -5,9 +5,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
-@ToString (exclude = {"applyPosterId"})
+@ToString(exclude = {"votes","applyReplies"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -36,10 +39,6 @@ public class BoardApply {
     private String title;
 
     @Builder.Default
-    @Column(name = "apply_report_count")
-    private int reportCount = 0;
-
-    @Builder.Default
     @Column(name = "check_good")
     private int upCount = 0;
 
@@ -47,14 +46,17 @@ public class BoardApply {
     @Column(name = "view_count")
     private int viewCount = 0;
 
-    @Column(name = "applyPosterId")
-    private String applyPosterId;
-
-    @Column(name = "applyPosterName")
-    private String applyPosterName;
     // fk가 필요한 곳
-//
-//    @OneToOne(mappedBy = "boardApply")
-//    private BoardRuling boardRuling;
+    //작성자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", updatable = false)
+    private User userId;
 
+    // ApplyReply와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApplyReply> applyReplies = new ArrayList<>();
+
+    // Vote와의 OneToMany 관계 설정
+    @OneToMany(mappedBy = "voteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteApply> votes = new ArrayList<>();
 }

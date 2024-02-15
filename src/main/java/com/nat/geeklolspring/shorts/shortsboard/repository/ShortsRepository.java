@@ -8,10 +8,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
     Page<BoardShorts> findByTitleContaining(String title, Pageable pageable);
+
     @Modifying
     @Query("update BoardShorts s set s.upCount = s.upCount + 1 where s.shortsId = :shortsId")
     void plusUpCount(Long shortsId);

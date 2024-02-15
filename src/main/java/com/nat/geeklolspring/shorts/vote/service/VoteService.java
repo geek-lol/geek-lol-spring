@@ -13,6 +13,7 @@ import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -60,28 +61,35 @@ public class VoteService {
         return new VoteResponseDTO(saved,upCount);
     }
 
+    @Transactional
     public VoteResponseDTO changeVote(VoteCheck vote) {
         BoardShorts shorts = shortsRepository.findByShortsId(vote.getShorts().getShortsId());
         // vote 값 수정
         if (vote.getUp() == 1) {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
-            shortsRepository.plusUpCount(vote.getShorts().getShortsId());
+            shortsRepository.plusUpCount(shorts.getShortsId());
             vote.setUp(0);
+            VoteCheck saved = voteCheckRepository.save(vote);
+            return VoteResponseDTO.builder()
+                    .up(0)
+                    .total(shorts.getUpCount()+1)
+                    .build();
         }
         else {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
-            shortsRepository.downUpCount(vote.getShorts().getShortsId());
+            shortsRepository.downUpCount(shorts.getShortsId());
             vote.setUp(1);
+            VoteCheck saved = voteCheckRepository.save(vote);
+            return VoteResponseDTO.builder()
+                    .up(1)
+                    .total(shorts.getUpCount()-1)
+                    .build();
         }
 
         // 수정한 vote 값 DB에 저장
-        VoteCheck saved = voteCheckRepository.save(vote);
 
         // 수정된 정보를 저장해서 Controller에 전달
-        return VoteResponseDTO.builder()
-                .up(saved.getUp())
-                .total(shorts.getUpCount())
-                .build();
+
     }
 
     public boolean VoteCheck(VotePostRequestDTO dto, TokenUserInfo userInfo) {

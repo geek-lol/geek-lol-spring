@@ -53,8 +53,6 @@ public class BoardVoteService {
 
         // 좋아요 등록
         BulletinCheck saved = voteCheckRepository.save(entity);
-        // 좋아요 등록에 따른 좋아요 카운트 증가
-        boardBulletinRepository.plusUpCount(dto.getBoardId());
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 

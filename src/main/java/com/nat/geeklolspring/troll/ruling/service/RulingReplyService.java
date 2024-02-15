@@ -122,7 +122,7 @@ public class RulingReplyService {
         List<RulingReplyResponseDTO> allReply = replyList.stream()
                 .map(reply -> {
                     RulingReplyResponseDTO dto = new RulingReplyResponseDTO(reply);
-                    boardRulingRepository.findById(dto.getRulingId()).ifPresent(boardRuling -> dto.setTitle(boardRuling.getApplyId().getTitle()));
+                    boardRulingRepository.findById(dto.getRulingId()).ifPresent(boardRuling -> dto.setTitle(boardRuling.getTitle()));
                     return dto;
                 })
                 .collect(Collectors.toList());

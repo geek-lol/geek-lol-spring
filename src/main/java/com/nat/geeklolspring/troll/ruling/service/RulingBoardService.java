@@ -71,7 +71,7 @@ public class RulingBoardService {
     // 게시물 영상 주소
     public String getVideoPath(Long rulingId){
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
-        String applyLink = boardRuling.getApplyId().getApplyLink();
+        String applyLink = boardRuling.getRulingLink();
         return rootPath+"/"+applyLink;
     }
 

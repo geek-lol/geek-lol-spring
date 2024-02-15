@@ -44,7 +44,6 @@ public class ApplyVoteService {
         log.info("voteApplt entity:{}",entity);
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
-        rulingApplyRepository.plusUpCount(saved.getApplyId().getApplyId());
 
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 

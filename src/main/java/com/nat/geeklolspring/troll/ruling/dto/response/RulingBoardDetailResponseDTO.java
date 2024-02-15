@@ -39,29 +39,32 @@ public class RulingBoardDetailResponseDTO {
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling) {
         this.rulingId = boardRuling.getRulingId();
-        this.rulingLink =boardRuling.getApplyId().getApplyLink();
-        this.rulingDate = boardRuling.getApplyId().getApplyDate();
-        this.title = boardRuling.getApplyId().getTitle();
-        this.content = boardRuling.getApplyId().getContent();
+        this.rulingLink =boardRuling.getRulingLink();
+        this.rulingDate = boardRuling.getRulingDate();
+        this.title = boardRuling.getTitle();
+        this.content = boardRuling.getContent();
         this.applyPosterId = boardRuling.getRulingPosterId().getId();
         this.viewCount = boardRuling.getViewCount();
         this.applyPosterName = boardRuling.getRulingPosterId().getUserName();
     }
     public RulingBoardDetailResponseDTO(BoardRuling boardRuling,int replyCount) {
         this.rulingId = boardRuling.getRulingId();
-        this.rulingLink =boardRuling.getApplyId().getApplyLink();
-        this.rulingDate = boardRuling.getApplyId().getApplyDate();
-        this.title = boardRuling.getApplyId().getTitle();
-        this.content = boardRuling.getApplyId().getContent();
+        this.rulingLink =boardRuling.getRulingLink();
+        this.rulingDate = boardRuling.getRulingDate();
+        this.title = boardRuling.getTitle();
+        this.content = boardRuling.getContent();
         this.applyPosterId = boardRuling.getRulingPosterId().getId();
         this.viewCount = boardRuling.getViewCount();
         this.applyPosterName = boardRuling.getRulingPosterId().getUserName();
         this.replyCount = replyCount;
     }
-    public BoardRuling toEntity(User user,BoardApply apply){
+    public BoardRuling toEntity(User user){
         return BoardRuling.builder()
+                .rulingId(rulingId)
                 .rulingPosterId(user)
-                .ApplyId(apply)
+                .rulingLink(rulingLink)
+                .title(title)
+                .content(content)
                 .viewCount(viewCount)
                 .build();
     }

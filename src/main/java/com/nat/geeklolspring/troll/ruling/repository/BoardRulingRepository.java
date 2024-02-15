@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface BoardRulingRepository extends JpaRepository<BoardRuling, Long> {
 
-    @Query("SELECT r FROM BoardRuling r ORDER BY r.ApplyId.applyDate DESC ")
+    @Query("SELECT r FROM BoardRuling r ORDER BY r.rulingDate DESC ")
     Page<BoardRuling> findAllByOrderByRulingDateDescPageable(Pageable pageable);
 
-    @Query("SELECT r FROM BoardRuling r ORDER BY r.ApplyId.applyDate DESC ")
+    @Query("SELECT r FROM BoardRuling r ORDER BY r.rulingDate DESC ")
     List<BoardRuling> findAllByOrderByRulingDateDesc();
 
 

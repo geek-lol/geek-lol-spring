@@ -17,7 +17,7 @@ public class RulingBoardResponseDTO {
 
     public RulingBoardResponseDTO(BoardRuling boardRuling){
         this.rulingId = boardRuling.getRulingId();
-        this.title = boardRuling.getApplyId().getTitle();
+        this.title = boardRuling.getTitle();
         this.posterId = boardRuling.getRulingPosterId().getId();
     }
 }

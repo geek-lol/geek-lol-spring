@@ -6,7 +6,6 @@ import com.nat.geeklolspring.lolapi.dto.response.ChampionMasteryResponseDTO;
 import com.nat.geeklolspring.lolapi.services.LolApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -68,4 +67,14 @@ public class LolApiCotroller {
         CurrentGameInfo realtimeGame = lolApiService.getRealtimeGame();
         return ResponseEntity.ok().body(realtimeGame);
     }
+
+    @GetMapping("/ranking/{tier}")
+    public ResponseEntity<?> loadRanking(@PathVariable String tier) {
+        log.info("load ranking info get");
+        //List<RankingResponseDTO> rankingData = lolApiService.getRankingData(tier);
+        //log.warn("ranking data : {}", rankingData);
+        //return ResponseEntity.ok().body(rankingData);
+        return ResponseEntity.ok().body(null);
+    }
+
 }

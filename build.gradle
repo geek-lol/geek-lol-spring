@@ -53,6 +53,8 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation group: 'org.apache.camel', name: 'json-simple-ordered', version: '2.25.4'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+//    provided 'org.json.simple:json-simple:1.1.1'
+    implementation group: 'org.json', name: 'org.json', version: 'chargebee-1.0'
 
 
 

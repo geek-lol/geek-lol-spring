@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/", "/all-champion-mastery").permitAll()
                 .antMatchers("/","/board/**").permitAll()
                 .antMatchers("/", "/api/**").permitAll()
+                .antMatchers("/", "/ranking/**").permitAll()
 //                    .antMatchers("/**").hasRole("ADMIN")
                     //.antMatchers(HttpMethod.GET,"/").permitAll()
                 .anyRequest().authenticated()

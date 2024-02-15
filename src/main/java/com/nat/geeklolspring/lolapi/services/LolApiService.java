@@ -7,36 +7,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nat.geeklolspring.lolapi.dto.CurrentGameInfo;
 import com.nat.geeklolspring.lolapi.dto.response.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.nat.geeklolspring.lolapi.dto.CurrentGameInfo.*;
+import static com.nat.geeklolspring.lolapi.dto.CurrentGameInfo.AllSummoner;
+import static com.nat.geeklolspring.lolapi.dto.CurrentGameInfo.CurrentGameParticipant;
 
 @Service
 @Slf4j
@@ -340,7 +331,7 @@ public class LolApiService {
             List<AllChampionMasteryResponseDTO> championMasteryResponseDTOS = responseSpec.bodyToMono(new ParameterizedTypeReference<List<AllChampionMasteryResponseDTO>>() {
             }).block();
 
-            if(championMasteryResponseDTOS != null) {
+            if (championMasteryResponseDTOS != null) {
                 return championMasteryResponseDTOS;
             } else {
                 log.error("데이터 가져오는데 실패함ㅋ");
@@ -416,4 +407,32 @@ public class LolApiService {
                 .retrieve()
                 .bodyToMono(AllSummoner.class);
     }
+
+    //public RankingResponseDTO getRankingData(String tier, int page) {
+    //
+    //    String url = riotUrl + "/lol/league-exp/v4/entries/RANKED_SOLO_5x5/" + tier + "/I?page=" + page + "&api_key=" + appKey;
+    //    log.error("ranking url : {}", url);
+    //
+    //    WebClient getGame = WebClient.builder()
+    //            .baseUrl(url)
+    //            .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+    //            .build();
+    //
+    //    Mono<RankingResponseDTO> mono = getGame.get()
+    //            .retrieve()
+    //            //.onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("요청이 잘못됨")))
+    //            //.onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("서버 에러 발생")))
+    //            .bodyToMono(RankingResponseDTO.class);
+    //
+    //    RankingResponseDTO rankingResponseDTO = mono.onErrorResume(error -> Mono.empty()).block();
+    //
+    //    if(rankingResponseDTO == null) {
+    //        return null;
+    //    }
+    //    log.warn("ranking : {}", rankingResponseDTO);
+    //    return rankingResponseDTO;
+    //
+    //}
+
+
 }

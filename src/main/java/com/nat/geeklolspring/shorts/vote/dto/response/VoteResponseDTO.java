@@ -18,4 +18,8 @@ public class VoteResponseDTO {
     public VoteResponseDTO(VoteCheck dto) {
         this.up = dto.getUp();
     }
+    public VoteResponseDTO(VoteCheck dto,int total) {
+        this.up = dto.getUp();
+        this.total = total;
+    }
 }

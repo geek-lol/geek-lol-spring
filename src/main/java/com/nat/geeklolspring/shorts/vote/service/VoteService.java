@@ -53,10 +53,11 @@ public class VoteService {
         log.error("쇼츠 좋아요 저장될 엔터티 : {},{}",entity.getShorts(),entity.getUser());
         // 좋아요 등록
         VoteCheck saved = voteCheckRepository.save(entity);
+        shortsRepository.plusUpCount(shorts.getShortsId());
 
+        int i = shorts.getUpCount();
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
-
-        return new VoteResponseDTO(saved);
+        return new VoteResponseDTO(saved,i);
     }
 
     public VoteResponseDTO changeVote(VoteCheck vote) {

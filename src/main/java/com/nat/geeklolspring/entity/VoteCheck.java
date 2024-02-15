@@ -22,7 +22,7 @@ public class VoteCheck {
 
     @Builder.Default
     @Column(name = "vote_up")
-    private int up = 1;
+    private int up = 0;
 
 
     // fk가 필요한 곳

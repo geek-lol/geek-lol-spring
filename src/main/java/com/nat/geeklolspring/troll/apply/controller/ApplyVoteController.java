@@ -102,6 +102,7 @@ public class ApplyVoteController {
     }
 
     // 좋아요 상태 수정
+    @Transactional
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> update(
             @Validated @RequestBody ApplyVotePatchRequestDTO dto,

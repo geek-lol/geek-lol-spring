@@ -27,7 +27,6 @@ import java.io.IOException;
 @RequestMapping("/troll/ruling/board")
 public class RulingBoardController {
     private final RulingBoardService rulingBoardService;
-
     // 최근 투표게시물 2개 반환
     @GetMapping
     public ResponseEntity<?> findBoardTwo(){

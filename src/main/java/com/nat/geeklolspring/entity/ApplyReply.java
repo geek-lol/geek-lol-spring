@@ -32,7 +32,7 @@ public class ApplyReply {
     private LocalDateTime replyDate;
 
     // fk가 필요한 곳
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apply_id")
     private BoardApply applyId; //댓글이 달릴 게시물 fk
 

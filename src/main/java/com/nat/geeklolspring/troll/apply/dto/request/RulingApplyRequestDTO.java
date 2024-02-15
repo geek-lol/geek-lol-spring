@@ -5,6 +5,8 @@ import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
+import java.util.ArrayList;
+
 @Setter
 @Getter
 @ToString
@@ -22,6 +24,7 @@ public class RulingApplyRequestDTO {
                 .content(content)
                 .title(title)
                 .userId(user)
+                .applyReplies(new ArrayList<>())
                 .build();
     }
 }

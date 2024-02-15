@@ -30,7 +30,7 @@ public class VoteCheck {
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shorts_id", updatable = false)
     private BoardShorts shorts;
 }

@@ -12,10 +12,7 @@ import java.util.List;
 import static com.nat.geeklolspring.entity.Role.COMMON;
 
 @Setter @Getter
-@ToString(exclude = {
-        "bulletinList","rulingList","applyList","shortsList","csGameRanksList","resGameRankList"
-        ,"rulingReplyList"
-})
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")

@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.board.bulletin.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.board.boardBulletinReply.repository.BoardReplyRepository;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinModifyRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinWriteRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDeleteResponseDTO;

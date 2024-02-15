@@ -25,6 +25,7 @@ public class BoardBulletinDetailResponseDTO {
     private String posterName;
     private LocalDateTime localDateTime;
     private int upCount;
+    private int totlaReply; // 총 댓글 수
 
     public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {
         this.bulletinId = boardBulletin.getBulletinId();
@@ -36,6 +37,7 @@ public class BoardBulletinDetailResponseDTO {
         this.viewCount = boardBulletin.getViewCount();
         this.localDateTime = boardBulletin.getBoardDate();
         this.upCount = boardBulletin.getUpCount();
+        this.totlaReply = boardBulletin.getReplies().size();
     }
 
 }

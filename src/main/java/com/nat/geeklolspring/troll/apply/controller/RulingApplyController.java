@@ -115,10 +115,11 @@ public class RulingApplyController {
     @PostMapping("/search")
     public ResponseEntity<?> searchBoard(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo,
-            @RequestBody ApplySearchRequestDTO dto
+            @RequestBody ApplySearchRequestDTO dto,
+            @RequestParam String order
             ){
         try {
-            RulingApplyResponseDTO applyList = rulingApplyService.serchToBoard(dto, pageInfo);
+            RulingApplyResponseDTO applyList = rulingApplyService.serchToBoard(dto, pageInfo,order);
             return ResponseEntity.ok().body(applyList);
         }catch (Exception e){
             return ResponseEntity

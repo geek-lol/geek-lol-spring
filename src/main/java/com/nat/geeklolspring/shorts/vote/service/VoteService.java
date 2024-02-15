@@ -55,9 +55,9 @@ public class VoteService {
         VoteCheck saved = voteCheckRepository.save(entity);
         shortsRepository.plusUpCount(shorts.getShortsId());
 
-        int i = shorts.getUpCount();
+        int upCount = shorts.getUpCount()+1;
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
-        return new VoteResponseDTO(saved,i);
+        return new VoteResponseDTO(saved,upCount);
     }
 
     public VoteResponseDTO changeVote(VoteCheck vote) {

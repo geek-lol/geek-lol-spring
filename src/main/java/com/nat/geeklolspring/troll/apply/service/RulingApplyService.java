@@ -203,23 +203,42 @@ public class RulingApplyService {
     }
 
     // 게시물 검색
-    public RulingApplyResponseDTO serchToBoard(ApplySearchRequestDTO dto, Pageable pageInfo){
+    public RulingApplyResponseDTO serchToBoard(ApplySearchRequestDTO dto, Pageable pageInfo,String order){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         Page<BoardApply> boardApplyList;
+        if (order == null)
+            order = "";
 
-        switch (dto.getType()){
-            case "title":
-                boardApplyList = rulingApplyRepository.findByTitleContaining(dto.getKeyword(),pageable);
-                break;
-            case "writer":
-                boardApplyList = rulingApplyRepository.findBoardsByUserName(dto.getKeyword(), pageable);
-                break;
-            case "mix":
-                boardApplyList = rulingApplyRepository.findByTitleContainingAndContentContaining(dto.getKeyword(),dto.getKeyword(),pageable);
-                break;
-            default:
-                boardApplyList = rulingApplyRepository.findAllByOrderByApplyDateDesc(pageable);
+        if (order.equals("like")){
+            switch (dto.getType()){
+                case "title":
+                    boardApplyList = rulingApplyRepository.findByTitleContainingOrderByUpCountDesc(dto.getKeyword(),pageable);
+                    break;
+                case "writer":
+                    boardApplyList = rulingApplyRepository.findBoardsByUserNameOrderByUpCountDesc(dto.getKeyword(), pageable);
+                    break;
+                case "mix":
+                    boardApplyList = rulingApplyRepository.findByTitleContainingAndContentContainingOrderByUpCountDesc(dto.getKeyword(),dto.getKeyword(),pageable);
+                    break;
+                default:
+                    boardApplyList = rulingApplyRepository.findAllByOrderByUpCountDesc(pageable);
+            }
+        }else{
+            switch (dto.getType()){
+                case "title":
+                    boardApplyList = rulingApplyRepository.findByTitleContainingOrderByApplyDateDesc(dto.getKeyword(),pageable);
+                    break;
+                case "writer":
+                    boardApplyList = rulingApplyRepository.findBoardsByUserNameOrderByApplyDateDesc(dto.getKeyword(), pageable);
+                    break;
+                case "mix":
+                    boardApplyList = rulingApplyRepository.findByTitleContainingAndContentContainingOrderByApplyDateDesc(dto.getKeyword(),dto.getKeyword(),pageable);
+                    break;
+                default:
+                    boardApplyList = rulingApplyRepository.findAllByOrderByApplyDateDesc(pageable);
+            }
         }
+
 
         List<RulingApplyDetailResponseDTO> list = boardApplyList.stream()
                 .map(RulingApplyDetailResponseDTO::new)

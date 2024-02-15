@@ -19,16 +19,23 @@ public interface RulingApplyRepository extends JpaRepository<BoardApply,Long> {
     BoardApply findFirstByApplyDateBetweenOrderByUpCountDescViewCountDesc(LocalDateTime startDate, LocalDateTime endDate);
     //최신글 정렬
     Page <BoardApply> findAllByOrderByApplyDateDesc(Pageable pageable);
+        //제목 찾기
+        Page<BoardApply> findByTitleContainingOrderByApplyDateDesc(String keyword,Pageable pageable);
+        //작성자 찾기
+        @Query("SELECT b FROM BoardApply b WHERE b.userId.userName Like %:keyword%")
+        Page<BoardApply> findBoardsByUserNameOrderByApplyDateDesc(String keyword, Pageable pageable);
+        //제목+내용 찾기
+        Page<BoardApply> findByTitleContainingAndContentContainingOrderByApplyDateDesc(String keyword,String conkeyword,Pageable pageable);
+
     //인기글 정렬
     Page <BoardApply> findAllByOrderByUpCountDesc(Pageable pageable);
-
-    //제목 찾기
-    Page<BoardApply> findByTitleContaining(String keyword,Pageable pageable);
-    //작성자 찾기
-    @Query("SELECT b FROM BoardApply b WHERE b.userId.userName Like %:keyword%")
-    Page<BoardApply> findBoardsByUserName(String keyword, Pageable pageable);
-    //제목+내용 찾기
-    Page<BoardApply> findByTitleContainingAndContentContaining(String keyword,String conkeyword,Pageable pageable);
+        //제목 찾기
+        Page<BoardApply> findByTitleContainingOrderByUpCountDesc(String keyword,Pageable pageable);
+        //작성자 찾기
+        @Query("SELECT b FROM BoardApply b WHERE b.userId.userName Like %:keyword%")
+        Page<BoardApply> findBoardsByUserNameOrderByUpCountDesc(String keyword, Pageable pageable);
+        //제목+내용 찾기
+        Page<BoardApply> findByTitleContainingAndContentContainingOrderByUpCountDesc(String keyword,String conkeyword,Pageable pageable);
 
     Page<BoardApply> findByUserId(User user, Pageable pageable);
 

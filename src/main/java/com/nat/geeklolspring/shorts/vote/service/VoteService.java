@@ -63,13 +63,13 @@ public class VoteService {
         BoardShorts shorts = shortsRepository.findByShortsId(vote.getShorts().getShortsId());
         // vote 값 수정
         if (vote.getUp() == 1) {
-            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
-            shortsRepository.downUpCount(vote.getShorts().getShortsId());
+            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
+            shortsRepository.plusUpCount(vote.getShorts().getShortsId());
             vote.setUp(0);
         }
         else {
-            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
-            shortsRepository.plusUpCount(vote.getShorts().getShortsId());
+            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
+            shortsRepository.downUpCount(vote.getShorts().getShortsId());
             vote.setUp(1);
         }
 

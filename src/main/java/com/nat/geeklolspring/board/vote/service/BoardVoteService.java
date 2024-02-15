@@ -55,10 +55,13 @@ public class BoardVoteService {
 
         // 좋아요 등록
         BulletinCheck saved = voteCheckRepository.save(entity);
-
+        boardBulletinRepository.plusUpCount(bulletin.getBulletinId());
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 
-        return new BoardVoteResponseDTO(saved);
+        return BoardVoteResponseDTO.builder()
+                .up(entity.getGood())
+                .total(bulletin.getUpCount()+1)
+                .build();
     }
 
     @Transactional

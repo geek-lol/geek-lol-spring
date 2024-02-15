@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class RulingReplyService {
     private final RulingReplyRepository rulingReplyRepository;
     private final BoardRulingRepository boardRulingRepository;
@@ -70,6 +69,7 @@ public class RulingReplyService {
             throw new RuntimeException("Internal Server Error", e);
         }
     }
+    @Transactional
     // 댓글 저장 서비스
     public RulingReplyListResponseDTO insertShortsReply(
             Long id,
@@ -89,6 +89,7 @@ public class RulingReplyService {
         return retrieve(id, pageInfo);
     }
 
+    @Transactional
     //댓글 삭제 서비스
     public void deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기

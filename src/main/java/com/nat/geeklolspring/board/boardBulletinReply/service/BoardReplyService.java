@@ -33,7 +33,6 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class BoardReplyService {
     private final BoardReplyRepository boardReplyRepository;
     private final BoardBulletinRepository boardBulletinRepository;
@@ -67,6 +66,7 @@ public class BoardReplyService {
         }
     }
 
+    @Transactional
     // 쇼츠 댓글 저장 서비스
     public BoardReplyListResponseDTO insertBoardReply(
             Long id,
@@ -86,6 +86,7 @@ public class BoardReplyService {
         return retrieve(id, pageInfo);
     }
 
+    @Transactional
     // 쇼츠 댓글 삭제 서비스
     public void deleteBoardReply(Long replyId, TokenUserInfo userInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기
@@ -105,30 +106,6 @@ public class BoardReplyService {
             throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
         }
     }
-
-    // 쇼츠 댓글 수정 서비스
-    public void updateReply(BoardUpdateRequestDTO dto,
-                            TokenUserInfo userInfo) {
-
-        BoardReply reply = boardReplyRepository.findById(dto.getReplyId()).orElseThrow();
-        User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
-        // 현재 접속한 유저의 id와 쓴 사람의 id를 비교
-        // 일치하면 true
-        // 일치하지 않으면 false
-        boolean flag = reply.getWriterUser().equals(user);
-        if(flag) {
-            // dto 안에 들어가있는 id값으로 찾은 댓글의 모든 정보를 target에 저장
-            Optional<BoardReply> target = boardReplyRepository.findById(dto.getReplyId());
-
-            // ifPresent로 null체크, null이 아니면 중괄호 안의 코드 실행
-            target.ifPresent(t -> {
-                t.setReplyText(dto.getContext()); // 수정 댓글 내용을 저장
-                boardReplyRepository.save(t); // 수정된 내용 DB에 저장
-            });
-        } else
-            throw new NotEqualTokenException("댓글 작성자만 수정할 수 있습니다!");
-    }
-
     // 내 댓글 조회
     public BoardReplyListResponseDTO findMyReply(Pageable pageInfo, TokenUserInfo userInfo){
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());

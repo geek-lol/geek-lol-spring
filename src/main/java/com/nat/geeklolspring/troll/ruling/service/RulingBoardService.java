@@ -94,6 +94,7 @@ public class RulingBoardService {
                 .totalPages(rulings.getTotalPages())
                 .build();
     }
+    @Transactional
     // 게시물 삭제
     public void deleteBoard(TokenUserInfo userInfo, RulingDeleteRequestDTO dto){
         if (userInfo.getRole().equals(Role.ADMIN)){

@@ -13,6 +13,7 @@ import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -39,6 +40,7 @@ public class BoardVoteService {
 
     }
 
+    @Transactional
     public BoardVoteResponseDTO createVote(BoardVotePostRequestDTO dto, TokenUserInfo userInfo) {
         log.debug("좋아요 저장 서비스 실행!");
 
@@ -59,6 +61,7 @@ public class BoardVoteService {
         return new BoardVoteResponseDTO(saved);
     }
 
+    @Transactional
     public BoardVoteResponseDTO changeVote(BulletinCheck vote) {
         BoardBulletin bulletin = boardBulletinRepository.findById(vote.getBulletin().getBulletinId()).orElseThrow();
         // vote 값 수정

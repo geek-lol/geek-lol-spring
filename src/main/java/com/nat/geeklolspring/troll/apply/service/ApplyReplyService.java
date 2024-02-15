@@ -35,7 +35,6 @@ import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class ApplyReplyService {
     private final ApplyReplyRepository applyReplyRepository;
     private final RulingApplyRepository rulingApplyRepository;
@@ -69,6 +68,7 @@ public class ApplyReplyService {
         }
     }
 
+    @Transactional
     // 댓글 저장 서비스
     public ApplyReplyListResponseDTO insertReply(
             Long applyId,
@@ -88,6 +88,7 @@ public class ApplyReplyService {
         return retrieve(applyId, pageInfo);
     }
 
+    @Transactional
     // 댓글 삭제 서비스
     public void deleteShortsReply(ApplyDeleteRequestDTO dto, TokenUserInfo userInfo) {
             ApplyReply reply = applyReplyRepository.findById(dto.getId()).orElseThrow();

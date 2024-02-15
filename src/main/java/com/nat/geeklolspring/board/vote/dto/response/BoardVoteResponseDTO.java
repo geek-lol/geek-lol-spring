@@ -13,8 +13,10 @@ import lombok.*;
 public class BoardVoteResponseDTO {
     // 웹사이트에 보내줄(보여줄) 정보들
     private int up;
+    private int total;
 
     public BoardVoteResponseDTO(BulletinCheck dto) {
         this.up = dto.getGood();
+        this.total = 0;
     }
 }

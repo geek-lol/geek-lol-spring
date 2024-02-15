@@ -69,20 +69,24 @@ public class BoardVoteService {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
             boardBulletinRepository.downUpCount(vote.getBulletin().getBulletinId());
             vote.setGood(0);
+            BulletinCheck saved = voteCheckRepository.save(vote);
+
+            return BoardVoteResponseDTO.builder()
+                    .up(0)
+                    .total(bulletin.getUpCount()-1)
+                    .build();
         }
         else {
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
             boardBulletinRepository.plusUpCount(vote.getBulletin().getBulletinId());
             vote.setGood(1);
+            BulletinCheck saved = voteCheckRepository.save(vote);
+
+            return BoardVoteResponseDTO.builder()
+                    .up(1)
+                    .total(bulletin.getUpCount()+1)
+                    .build();
         }
-
-        // 수정한 vote 값 DB에 저장
-        BulletinCheck saved = voteCheckRepository.save(vote);
-
-        // 수정된 정보를 저장해서 Controller에 전달
-        return BoardVoteResponseDTO.builder()
-                .up(saved.getGood())
-                .build();
     }
 
     public boolean VoteCheck(BoardVotePostRequestDTO dto, TokenUserInfo userInfo) {

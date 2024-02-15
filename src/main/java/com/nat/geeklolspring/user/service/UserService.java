@@ -21,6 +21,7 @@ import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,8 @@ public class UserService {
 
     @Value("${upload.path}")
     private String rootPath;
+
+    private final List<SocialLoginService> loginServices;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -77,6 +80,41 @@ public class UserService {
 
         return new UserSignUpResponseDTO(saved);
 
+    }
+
+    public LoginResponseDTO doSocialLogin(SocialLoginRequestDTO request) throws ChangeSetPersister.NotFoundException {
+        SocialLoginService loginService = this.getLoginService("google");
+
+        SocialAutoResponseDTO socialAuthResponse = loginService.getAccessToken(request.getCode());
+
+        SocialUserResponseDTO socialUserResponse = loginService.getUserInfo(socialAuthResponse.getAccess_token());
+        log.info("socialUserResponse {} ", socialUserResponse.toString());
+
+        if (userRepository.findById(socialUserResponse.getId()).isEmpty()) {
+            this.create(
+                    UserSignUpRequestDTO.builder()
+                            .id(socialUserResponse.getEmail())
+                            .userName(socialUserResponse.getName())
+                            .build()
+            );
+        }
+
+        User user = userRepository.findById(socialUserResponse.getId())
+                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+
+        return LoginResponseDTO.builder()
+                .id(user.getId())
+                .build();
+    }
+
+    private SocialLoginService getLoginService(String userType){
+        for (SocialLoginService loginService: loginServices) {
+            if (userType.equals("google")) {
+                log.info("login service name: {}", "google");
+                return loginService;
+            }
+        }
+        return new GoogleLoginServiceImpl();
     }
 
 

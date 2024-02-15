@@ -36,6 +36,8 @@ public interface ShortsRepository extends JpaRepository<BoardShorts, Long> {
 
     Page<BoardShorts> findAllByUploaderId(User uploaderId, Pageable pageable);
 
+    //쇼츠별 좋아요 갯수 반환
+    int countByShortsId(Long shortsId);
     //내꺼 갯수 반환
     int countByUploaderId(User uploaderId);
 

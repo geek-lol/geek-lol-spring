@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.board.vote.dto.response.BoardVoteResponseDTO;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.entity.VoteApply;
@@ -9,10 +10,11 @@ import com.nat.geeklolspring.troll.apply.dto.request.ApplyVotePostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
+
 import com.nat.geeklolspring.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,12 +25,15 @@ import javax.transaction.Transactional;
 @Transactional
 public class ApplyVoteService {
     private final ApplyVoteCheckRepository voteCheckRepository;
+
+    private final RulingApplyRepository rulingApplyRepository;
     private final RulingApplyService rulingApplyService;
     private final RulingApplyRepository rulingApplyRepository;
     private final UserRepository userRepository;
 
 
     public ApplyVoteResponseDTO createVote(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
+        Long applyId = dto.getApplyId();
         log.debug("좋아요 저장 서비스 실행!");
 
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
@@ -45,12 +50,11 @@ public class ApplyVoteService {
         // 좋아요 등록
         VoteApply saved = voteCheckRepository.save(entity);
 
-        log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
-
         return new ApplyVoteResponseDTO(saved);
     }
 
     public ApplyVoteResponseDTO getVote(long applyId, TokenUserInfo userInfo) {
+
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
         VoteApply voteCheck = voteCheckRepository.findByApplyIdAndReceiver(boardApply, user);
@@ -60,11 +64,12 @@ public class ApplyVoteService {
             log.warn("vote 정보가 없습니다.");
             return null;
         }
-        else
+        else{
             return ApplyVoteResponseDTO.builder()
                     .up(voteCheck.getUp())
                     .total(boardApply.getUpCount())
                     .build();
+        }
 
     }
 

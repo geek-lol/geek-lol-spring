@@ -16,7 +16,10 @@ public class ApplyVoteResponseDTO {
     private int up;
     private int total;
 
-    public ApplyVoteResponseDTO(VoteApply dto) {
+    public ApplyVoteResponseDTO(VoteApply dto,int i) {
+        this.up = dto.getUp();
+        this.total = i;
+    } public ApplyVoteResponseDTO(VoteApply dto) {
         this.up = dto.getUp();
     }
 }

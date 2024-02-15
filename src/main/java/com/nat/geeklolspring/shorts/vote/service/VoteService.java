@@ -54,9 +54,11 @@ public class VoteService {
         // 좋아요 등록
         VoteCheck saved = voteCheckRepository.save(entity);
 
+        BoardShorts shorts = shortsRepository.findByShortsId(dto.getShortsId());
+        int i = shorts.getUpCount();
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 
-        return new VoteResponseDTO(saved);
+        return new VoteResponseDTO(saved,i);
     }
 
     public VoteResponseDTO changeVote(VoteCheck vote) {
@@ -72,6 +74,9 @@ public class VoteService {
             shortsRepository.downUpCount(vote.getShorts().getShortsId());
             vote.setUp(1);
         }
+
+        BoardShorts shorts = shortsRepository.findByShortsId(vote.getShortsId());
+        int i = shorts.getUpCount();
 
         // 수정한 vote 값 DB에 저장
         VoteCheck saved = voteCheckRepository.save(vote);

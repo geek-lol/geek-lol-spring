@@ -8,6 +8,8 @@ import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResp
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.BoardBulletin;
+import com.nat.geeklolspring.entity.BoardReply;
+import com.nat.geeklolspring.entity.BulletinCheck;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -178,9 +180,11 @@ public class BoardBulletinService {
         dto.setViewCount(boardBulletin.get().getViewCount());
         dto.setUpCount(boardBulletin.get().getUpCount());
 
+        List<BoardReply> replies = boardBulletin.get().getReplies();
+        List<BulletinCheck> votes = boardBulletin.get().getVotes();
         log.info("dto : {}",dto);
 
-        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(filePath,boardBulletin.get().getUser()));
+        BoardBulletin saveData = boardBulletinRepository.save(dto.toEntity(filePath,boardBulletin.get().getUser(),replies,votes));
 
         return new BoardBulletinDetailResponseDTO(saveData);
 

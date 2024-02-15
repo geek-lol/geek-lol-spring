@@ -1,10 +1,13 @@
 package com.nat.geeklolspring.board.bulletin.dto.request;
 
 import com.nat.geeklolspring.entity.BoardBulletin;
+import com.nat.geeklolspring.entity.BoardReply;
+import com.nat.geeklolspring.entity.BulletinCheck;
 import com.nat.geeklolspring.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -26,7 +29,7 @@ public class BoardBulletinModifyRequestDTO {
     private int viewCount;
     private int upCount;
 
-    public BoardBulletin toEntity(String fileUrl, User user) {
+    public BoardBulletin toEntity(String fileUrl, User user, List<BoardReply> replies, List<BulletinCheck> votes) {
         return BoardBulletin.builder()
                 .bulletinId(bulletinId)
                 .title(title)
@@ -36,6 +39,8 @@ public class BoardBulletinModifyRequestDTO {
                 .boardDate(this.boardDate)
                 .upCount(this.upCount)
                 .user(user)
+                .Replies(replies)
+                .votes(votes)
                 .build();
     }
 

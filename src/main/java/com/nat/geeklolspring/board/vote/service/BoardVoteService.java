@@ -36,6 +36,7 @@ public class BoardVoteService {
         else
             return BoardVoteResponseDTO.builder()
                     .up(voteCheck.getGood())
+                    .total(bulletin.getUpCount())
                     .build();
 
     }

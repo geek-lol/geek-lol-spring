@@ -25,6 +25,13 @@ public class RulingVoteService {
     public ProsAndConsDTO rulingVoteSave(RulingVoteRequestDTO dto,TokenUserInfo userInfo){
         BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
+
+        //저장된 정보가 있는지 여부
+        boolean flag = rvr.existsByRulingVoter(user);
+        if (flag) {
+            return null;
+        }
+
         if (dto.getVote().equals("pros")){
             RulingCheck check = RulingCheck.builder()
                     .rulingVoter(user)
@@ -61,5 +68,6 @@ public class RulingVoteService {
                 .consPercent(consPercent)
                 .build();
     }
+
 
 }

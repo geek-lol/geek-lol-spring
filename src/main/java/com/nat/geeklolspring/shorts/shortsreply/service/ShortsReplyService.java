@@ -48,7 +48,7 @@ public class ShortsReplyService {
         Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         BoardShorts shorts = shortsRepository.findByShortsId(shortsId);
         // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
-        Page<ShortsReply> replyList = shortsReplyRepository.findAllByShortsId(shorts, pageable);
+        Page<ShortsReply> replyList = shortsReplyRepository.findAllByShortsIdOrderByReplyDateDesc(shorts, pageable);
 
         // 정보를 가공하여 List<DTO>형태로 저장
         List<ShortsReplyResponseDTO> allReply = replyList.stream()

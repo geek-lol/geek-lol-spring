@@ -19,4 +19,6 @@ public class ProsAndConsDTO {
     //반대 퍼센트율
     private float consPercent;
 
+    //에러 메세지
+    private String error;
 }

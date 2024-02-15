@@ -12,7 +12,7 @@ import java.util.List;
 public interface ShortsReplyRepository extends JpaRepository<ShortsReply, Long> {
 
     // ShortsId에 달린 모든 댓글을 가져오는걸 JPA로 자동화해서 만든 코드
-    Page<ShortsReply> findAllByShortsId(BoardShorts shortsId, Pageable pageable);
+    Page<ShortsReply> findAllByShortsIdOrderByReplyDateDesc(BoardShorts shortsId, Pageable pageable);
 
     //특정 아이디가 쓴 댓글을 조회
     Page<ShortsReply> findAllByWriterId(User writerId, Pageable pageable);

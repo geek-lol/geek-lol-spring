@@ -35,7 +35,17 @@ public class RulingVoteController {
             @RequestBody RulingVoteRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo
     ){
-        ProsAndConsDTO prosAndConsDTO = rulingVoteService.rulingVoteSave(dto, userInfo);
-        return ResponseEntity.ok().body(prosAndConsDTO);
+        try
+        {
+            ProsAndConsDTO prosAndConsDTO = rulingVoteService.rulingVoteSave(dto, userInfo);
+            if (prosAndConsDTO == null){
+                return ResponseEntity.ok().body(ProsAndConsDTO.builder()
+                        .error("이미 투표한 회원입니다. 투표 수정이 불가합니다.")
+                        .build());
+            }
+            return ResponseEntity.ok().body(prosAndConsDTO);
+        }catch (NullPointerException e){
+            throw new RuntimeException("토큰이 만료되었습니다.");
+        }
     }
 }

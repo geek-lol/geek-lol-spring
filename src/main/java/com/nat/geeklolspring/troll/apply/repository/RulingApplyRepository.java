@@ -5,6 +5,7 @@ import com.nat.geeklolspring.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
@@ -33,6 +34,14 @@ public interface RulingApplyRepository extends JpaRepository<BoardApply,Long> {
 
     //내꺼 갯수 반환
     int countByUserId(User user);
+
+    @Modifying
+    @Query("update BoardApply s set s.upCount = s.upCount + 1 where s.applyId = :applyId")
+    void plusUpCount(Long applyId);
+
+    @Modifying
+    @Query("update BoardApply s set s.upCount = s.upCount - 1 where s.applyId = :applyId")
+    void downUpCount(Long applyId);
 
 
 }

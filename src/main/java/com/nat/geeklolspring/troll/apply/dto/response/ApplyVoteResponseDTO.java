@@ -14,6 +14,7 @@ import lombok.*;
 public class ApplyVoteResponseDTO {
     // 웹사이트에 보내줄(보여줄) 정보들
     private int up;
+    private int total;
 
     public ApplyVoteResponseDTO(VoteApply dto) {
         this.up = dto.getUp();

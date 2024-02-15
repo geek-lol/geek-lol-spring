@@ -64,7 +64,9 @@ public class RulingBoardService {
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
         boardRuling.setViewCount(boardRuling.getViewCount()+1);
         boardRulingRepository.save(boardRuling);
-        return new RulingBoardDetailResponseDTO(boardRuling);
+
+        int i = rulingReplyRepository.countByRulingId(boardRuling);
+        return new RulingBoardDetailResponseDTO(boardRuling,i);
     }
     // 게시물 영상 주소
     public String getVideoPath(Long rulingId){

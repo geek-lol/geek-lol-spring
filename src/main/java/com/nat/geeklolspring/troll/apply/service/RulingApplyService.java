@@ -2,6 +2,7 @@ package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardApply;
+import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyDeleteRequestDTO;
@@ -190,7 +191,10 @@ public class RulingApplyService {
             return;
         RulingBoardDetailResponseDTO rulingDto = new RulingBoardDetailResponseDTO(BestBoard);
         User user = userRepository.findById(rulingDto.getApplyPosterId()).orElseThrow();
-        boardRulingRepository.save(rulingDto.toEntity(user,BestBoard));
+        BoardRuling save = boardRulingRepository.save(rulingDto.toEntity(user, BestBoard));
+
+        rulingApplyRepository.deleteAll();
+
 
     }
     public LocalDateTime threeDayAfter (){

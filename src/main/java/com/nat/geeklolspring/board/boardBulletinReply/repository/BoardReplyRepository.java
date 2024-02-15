@@ -15,6 +15,7 @@ public interface BoardReplyRepository extends JpaRepository<BoardReply, Long> {
     //해당 회원의 댓글 조회 하는 기능
     Page<BoardReply> findAllByWriterUser(User writerUser, Pageable pageable);
 
+
     //내꺼 갯수 반환
     int countByWriterUser(User writerUser);
 }

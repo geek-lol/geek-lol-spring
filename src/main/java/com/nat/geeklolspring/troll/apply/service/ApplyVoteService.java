@@ -28,7 +28,6 @@ public class ApplyVoteService {
 
     private final RulingApplyRepository rulingApplyRepository;
     private final RulingApplyService rulingApplyService;
-    private final RulingApplyRepository rulingApplyRepository;
     private final UserRepository userRepository;
 
 

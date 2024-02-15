@@ -4,8 +4,6 @@ import com.nat.geeklolspring.admin.dto.Response.List.*;
 import com.nat.geeklolspring.admin.service.AdminPageService;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDeleteResponseDTO;
-import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDetailResponseDTO;
-import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinResponseDTO;
 import com.nat.geeklolspring.board.bulletin.service.BoardBulletinService;
 import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;

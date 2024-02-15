@@ -15,8 +15,7 @@ public class VoteResponseDTO {
     private int up;
     private int total;
 
-    public VoteResponseDTO(VoteCheck dto,int total) {
+    public VoteResponseDTO(VoteCheck dto) {
         this.up = dto.getUp();
-        this.total = total;
     }
 }

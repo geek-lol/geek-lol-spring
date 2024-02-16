@@ -48,6 +48,8 @@ dependencies {
 
     //파일업로드 라이브러리
     implementation 'commons-io:commons-io:2.8.0'
+    implementation 'commons-fileupload:commons-fileupload:1.5'
+
     
     // API 사용을 위한 라이브러리들
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
@@ -68,6 +70,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'software.amazon.awssdk:s3:2.17.52'
+    testImplementation 'org.springframework:spring-test'
+
 }
 
 tasks.named('test') {

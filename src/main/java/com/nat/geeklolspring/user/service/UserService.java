@@ -4,6 +4,7 @@ import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.Role;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.game.repository.CsGameRankRepository;
 import com.nat.geeklolspring.game.repository.ResGameRankRepository;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
@@ -11,19 +12,25 @@ import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
 import com.nat.geeklolspring.user.dto.request.*;
 import com.nat.geeklolspring.user.dto.response.*;
-import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,12 +59,13 @@ public class UserService {
     private final ResGameRankRepository resGameRankRepository;
 
 
-    public UserResponseDTO findByUserInfo(TokenUserInfo userInfo){
+    public UserResponseDTO findByUserInfo(TokenUserInfo userInfo) {
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         return new UserResponseDTO(user);
 
     }
-    public UserSignUpResponseDTO create(UserSignUpRequestDTO dto) {
+
+    public UserSignUpResponseDTO create(UserSignUpRequestDTO dto) throws IOException {
 
         if (dto == null) {
             throw new RuntimeException("회원가입 입력정보가 없습니다!");
@@ -71,13 +79,38 @@ public class UserService {
 
         User saved = userRepository.save(dto.toEntity(passwordEncoder));
 
+        //File defaultImageFile = new File("/public/defaultUser.jpg");
+        Path filePath = Paths.get("src/main/resources/public", "defaultUser.jpg").toAbsolutePath();
+        MultipartFile multipartDefaultFile = getMultipartDefaultFile(filePath.toFile());
+
+        String s = uploadProfileImage(multipartDefaultFile);
+        saved.setProfileImage(s);
+
         log.info("회원가입 성공!! saved user - {}", saved);
 
         return new UserSignUpResponseDTO(saved);
 
     }
 
-    public LoginResponseDTO doSocialLogin(SocialLoginRequestDTO request) throws ChangeSetPersister.NotFoundException {
+    private MultipartFile getMultipartDefaultFile(File file) throws IOException {
+        //File file = new File(new File("").getAbsoluteFile() + "public/defaultUser.jpg");
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        FileItem fileItem = new DiskFileItem("originFile", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length(), file.getParentFile());
+
+        try {
+            InputStream input = new FileInputStream(file);
+            OutputStream os = fileItem.getOutputStream();
+            IOUtils.copy(input, os);
+        } catch (IOException e) {
+            log.error("File to Multipart Error : {}", e.getMessage());
+            throw e;
+        }
+
+        MultipartFile mFile = new CommonsMultipartFile(fileItem);
+        return mFile;
+    }
+
+    public LoginResponseDTO doSocialLogin(SocialLoginRequestDTO request) throws ChangeSetPersister.NotFoundException, IOException {
         SocialLoginService loginService = this.getLoginService("google");
 
         SocialAutoResponseDTO socialAuthResponse = loginService.getAccessToken(request.getCode());
@@ -102,8 +135,8 @@ public class UserService {
                 .build();
     }
 
-    private SocialLoginService getLoginService(String userType){
-        for (SocialLoginService loginService: loginServices) {
+    private SocialLoginService getLoginService(String userType) {
+        for (SocialLoginService loginService : loginServices) {
             if (userType.equals("google")) {
                 log.info("login service name: {}", "google");
                 return loginService;
@@ -119,55 +152,59 @@ public class UserService {
             log.warn("삭제할 회원이 없습니다!! - {}", dto.getId());
             throw new RuntimeException("중복된 아이디입니다!!");
         }
-        if (dto.getIds() != null){
-            dto.getIds().forEach(id->{
+        if (dto.getIds() != null) {
+            dto.getIds().forEach(id -> {
                 User user = userRepository.findById(id).orElseThrow();
                 deleteChildren(user);
                 userRepository.delete(user);
             });
-        }else {
+        } else {
             User user = userRepository.findById(dto.getId()).orElseThrow();
             deleteChildren(user);
             userRepository.delete(user);
         }
     }
+
     public void delete(List<String> ids) {
         if (ids == null) {
-        log.warn("삭제할 회원이 없습니다!!");
+            log.warn("삭제할 회원이 없습니다!!");
         }
         try {
-            ids.forEach(id->{
+            ids.forEach(id -> {
                 User user = userRepository.findById(id).orElseThrow();
                 deleteChildren(user);
                 userRepository.delete(user);
             });
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             throw new RuntimeException("삭제 안도ㅐ유");
         }
 
     }
-    void deleteChildren(User user){
+
+    void deleteChildren(User user) {
         boardBulletinRepository.deleteAllByUser(user);
         rulingApplyRepository.deleteAllByUserId(user);
         shortsRepository.deleteAllByUploaderId(user);
         csGameRankRepository.deleteAllByUser(user);
         resGameRankRepository.deleteAllByUser(user);
     }
-    public boolean isDupilcateId(String id){
+
+    public boolean isDupilcateId(String id) {
         return userRepository.existsById(id);
     }
-    public boolean isDupilcatePw(String pw,TokenUserInfo userInfo){
+
+    public boolean isDupilcatePw(String pw, TokenUserInfo userInfo) {
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
-        if (!passwordEncoder.matches(pw,user.getPassword())){
+        if (!passwordEncoder.matches(pw, user.getPassword())) {
             return false;
         }
         return true;
     }
 
 
-    public LoginResponseDTO authenticate(final LoginRequestDTO dto){
+    public LoginResponseDTO authenticate(final LoginRequestDTO dto) {
 
-        log.info("dto : {}",dto);
+        log.info("dto : {}", dto);
 
         User user = userRepository.findById(dto.getId())
                 .orElseThrow(
@@ -177,37 +214,36 @@ public class UserService {
         String inputPassword = dto.getPassword();
         String encodedPassword = user.getPassword();
 
-        if (!passwordEncoder.matches(inputPassword,encodedPassword)){
+        if (!passwordEncoder.matches(inputPassword, encodedPassword)) {
             throw new RuntimeException("비밀번호가 틀렸습니다");
         }
         String token = tokenProvider.createToken(user);
 
         user.setAutoLogin(dto.getAutoLogin());
 
-        log.info("user : {}",user);
+        log.info("user : {}", user);
 
         userRepository.save(user);
 
-        return new LoginResponseDTO(user,token);
+        return new LoginResponseDTO(user, token);
     }
-
 
 
     public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
 
-        log.info("modifyDTO : {}",dto);
+        log.info("modifyDTO : {}", dto);
 
         if (dto == null && profilePath == null) {
             throw new RuntimeException("수정된 회원정보가 없습니다!");
         }
 
-        if (dto.getPassword() == null){
+        if (dto.getPassword() == null) {
             dto.setPassword(userInfo.getPassword());
         }
-        if (dto.getProfileIamge() == null){
+        if (dto.getProfileIamge() == null) {
             dto.setProfileIamge(userInfo.getProfileImage());
         }
-        if (dto.getUserName() == null){
+        if (dto.getUserName() == null) {
             dto.setUserName(userInfo.getUserName());
         }
 
@@ -215,17 +251,17 @@ public class UserService {
 
         Optional<User> byId = userRepository.findById(userId);
 
-        log.info("{}",byId);
+        log.info("{}", byId);
 
 //        delete(byId);
 
-        User saved = userRepository.save(dto.toEntity(userId,passwordEncoder,profilePath,userInfo.getRole()));
+        User saved = userRepository.save(dto.toEntity(userId, passwordEncoder, profilePath, userInfo.getRole()));
 
         String token = tokenProvider.createToken(saved);
 
         log.info("회원정보 수정 성공!! saved user - {}", saved);
 
-        return new LoginResponseDTO(saved,token);
+        return new LoginResponseDTO(saved, token);
 
     }
 
@@ -245,23 +281,23 @@ public class UserService {
         return uniqueFileName;
     }
 
-    public String getProfilePath(String id){
+    public String getProfilePath(String id) {
 
         //DB에서 파일명 조회
         User user = userRepository.findById(id).orElseThrow();
         String fileName = user.getProfileImage();
 
-        return rootPath+"/"+fileName;
+        return rootPath + "/" + fileName;
 
     }
 
-    public void changeAuth(String userId, String newAuth){
-        if (!userRepository.existsById(userId)){
+    public void changeAuth(String userId, String newAuth) {
+        if (!userRepository.existsById(userId)) {
             throw new RuntimeException("존재하지 않는 회원입니다.");
         }
-        log.info("newAuth:{}",newAuth);
+        log.info("newAuth:{}", newAuth);
         try {
-            switch (newAuth){
+            switch (newAuth) {
                 case "ADMIN":
                     userRepository.updateAuthority(userId, Role.ADMIN);
                     break;
@@ -271,8 +307,8 @@ public class UserService {
                 default:
                     throw new RuntimeException("없는 권한입니다.");
             }
-        }catch (Exception e){
-            log.warn("권한 변경 에러! :{}",e.getMessage());
+        } catch (Exception e) {
+            log.warn("권한 변경 에러! :{}", e.getMessage());
             throw new RuntimeException("회원 권한 변경에 실패하였습니다.");
         }
     }

@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.user.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.user.dto.request.LoginRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserDeleteRequestDTO;
 import com.nat.geeklolspring.user.dto.request.UserModifyRequestDTO;
@@ -64,7 +63,7 @@ public class UserController {
             UserSignUpResponseDTO responseDTO = userService.create(dto);
             return ResponseEntity.ok().body(responseDTO);
         }catch (Exception e){
-            log.warn("문제 발생");
+            log.warn("문제 발생 : {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 

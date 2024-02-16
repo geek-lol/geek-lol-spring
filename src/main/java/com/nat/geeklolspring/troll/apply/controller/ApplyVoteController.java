@@ -118,8 +118,8 @@ public class ApplyVoteController {
             ApplyVoteResponseDTO vote = voteService.changeVote(voteCheck);
             
             return ResponseEntity.ok().body(vote);
-        } catch (Exception e) {
-            log.warn("서버 에러가 발생했습니다! 사유 : {}", e.getMessage());
+        } catch (NullPointerException e) {
+            log.warn("뭔가가 null이애용 사유 : {}", e.getMessage());
             return ResponseEntity
                     .internalServerError()
                     .body(e.getMessage());

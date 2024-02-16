@@ -26,5 +26,5 @@ public interface BoardRulingRepository extends JpaRepository<BoardRuling, Long> 
     void deleteAllByRulingPosterId(User user);
 
     //가장 최근에 등록된 보드를 반환
-    BoardRuling findTopByOrderByRulingDateAsc();
+    BoardRuling findTopByOrderByRulingDateDesc();
 }

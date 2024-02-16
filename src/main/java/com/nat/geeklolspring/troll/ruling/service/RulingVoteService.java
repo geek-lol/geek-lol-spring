@@ -27,7 +27,7 @@ public class RulingVoteService {
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
 
         //현재 투표중인 보드
-        BoardRuling board = boardRulingRepository.findTopByOrderByRulingDateAsc();
+        BoardRuling board = boardRulingRepository.findTopByOrderByRulingDateDesc();
 
         //저장된 정보가 있는지 여부 - 있으면 true / 없으면 false
         boolean flag = rvr.existsByRulingVoter(user);

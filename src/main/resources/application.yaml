@@ -27,7 +27,7 @@ logging:
     root: info
     org.hibernate.SQL: debug
 
-lol.app-key: RGAPI-d8d4830b-4756-409c-b977-726e23cd1858
+lol.app-key: RGAPI-32283c1a-5de7-4c98-b452-1d61924c0da8
 
 social:
   client:
@@ -41,4 +41,5 @@ jwt:
   secret: Gt9jGFwmCAjnUG64pitfmWSm8v/0c1uNjYvTWxCUWpY8jNbUmgfXWk9h4CaA6UFC7kQtbjF4iqNtX2hkRaAe4w==
 
 upload:
-  path: C:/upload
+  path: D:\upload
+  # path: C:/upload

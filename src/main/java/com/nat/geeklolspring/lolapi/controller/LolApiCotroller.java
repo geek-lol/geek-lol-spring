@@ -1,18 +1,19 @@
 package com.nat.geeklolspring.lolapi.controller;
 
 import com.nat.geeklolspring.lolapi.dto.CurrentGameInfo;
+import com.nat.geeklolspring.lolapi.dto.RankingResponseDTO;
 import com.nat.geeklolspring.lolapi.dto.response.AllChampionMasteryResponseDTO;
 import com.nat.geeklolspring.lolapi.dto.response.ChampionMasteryResponseDTO;
 import com.nat.geeklolspring.lolapi.services.LolApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -67,5 +68,13 @@ public class LolApiCotroller {
         log.info("load realtime game get!");
         CurrentGameInfo realtimeGame = lolApiService.getRealtimeGame();
         return ResponseEntity.ok().body(realtimeGame);
+    }
+
+    @GetMapping("/ranking/{tier}")
+    public ResponseEntity<?> loadRanking(@PathVariable String tier) {
+        log.info("load ranking info get");
+        RankingResponseDTO rankingData = lolApiService.getRankingData(tier);
+        log.warn("ranking data : {}", rankingData);
+        return ResponseEntity.ok().body(rankingData);
     }
 }

@@ -12,6 +12,7 @@ import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -21,6 +22,7 @@ public class RulingVoteService {
     private final BoardRulingRepository boardRulingRepository;
     private final UserRepository userRepository;
 
+    @Transactional()
     // 투표한 내용을 저장
     public ProsAndConsDTO rulingVoteSave(RulingVoteRequestDTO dto,TokenUserInfo userInfo){
         BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
@@ -35,7 +37,9 @@ public class RulingVoteService {
         boolean boardFlag = board.equals(boardRuling);
 
          if (flag || !boardFlag) {
-            return null;
+             ProsAndConsDTO prosAndConsDTO = prosAndCons(boardRuling.getRulingId());
+             prosAndConsDTO.setError("이미 투표한 회원이거나 지난 투표게시물입니다");
+             return prosAndConsDTO;
         }
 
         if (dto.getVote().equals("pros")){

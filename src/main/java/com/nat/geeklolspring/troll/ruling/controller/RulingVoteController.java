@@ -38,11 +38,6 @@ public class RulingVoteController {
         try
         {
             ProsAndConsDTO prosAndConsDTO = rulingVoteService.rulingVoteSave(dto, userInfo);
-            if (prosAndConsDTO == null){
-                return ResponseEntity.ok().body(ProsAndConsDTO.builder()
-                        .error("이미 투표한 회원이거나 지난 투표게시물입니다")
-                        .build());
-            }
             return ResponseEntity.ok().body(prosAndConsDTO);
         }catch (NullPointerException e){
             throw new RuntimeException("토큰이 만료되었거나 게시판 아이디를 넘겨받지 못했습니다.");

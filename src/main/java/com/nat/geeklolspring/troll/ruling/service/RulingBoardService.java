@@ -51,8 +51,8 @@ public class RulingBoardService {
                     .build();
         }else if (topTwo.size() == 1){
             return CurrentBoardListResponseDTO.builder()
-                    .currentBoard(new RulingBoardResponseDTO(topTwo.get(0)))
-                    .previousBoard(null)
+                    .currentBoard(null)
+                    .previousBoard(new RulingBoardResponseDTO(topTwo.get(0)))
                     .build();
         }
 

@@ -37,6 +37,7 @@ public class CsGameRankService {
                 .build();
     }
     // 랭킹 저장
+    @Transactional
     public GameRankListResponseDTO addRank(GameRankRequestDTO dto, TokenUserInfo userInfo){
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // 근데 랭킹에 이미 있고, 원래 점수보다 높으면 수정해서 저장

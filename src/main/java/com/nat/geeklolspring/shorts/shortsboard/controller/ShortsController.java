@@ -33,7 +33,7 @@ import java.util.Map;
 @RequestMapping("/api/shorts")
 public class ShortsController {
     // 업로드한 shorts를 저장할 로컬 위치
-    @Value("D:/geek-lol/upload/shorts/video")
+    @Value("C:/upload")
     private String rootShortsPath;
 
     private final ShortsService shortsService;

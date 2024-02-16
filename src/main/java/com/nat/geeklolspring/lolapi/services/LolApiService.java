@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nat.geeklolspring.lolapi.dto.CurrentGameInfo;
+import com.nat.geeklolspring.lolapi.dto.RankingResponseDTO;
 import com.nat.geeklolspring.lolapi.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,6 +44,7 @@ public class LolApiService {
 
 
     private final WebClient.Builder webClientBuilder;
+
 
     public JSONObject getJsonToApi(String requestURL) {
         try {
@@ -408,31 +411,65 @@ public class LolApiService {
                 .bodyToMono(AllSummoner.class);
     }
 
-    //public RankingResponseDTO getRankingData(String tier, int page) {
+    public RankingResponseDTO getRankingData(String s) {
+        String url = "";
+        if (s.equals("CHALLENGER")) {
+            url = riotUrl + "/lol/league/v4/challengerleagues/by-queue/RANKED_SOLO_5x5?api_key=" + appKey;
+        } else if (s.equals("GRANDMASTER")) {
+            url = riotUrl + "/lol/league/v4/grandmasterleagues/by-queue/RANKED_SOLO_5x5?api_key=" + appKey;
+        } else if (s.equals("MASTER")) {
+            url = riotUrl + "/lol/league/v4/masterleagues/by-queue/RANKED_SOLO_5x5?api_key=" + appKey;
+        }
+
+        log.warn("ranking url : {}", url);
+
+        try {
+            ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
+                    .codecs(clientCodecConfigurer -> clientCodecConfigurer.defaultCodecs().maxInMemorySize(3 * 1024 * 1024))
+                    .build();
+
+            // WebClient 객체 생성
+            WebClient webClient = WebClient.builder()
+                    .exchangeStrategies(exchangeStrategies)
+                    .baseUrl(url)
+                    .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+
+            // Riot API에서 데이터를 가져옴
+            Mono<RankingResponseDTO> mono = webClient.get()
+                    .retrieve()
+                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("연결 오류 발생")))
+                    .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("서버 오류 발생")))
+                    .bodyToMono(RankingResponseDTO.class);
+
+            // Mono에서 데이터를 가져와 RankingResponseDTO로 변환
+            RankingResponseDTO rankingResponseDTO = mono.block();
+            log.warn("rankingResponseDTO : {}", rankingResponseDTO);
+
+            if (rankingResponseDTO != null && rankingResponseDTO.getEntries() != null) {
+                List<RankingResponseDTO.RankingEntryDTO> entries = rankingResponseDTO.getEntries();
+                Collections.sort(entries, Comparator.comparingInt(RankingResponseDTO.RankingEntryDTO::getLeaguePoints).reversed());
+                rankingResponseDTO.setEntries(entries);
+            }
+
+            return rankingResponseDTO;
+        } catch (Exception e) {
+            log.error("error : {}", e.getMessage());
+            return null;
+        }
+
+    }
+
+    //private Mono<SummonerInfo> getSummonerDataBySummonerId(String summonerId) {
     //
-    //    String url = riotUrl + "/lol/league-exp/v4/entries/RANKED_SOLO_5x5/" + tier + "/I?page=" + page + "&api_key=" + appKey;
-    //    log.error("ranking url : {}", url);
+    //    String url = riotUrl + "/lol/summoner/v4/summoners/" + summonerId + "?api_key=" + appKey;
     //
-    //    WebClient getGame = WebClient.builder()
-    //            .baseUrl(url)
-    //            .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-    //            .build();
-    //
-    //    Mono<RankingResponseDTO> mono = getGame.get()
+    //    return WebClient.create()
+    //            .get()
+    //            .uri(url)
+    //            .header(HttpHeaders.CONTENT_TYPE, "application/json")
+    //            .header("Accept", "*/*")
     //            .retrieve()
-    //            //.onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("요청이 잘못됨")))
-    //            //.onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("서버 에러 발생")))
-    //            .bodyToMono(RankingResponseDTO.class);
-    //
-    //    RankingResponseDTO rankingResponseDTO = mono.onErrorResume(error -> Mono.empty()).block();
-    //
-    //    if(rankingResponseDTO == null) {
-    //        return null;
-    //    }
-    //    log.warn("ranking : {}", rankingResponseDTO);
-    //    return rankingResponseDTO;
-    //
+    //            .bodyToMono(SummonerInfo.class);
     //}
-
-
 }

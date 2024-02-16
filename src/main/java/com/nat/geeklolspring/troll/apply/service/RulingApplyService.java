@@ -171,7 +171,8 @@ public class RulingApplyService {
 
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
-    @Scheduled(initialDelay = 0, fixedDelay = 30 * 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+    @Scheduled(initialDelay = 0, fixedDelay = 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+    @Transactional
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");
         // 현재 시간
@@ -193,6 +194,11 @@ public class RulingApplyService {
         User user = userRepository.findById(rulingDto.getApplyPosterId()).orElseThrow();
         BoardRuling save = boardRulingRepository.save(rulingDto.toEntity(user));
 
+//        //지원 게시글의 좋아요 정보들 다 삭제
+//        rulingApplyRepository.findAll()
+//                .forEach(board->{
+//                    board.getVotes().clear();
+//                });
         //지원 게시글은 다 지우기
         rulingApplyRepository.deleteAll();
 

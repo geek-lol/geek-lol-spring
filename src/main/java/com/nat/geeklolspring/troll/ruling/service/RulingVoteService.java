@@ -29,12 +29,12 @@ public class RulingVoteService {
         //현재 투표중인 보드
         BoardRuling board = boardRulingRepository.findTopByOrderByRulingDateAsc();
 
-        //저장된 정보가 있는지 여부
+        //저장된 정보가 있는지 여부 - 있으면 true / 없으면 false
         boolean flag = rvr.existsByRulingVoter(user);
-        // 보드가 같으면 false
-        boolean boardFlag = !board.equals(boardRuling);
+        // 보드가 같으면 true / 다르면 false
+        boolean boardFlag = board.equals(boardRuling);
 
-        if (flag ||boardFlag) {
+         if (flag || !boardFlag) {
             return null;
         }
 

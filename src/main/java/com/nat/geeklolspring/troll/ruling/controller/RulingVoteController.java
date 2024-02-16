@@ -45,7 +45,7 @@ public class RulingVoteController {
             }
             return ResponseEntity.ok().body(prosAndConsDTO);
         }catch (NullPointerException e){
-            throw new RuntimeException("토큰이 만료되었습니다.");
+            throw new RuntimeException("토큰이 만료되었거나 게시판 아이디를 넘겨받지 못했습니다.");
         }
     }
 }

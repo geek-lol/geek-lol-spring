@@ -48,7 +48,7 @@ public class BoardVoteController {
     }
 
     // 좋아요 생성
-    @Transactional
+//    @Transactional
     @PostMapping()
     public ResponseEntity<?> addVote(
             @Validated @RequestBody BoardVotePostRequestDTO dto,
@@ -104,7 +104,7 @@ public class BoardVoteController {
     }
 
     // 좋아요 상태 수정
-    @Transactional
+//    @Transactional
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> update(
             @Validated @RequestBody BoardVotePatchRequestDTO dto,

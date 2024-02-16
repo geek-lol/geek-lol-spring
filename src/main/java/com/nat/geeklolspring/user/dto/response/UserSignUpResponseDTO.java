@@ -24,6 +24,8 @@ public class UserSignUpResponseDTO {
     private String userName;
     private String profileImage;
     private int reportCount;
+
+    @Builder.Default
     private Role role = COMMON;
 
 

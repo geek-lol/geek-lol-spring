@@ -19,6 +19,7 @@ public class ShortsDetailResponseDTO {
     private String uploaderName;
     private String title;
     private String context;
+    private int replyCount;
     private int viewCount;
     private int upCount;
     private String videoLink;
@@ -26,12 +27,13 @@ public class ShortsDetailResponseDTO {
 
     public ShortsDetailResponseDTO(BoardShorts shorts) {
         this.shortsId = shorts.getShortsId();
-        this.uploaderId = shorts.getUploaderId();
-        this.uploaderName = shorts.getUploaderName();
+        this.uploaderId = shorts.getUploaderId().getId();
+        this.uploaderName = shorts.getUploaderId().getUserName();
         this.title = shorts.getTitle();
         this.context = shorts.getContext();
         this.viewCount = shorts.getViewCount();
         this.upCount = shorts.getUpCount();
+        this.replyCount = shorts.getReplyCount();
         this.videoLink = shorts.getVideoLink();
         this.uploadDate = shorts.getUploadDate();
     }

@@ -20,7 +20,7 @@ public class BoardReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
-    private long replyId;
+    private Long replyId;
 
     @CreationTimestamp
     @Column(name = " board_reply_date")
@@ -29,20 +29,14 @@ public class BoardReply {
     @Column(name = "reply_text", nullable = false)
     private String replyText;
 
-    @Column(name = "board_reply_modify")
-    private int boardReplyModify;
-
-
-
-    //----------------------------------------
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_writer")
-    private User replyWriter;
-
-
+    //fk
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bulletin_id")
-    private BoardBulletin bulletinId;
+    private BoardBulletin bulletin; //댓글이 달릴 게시물 fk
 
+    //작성자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_writer_id", updatable = false)
+    private User writerUser;
 
 }

@@ -22,16 +22,22 @@ public class BoardBulletinDetailResponseDTO {
     private String content;
     private String boardMedia;
     private int viewCount;
+    private String posterName;
     private LocalDateTime localDateTime;
+    private int upCount;
+    private int totlaReply; // 총 댓글 수
 
     public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin) {
         this.bulletinId = boardBulletin.getBulletinId();
-        this.posterId = String.valueOf(boardBulletin.getPosterId());
+        this.posterId = (boardBulletin.getUser().getId());
+        this.posterName = boardBulletin.getUser().getUserName();
         this.title = boardBulletin.getTitle();
         this.content = boardBulletin.getBoardContent();
         this.boardMedia = boardBulletin.getBoardMedia();
         this.viewCount = boardBulletin.getViewCount();
         this.localDateTime = boardBulletin.getBoardDate();
+        this.upCount = boardBulletin.getUpCount();
+        this.totlaReply = boardBulletin.getReplies().size();
     }
 
 }

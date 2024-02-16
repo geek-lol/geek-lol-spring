@@ -6,18 +6,24 @@ import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
+import com.nat.geeklolspring.utils.files.Videos;
 import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -34,16 +40,12 @@ public class ShortsController {
 
     // shorts 리스트 가져오기
     @GetMapping()
-    public ResponseEntity<?> shortsList(
-            @PageableDefault(page = 1, size = 5) Pageable pageInfo,
-            @RequestParam(required = false) String keyword) {
+    public ResponseEntity<?> shortsList() {
         log.info("/api/shorts : Get!");
 
-        log.info("keyword : {}", keyword);
-
         try {
-            // 모든 쇼츠 목록 가져오기
-            ShortsListResponseDTO shortsList = shortsService.retrieve(keyword, pageInfo);
+            // 쇼츠 목록 가져오기
+            ShortsListResponseDTO shortsList = shortsService.retrieve();
 
             log.warn("shortsList: {}", shortsList);
 
@@ -115,14 +117,14 @@ public class ShortsController {
     }
 
     // 쇼츠 삭제 요청
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteShorts(@PathVariable Long id,
+    @DeleteMapping("/{shortsId}")
+    public ResponseEntity<?> deleteShorts(@PathVariable Long shortsId,
                                           @AuthenticationPrincipal TokenUserInfo userInfo) {
 
-        log.info("/api/shorts/{} DELETE !!", id);
+        log.info("/api/shorts/{} DELETE !!", shortsId);
 
         // 데이터를 전달받지 못했다면 실행
-        if(id == null) {
+        if(shortsId == null) {
             return ResponseEntity
                     .badRequest()
                     .body(ShortsListResponseDTO
@@ -134,7 +136,7 @@ public class ShortsController {
         try {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
-            shortsService.deleteShorts(id, userInfo);
+            shortsService.deleteShorts(shortsId, userInfo);
 
             return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {
@@ -154,4 +156,56 @@ public class ShortsController {
                             .build());
         }
     }
+
+
+    //동영상 파일 불러오기
+    @GetMapping("/load-video/{shortsId}")
+    public ResponseEntity<?> loadVideo(
+            @PathVariable Long shortsId){
+        log.error("shortsId : {}", shortsId);
+        try {
+            String shortPath = shortsService.getShortPath(shortsId);
+
+            File videoFile = new File(shortPath);
+
+            if (!videoFile.exists()) return ResponseEntity.notFound().build();
+
+            byte[] fileData = FileCopyUtils.copyToByteArray(videoFile);
+
+            HttpHeaders headers = new HttpHeaders();
+
+
+            MediaType mediaType = Videos.extractFileExtension(shortPath);
+            if (mediaType == null){
+                return ResponseEntity.internalServerError().body("비디오가 아닙니다");
+            }
+
+            headers.setContentType(mediaType);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> myShorts(
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo,
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ){
+        try {
+            ShortsListResponseDTO shortsListResponseDTO = shortsService.myUploadShort(userInfo,pageInfo);
+            return ResponseEntity.ok().body(shortsListResponseDTO);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(ShortsListResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build());
+        }
+    }
+
 }

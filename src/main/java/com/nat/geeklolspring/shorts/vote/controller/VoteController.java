@@ -16,13 +16,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000","",""})
+//@CrossOrigin(origins = {"http://localhost:3000","",""})
 @RequestMapping("/api/vote")
 public class VoteController {
     private final VoteService voteService;
@@ -45,12 +47,13 @@ public class VoteController {
     }
 
     // 좋아요 생성
+    @Transactional
     @PostMapping()
     public ResponseEntity<?> addVote(
             @Validated @RequestBody VotePostRequestDTO dto,
             @AuthenticationPrincipal TokenUserInfo userInfo,
             BindingResult result
-            ) {
+    ) {
         // 입력값 검증에 걸리면 400번 코드와 함께 메시지를 클라이언트에 전송
         if(result.hasErrors()) {
             return ResponseEntity
@@ -100,6 +103,7 @@ public class VoteController {
     }
 
     // 좋아요 상태 수정
+    @Transactional
     @RequestMapping(method = {PUT, PATCH})
     public ResponseEntity<?> update(
             @Validated @RequestBody VotePatchRequestDTO dto,

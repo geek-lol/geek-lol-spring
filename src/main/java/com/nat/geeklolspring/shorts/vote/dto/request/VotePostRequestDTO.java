@@ -1,5 +1,7 @@
 package com.nat.geeklolspring.shorts.vote.dto.request;
 
+import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.entity.VoteCheck;
 import lombok.*;
 
@@ -17,9 +19,10 @@ public class VotePostRequestDTO {
     @NotNull
     private Long shortsId;
 
-    public VoteCheck toEntity(VotePostRequestDTO dto) {
+    public VoteCheck toEntity(BoardShorts shorts, User user) {
         return VoteCheck.builder()
-                .shortsId(dto.shortsId)
+                .shorts(shorts)
+                .user(user)
                 .build();
     }
 }

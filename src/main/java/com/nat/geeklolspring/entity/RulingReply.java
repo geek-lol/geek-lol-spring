@@ -29,12 +29,7 @@ public class RulingReply {
     @Column(name = "ruling_reply_date", updatable = false)
     private LocalDateTime replyDate;
 
-    @Builder.Default
-    @Column(name = "ruling_reply_modify")
-    private int modify = 0;
-
-
-    // fk가 필요한 곳
+//    // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User rulingWriterId;

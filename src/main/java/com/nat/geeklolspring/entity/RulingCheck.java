@@ -20,16 +20,14 @@ public class RulingCheck {
     private Long rulingVoteId;
 
     @Builder.Default
-    @Column(name = "vote_one")
-    private int one = 0;
+    @Column(name = "vote_pros")
+    private int pros = 0;
 
     @Builder.Default
-    @Column(name = "vote_two")
-    private int two = 0;
+    @Column(name = "vote_cons")
+    private int cons = 0;
 
-
-
-    // fk가 필요한 곳
+//    // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voter_id")
     private User rulingVoter;

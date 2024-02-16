@@ -17,19 +17,18 @@ public class BulletinCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bulletin_check_id")
-    private Long bulletinId;
+    private Long bulletinCheckId;
 
     @Builder.Default
     @Column(name = "check_good")
     private int good = 0;
 
-
     // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bulletin_checker_id")
-    private User bulletinCheckerId;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bulletin_id")
-    private BoardBulletin boardBulletinId;
+    private BoardBulletin bulletin;
 }

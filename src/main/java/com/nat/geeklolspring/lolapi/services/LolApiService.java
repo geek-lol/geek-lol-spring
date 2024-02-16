@@ -1,13 +1,15 @@
 package com.nat.geeklolspring.lolapi.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.nat.geeklolspring.lolapi.dto.response.GameDataResponseDTO;
-import com.nat.geeklolspring.lolapi.dto.response.PerksDataResponseDTO;
-import com.nat.geeklolspring.lolapi.dto.response.TeamDataResponseDTO;
-import com.nat.geeklolspring.lolapi.dto.response.MatchDataResponseDTO;
+import com.nat.geeklolspring.lolapi.dto.CurrentGameInfo;
+import com.nat.geeklolspring.lolapi.dto.response.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,112 +21,102 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.nat.geeklolspring.lolapi.dto.CurrentGameInfo.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class LolApiService {
     @Value("${lol.app-key}")
     private String appKey;
-    private String riotUrl = "https://kr.api.riotgames.com";
-    private String aisaRiotUrl = "https://asia.api.riotgames.com";
+    private final String riotUrl = "https://kr.api.riotgames.com";
+    private final String aisaRiotUrl = "https://asia.api.riotgames.com";
     String puuid = "";
+    String infoId = "";
+
+
+    private final WebClient.Builder webClientBuilder;
 
     public JSONObject getJsonToApi(String requestURL) {
-        JSONObject jsonObj = new JSONObject();
-        JSONParser jParser = new JSONParser();
-        HttpGet httpGet = new HttpGet(requestURL);
+        try {
+            Mono<String> responseMono = webClientBuilder.build()
+                    .get()
+                    .uri(requestURL)
+                    .header("User-Agent", "Mozilla/5.0")
+                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                    .header("Accept-Charset", "application/x-www-form-urlencoded; charset=UTF-8")
+                    .header("Origin", "https://developer.riotgames.com")
+                    .retrieve()
+                    .bodyToMono(String.class);
 
-        httpGet.addHeader("User-Agent", "Mozilla/5.0");
-        httpGet.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        httpGet.addHeader("Accept-Charset", "application/x-www-form-urlencoded; charset=UTF-8");
-        httpGet.addHeader("Origin", "https://developer.riotgames.com");
-        // httpGet.addHeader("X-Riot-Token", appKey);
+            String responseBody = responseMono.block(); // Blocking for simplicity
 
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-
-                if (statusCode == 200) {
-                    ResponseHandler<String> handler = new BasicResponseHandler();
-                    String body = handler.handleResponse(response);
-                    //log.info("body : " + body);
-                    jsonObj = (JSONObject) jParser.parse(body);
-                } else if (statusCode == 404) {
-                    log.error("Failed to get data: HTTP 404 Not Found");
-                    // Returns null
-                    return null;
-                } else {
-                    log.error("response is error : " + statusCode);
-                }
-            } catch (Exception e) {
-                log.error("An error occurred while making the HTTP request", e);
+            JSONParser jParser = new JSONParser();
+            return (JSONObject) jParser.parse(responseBody);
+        } catch (HttpClientErrorException e) {
+            if (e.getRawStatusCode() == 404) {
+                log.error("Failed to get data: HTTP 404 Not Found");
+                return null;
+            } else {
+                log.error("response is error : {}", e.getRawStatusCode());
+                return null;  // Or potentially throw a custom exception here
             }
         } catch (Exception e) {
-            log.error("An error occurred while creating the HTTP client", e);
+            log.error("An error occurred while making the HTTP request", e);
+            return null; // Consider returning an empty JSONObject or throw a custom exception
         }
-        if (jsonObj == null){
-            log.warn("The JSON object 'jsonObj' is null");
-            jsonObj = new JSONObject();
-        }
-        return jsonObj;
     }
 
     public JSONArray getJsonArrayToApi(String requestURL) {
-        JSONArray jsonArray = new JSONArray();
-        JSONParser jParser = new JSONParser();
-        HttpGet httpGet = new HttpGet(requestURL);
+        try {
+            Mono<String> responseMono = webClientBuilder.build()
+                    .get()
+                    .uri(requestURL)
+                    .header("User-Agent", "Mozilla/5.0")
+                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                    .header("Accept-Charset", "application/x-www-form-urlencoded; charset=UTF-8")
+                    .header("Origin", "https://developer.riotgames.com")
+                    .retrieve()
+                    .bodyToMono(String.class);
 
-        httpGet.addHeader("User-Agent", "Mozilla/5.0");
-        httpGet.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        httpGet.addHeader("Accept-Charset", "application/x-www-form-urlencoded; charset=UTF-8");
-        httpGet.addHeader("Origin", "https://developer.riotgames.com");
-        // httpGet.addHeader("X-Riot-Token", appKey);
+            String responseBody = responseMono.block(); // Blocking for simplicity
 
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                int statusCode = response.getStatusLine().getStatusCode();
+            JSONParser jParser = new JSONParser();
+            Object parsedObject = jParser.parse(responseBody);
 
-                if (statusCode == 200) {
-                    ResponseHandler<String> handler = new BasicResponseHandler();
-                    String body = handler.handleResponse(response);
-                    //log.info("body: " + body);
-                    Object parsedObject = jParser.parse(body);
-
-                    if (parsedObject instanceof JSONArray) {
-                        jsonArray = (JSONArray) parsedObject;
-                    } else {
-                        log.warn("Received JSON object instead of JSON array");
-                    }
-                } else if (statusCode == 404) {
-                    log.error("Failed to get data: HTTP 404 Not Found");
-                    // An empty JSONArray object
-                    return new JSONArray();
-                } else {
-                    log.error("response is error: " + statusCode);
-                }
-            } catch (Exception e) {
-                log.error("An error occurred while making the HTTP request", e);
+            if (parsedObject instanceof JSONArray) {
+                return (JSONArray) parsedObject;
+            } else {
+                log.warn("Received JSON object instead of JSON array");
+                return new JSONArray(); // Return an empty JSON array
+            }
+        } catch (HttpClientErrorException e) {
+            if (e.getRawStatusCode() == 404) {
+                log.error("Failed to get data: HTTP 404 Not Found");
+                return new JSONArray(); // An empty JSONArray object
+            } else {
+                log.error("response is error: {}", e.getRawStatusCode());
+                return new JSONArray();
             }
         } catch (Exception e) {
-            log.error("An error occurred while creating the HTTP client", e);
+            log.error("An error occurred while making the HTTP request", e);
+            return new JSONArray(); // Consider returning an empty JSONArray or throw a custom exception
         }
-
-        if(jsonArray == null) {
-            jsonArray = new JSONArray();
-        }
-        return jsonArray;
     }
 
     /**
@@ -137,34 +129,38 @@ public class LolApiService {
     public JSONObject findUserInfomation(String name, String tag) {
         log.info("접근함");
         log.error("tag : {}", tag);
-        String parseName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-        String parseTag = URLEncoder.encode(tag, StandardCharsets.UTF_8);
+        //String parseName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+        //String parseTag = URLEncoder.encode(tag, StandardCharsets.UTF_8);
         String requestUserInfoUrl = "";
-        String infoId = "";
         JSONObject jsonUserInfo = new JSONObject();
         JSONArray leagueJson = new JSONArray();
 
         if (tag.equals("KR1")) {
-            requestUserInfoUrl = riotUrl + "/lol/summoner/v4/summoners/by-name/" + parseName + "?api_key=" + appKey;
+            requestUserInfoUrl = riotUrl + "/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + appKey;
         } else {
-            requestUserInfoUrl = aisaRiotUrl + "/riot/account/v1/accounts/by-riot-id/" + parseName + "/" + parseTag + "?api_key=" + appKey;
+            requestUserInfoUrl = aisaRiotUrl + "/riot/account/v1/accounts/by-riot-id/" + name + "/" + tag + "?api_key=" + appKey;
         }
-        log.warn("requestURL : {}", requestUserInfoUrl);
         try {
             if (tag.equals("KR1")) {
-                try{
+                try {
+                    log.warn("requestUserInfoUrl : {}", requestUserInfoUrl);
                     jsonUserInfo = getJsonToApi(requestUserInfoUrl);
                     puuid = jsonUserInfo.get("puuid").toString();
                     infoId = jsonUserInfo.get("id").toString();
-                    log.info("puuid : {}", puuid);
+                    log.error("jsonUserInfo : {}", jsonUserInfo);
                 } catch (NullPointerException e) {
                     log.warn("error: {}", e.getMessage());
                 }
             } else {
                 try {
-                    log.warn("이건 라이엇계정임");
                     jsonUserInfo = getJsonToApi(requestUserInfoUrl);
                     puuid = jsonUserInfo.get("puuid").toString();
+                    try {
+                        log.error("puuid: {}", puuid);
+                    } catch (Exception e) {
+                        log.error("Error : {}", e.getMessage());
+                    }
+
                     String riotAccountUrl = riotUrl + "/lol/summoner/v4/summoners/by-puuid/" + puuid + "?api_key=" + appKey;
                     JSONObject riotAccountInfo = getJsonToApi(riotAccountUrl);
                     infoId = riotAccountInfo.get("id").toString();
@@ -177,7 +173,6 @@ public class LolApiService {
                 }
             }
             String leagueInfo = riotUrl + "/lol/league/v4/entries/by-summoner/" + infoId + "?api_key=" + appKey;
-            log.warn(leagueInfo);
             leagueJson = getJsonArrayToApi(leagueInfo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -185,138 +180,240 @@ public class LolApiService {
         JSONObject result = new JSONObject();
         result.put("userInfo", jsonUserInfo);
         result.put("leagueInfo", leagueJson);
-
-        //log.error("result : {}", result);
         return result;
     }
 
     public List<Map<String, Object>> getRecentGames(int start, int count) throws Exception {
-
         ObjectMapper mapper = new ObjectMapper();
-        RestTemplate restTemplate = new RestTemplate();
 
         try {
-            //String recentGamesMatchIdRequestUrl = aisaRiotUrl + "/lol/match/v5/matches/by-puuid/" + puuid + "/ids?queue=420&start=" + 0 + "&count=" + 10 + "&api_key=" + appKey;
-            String recentGamesMatchIdRequestUrl = aisaRiotUrl + "/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=" + 0 + "&count=" + 10 + "&api_key=" + appKey;
-            log.info("recentGamesMatchIdRequestUrl : {}", recentGamesMatchIdRequestUrl);
+            String recentGamesMatchIdRequestUrl = aisaRiotUrl + "/lol/match/v5/matches/by-puuid/" + puuid + "/ids?" +
+                    "&start=" + start + "&count=" + count + "&api_key=" + appKey;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Accept","*/*");
-
-
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(recentGamesMatchIdRequestUrl, HttpMethod.GET, entity, String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                List<String> matchIds = mapper.readValue(response.getBody(), new TypeReference<>() {
-                });
-
-                //Map<String, Object> filteredGameData = new HashMap<>();
-                List<Map<String, Object>> filteredGameData = new ArrayList<>();
-
-                for (String matchId : matchIds) {
-                    String recentGamesUrl = aisaRiotUrl + "/lol/match/v5/matches/" + matchId + "?api_key=" + appKey;
-                    log.warn("recentGamesUrl : {}", recentGamesUrl);
-
-                    ResponseEntity<String>  Aresponse = restTemplate.exchange(recentGamesUrl,HttpMethod.GET, entity, String.class);
-                    log.warn("response body : {}", Aresponse.getStatusCode());
-
-                    Map<String, Object> singleGameResult = new HashMap<>();
-                    if (Aresponse.getStatusCode().is2xxSuccessful()) {
-                        JsonNode root = mapper.readTree(Aresponse.getBody());
-                        JsonNode info = root.path("info");
-                        JsonNode metadata = root.path("metadata");
-
-                        int gameDuration = info.path("gameDuration").asInt();
-                        long gameStartTimestamp = info.path("gameStartTimestamp").asLong();
-                        long gameEndTinestamp = info.path("gameEndTimestamp").asLong();
-                        int queueId = info.path("queueId").asInt();
-                        long gameId = info.path("gameId").asLong();
-                        String gameMode = info.path("gameMode").asText();
-
-                        String matchIdss = String.valueOf(metadata.path("matchId"));
-
-
-                        GameDataResponseDTO gameData = new GameDataResponseDTO();
-                        gameData.setGameDuration(gameDuration);
-                        gameData.setGameStartTimestamp((long) gameStartTimestamp);
-                        gameData.setGameEndTimestamp((long) gameEndTinestamp);
-                        gameData.setQueueId(queueId);
-                        gameData.setGameId(gameId);
-                        gameData.setMatchId(matchIdss);
-                        gameData.setGameMode(gameMode);
-
-
-                        singleGameResult.put("info", gameData);
-
-
-
-                        ArrayNode participants1 = (ArrayNode) info.path("participants");
-                        ArrayNode teams = (ArrayNode) info.path("teams");
-
-                        if (participants1.isArray()) {
-                            //List<String> participants = mapper.convertValue(participants1, new TypeReference<List<String>>() {});
-                            List<MatchDataResponseDTO> participants = new ArrayList<>();
-                            for (JsonNode participantNode : participants1) {
-                                MatchDataResponseDTO matchDataResponseDTO = mapper.treeToValue(participantNode, MatchDataResponseDTO.class);
-
-                                JsonNode perksNode = participantNode.path("perks");
-                                PerksDataResponseDTO perksDataResponseDTO = mapper.treeToValue(perksNode, PerksDataResponseDTO.class);
-
-
-                                matchDataResponseDTO.setPerks(perksDataResponseDTO);
-
-
-                                participants.add(matchDataResponseDTO);
-                            }
-                            //log.error("participants : {}", participants);
-                            //filteredGameData.put("participants", participants);
-                            singleGameResult.put("participants", participants);
-                        } else {
-                            log.warn("participants1.participants is not an array");
+            List<String> matchIds = webClientBuilder.build()
+                    .get()
+                    .uri(recentGamesMatchIdRequestUrl)
+                    .header("Accept", "*/*")
+                    .retrieve()
+                    .onStatus(HttpStatus::isError, clientResponse -> {
+                        // 오류 처리, 여기서 더 구체적인 예외를 고려하십시오.
+                        return Mono.error(new RuntimeException("경기 ID를 가져오는 중 오류 발생: " + clientResponse.statusCode()));
+                    })
+                    .bodyToMono(String.class)
+                    .<List<String>>handle((response, sink) -> {
+                        try {
+                            sink.next(mapper.readValue(response, new TypeReference<List<String>>() {
+                            }));
+                        } catch (JsonProcessingException e) {
+                            sink.error(new RuntimeException(e));
                         }
+                    })
+                    .block(); // 단순화를 위해 차단; 실제 앱에서는 반응적으로 처리
 
-                        if (teams.isArray()) {
-                            List<TeamDataResponseDTO> teamsList = new ArrayList<>();
-                            for (JsonNode teamNode : teams) {
-                                TeamDataResponseDTO teamDataResponseDTO = mapper.treeToValue(teamNode, TeamDataResponseDTO.class);
-                                teamsList.add(teamDataResponseDTO);
+            List<Map<String, Object>> filteredGameData = new ArrayList<>();
+            assert matchIds != null;
+            for (String matchId : matchIds) {
+                String recentGamesUrl = aisaRiotUrl + "/lol/match/v5/matches/" + matchId + "?api_key=" + appKey;
+
+                Map<String, Object> singleGameResult = webClientBuilder.build()
+                        .get()
+                        .uri(recentGamesUrl)
+                        .header("Accept", "*/*")
+                        .retrieve()
+                        .onStatus(HttpStatus::isError, clientResponse -> {
+                            return Mono.error(new RuntimeException("경기 데이터를 가져오는 중 오류 발생: " + clientResponse.statusCode()));
+                        })
+                        .bodyToMono(String.class)
+                        .mapNotNull(response -> {
+                            try {
+                                return processGameData(response, mapper);
+                            } catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
                             }
-                            singleGameResult.put("teams", teamsList);
-                        } else {
-                            log.warn("info.teams is not an array");
-                        }
-
-                        //filteredGameData.put("info", mapper.convertValue(info, new TypeReference<Map<String, Object>>() {
-                        //}));
-                        //filteredGameData.put("participants1", mapper.convertValue(participants1, new TypeReference<Map<String, Object>>() {
-                        //}));
-                        //log.warn("participants1 : {}", participants1);
-
-                        //log.warn("filteredGameData : {}", filteredGameData);
-                        filteredGameData.add(singleGameResult);
-                    } else {
-                        log.error("Error fetching recent games data. Status code: {}", Aresponse.getStatusCodeValue());
-                    }
-                }
-
-                return filteredGameData;
-            } else {
-                log.error("Error fetching recent games match IDs. Status code: {}", response.getStatusCodeValue());
+                        }) // 보조 메서드로 추출
+                        .block();
+                filteredGameData.add(singleGameResult);
             }
-        } catch (HttpClientErrorException e) {
-            // Handle 4xx client errors
-            log.error("Client error while making HTTP request: {}", e.getRawStatusCode());
-            log.error("Response body: {}", e.getResponseBodyAsString());
-        } catch (HttpServerErrorException e) {
-            // Handle 5xx server errors
-            log.error("Server error while making HTTP request: {}", e.getRawStatusCode());
-            log.error("Response body: {}", e.getResponseBodyAsString());
-        } catch (Exception e) {
-            // Handle other exceptions
-            log.error("Exception while making HTTP request", e);
-        }
 
-        return Collections.emptyList();
+            return filteredGameData;
+        } catch (Exception e) {
+            log.error("HTTP 요청 중 오류 발생", e);
+            return Collections.emptyList();
+        }
     }
 
+    private Map<String, Object> processGameData(String responseBody, ObjectMapper mapper) throws JsonProcessingException {
+        Map<String, Object> singleGameResult = new HashMap<>();
+
+        JsonNode root = mapper.readTree(responseBody);
+        JsonNode info = root.path("info");
+        JsonNode metadata = root.path("metadata");
+
+        int gameDuration = info.path("gameDuration").asInt();
+        long gameStartTimestamp = info.path("gameStartTimestamp").asLong();
+        long gameEndTimestamp = info.path("gameEndTimestamp").asLong();
+        int queueId = info.path("queueId").asInt();
+        long gameId = info.path("gameId").asLong();
+        String gameMode = info.path("gameMode").asText();
+
+        String matchIdss = String.valueOf(metadata.path("matchId"));
+
+        GameDataResponseDTO gameData = new GameDataResponseDTO();
+        gameData.setGameDuration(gameDuration);
+        gameData.setGameStartTimestamp((long) gameStartTimestamp);
+        gameData.setGameEndTimestamp((long) gameEndTimestamp);
+        gameData.setQueueId(queueId);
+        gameData.setGameId(gameId);
+        gameData.setMatchId(matchIdss);
+        gameData.setGameMode(gameMode);
+
+        singleGameResult.put("info", gameData);
+
+        ArrayNode participants1 = (ArrayNode) info.path("participants");
+        ArrayNode teams = (ArrayNode) info.path("teams");
+
+        if (participants1.isArray()) {
+            List<MatchDataResponseDTO> participants = new ArrayList<>();
+            for (JsonNode participantNode : participants1) {
+                MatchDataResponseDTO matchDataResponseDTO = mapper.treeToValue(participantNode, MatchDataResponseDTO.class);
+                JsonNode perksNode = participantNode.path("perks");
+                PerksDataResponseDTO perksDataResponseDTO = mapper.treeToValue(perksNode, PerksDataResponseDTO.class);
+                matchDataResponseDTO.setPerks(perksDataResponseDTO);
+                participants.add(matchDataResponseDTO);
+            }
+            singleGameResult.put("participants", participants);
+        } else {
+            log.warn("participants1.participants is not an array");
+        }
+
+        if (teams.isArray()) {
+            List<TeamDataResponseDTO> teamsList = new ArrayList<>();
+            for (JsonNode teamNode : teams) {
+                TeamDataResponseDTO teamDataResponseDTO = mapper.treeToValue(teamNode, TeamDataResponseDTO.class);
+                teamsList.add(teamDataResponseDTO);
+            }
+            singleGameResult.put("teams", teamsList);
+        } else {
+            log.warn("info.teams is not an array");
+        }
+
+        return singleGameResult;
+    }
+
+    public List<ChampionMasteryResponseDTO> getChampionMastery() {
+        String url = "https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/" + puuid + "/top?count=3&api_key=" + appKey;
+        WebClient webClient = WebClient.builder()
+                .baseUrl(url)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+        try {
+            WebClient.ResponseSpec responseSpec = webClient.get()
+                    .retrieve();
+
+            List<ChampionMasteryResponseDTO> championMasteries = responseSpec.bodyToMono(new ParameterizedTypeReference<List<ChampionMasteryResponseDTO>>() {
+                    })
+                    .block();
+
+            if (championMasteries != null) {
+                return championMasteries;
+            } else {
+                log.error("Error fetching champion mastery data.");
+                return Collections.emptyList();
+            }
+        } catch (Exception e) {
+            log.error("Server to Server Failed : {}", e.getMessage());
+        }
+        return null;
+    }
+
+    public List<AllChampionMasteryResponseDTO> getAllChampionMastery() {
+        String url = riotUrl + "/lol/champion-mastery/v4/champion-masteries/by-puuid/" + puuid + "?api_key=" + appKey;
+        log.error("all champion mastery url : {}", url);
+        WebClient webClient = WebClient.builder()
+                .baseUrl(url)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        try {
+            WebClient.ResponseSpec responseSpec = webClient.get().retrieve();
+
+            List<AllChampionMasteryResponseDTO> championMasteryResponseDTOS = responseSpec.bodyToMono(new ParameterizedTypeReference<List<AllChampionMasteryResponseDTO>>() {
+            }).block();
+
+            if(championMasteryResponseDTOS != null) {
+                return championMasteryResponseDTOS;
+            } else {
+                log.error("데이터 가져오는데 실패함ㅋ");
+                return Collections.emptyList();
+            }
+        } catch (Exception e) {
+            log.error("통신 실패함 : {}", e.getMessage());
+        }
+        return null;
+    }
+
+    public CurrentGameInfo getRealtimeGame() {
+        String url = riotUrl + "/lol/spectator/v4/active-games/by-summoner/" + infoId + "?api_key=" + appKey;
+        log.error("url : {}", url);
+        WebClient getGame = WebClient.builder()
+                .baseUrl(url)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+        Mono<CurrentGameInfo> mono = getGame.get()
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("현재 진행중인 게임이 없습니다.")))
+                .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("서버 에러 발생")))
+                .bodyToMono(CurrentGameInfo.class);
+
+        CurrentGameInfo realtimeGame = mono.onErrorResume(error -> Mono.empty())
+                .block();
+
+        if (realtimeGame == null) {
+            return null;
+        }
+
+        List<String> puuids = realtimeGame.getParticipants()
+                .stream()
+                .map(CurrentGameParticipant::getPuuid)
+                .collect(Collectors.toList());
+
+        Flux<AllSummoner> allSummonerFlux = Flux.fromIterable(puuids)
+                .flatMap(this::getSummonerData);
+
+        List<AllSummoner> allSummoners = allSummonerFlux.collectList().block();
+
+        realtimeGame.setAllSummoners(allSummoners);
+
+        List<CurrentGameParticipant> participants = realtimeGame.getParticipants();
+
+        participants = participants.stream()
+                .map(participant -> {
+                    assert allSummoners != null;
+                    Optional<AllSummoner> summoner = allSummoners.stream()
+                            .filter(s -> s.getPuuid().equals(participant.getPuuid()))
+                            .findFirst();
+
+                    participant.setGameName(summoner.map(AllSummoner::getGameName).orElse(null));
+                    participant.setTagLine(summoner.map(AllSummoner::getTagLine).orElse(null));
+
+                    return participant;
+                })
+                .collect(Collectors.toList());
+
+        return realtimeGame;
+    }
+
+    private Mono<AllSummoner> getSummonerData(String summonerPuuid) {
+
+        String url = aisaRiotUrl + "/riot/account/v1/accounts/by-puuid/" + summonerPuuid + "?api_key=" + appKey;
+        // 태그에 대한 조건부 해야함
+
+        return WebClient.create()
+                .get()
+                .uri(url)
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .header("Accept", "*/*")
+                .retrieve()
+                .bodyToMono(AllSummoner.class);
+    }
 }

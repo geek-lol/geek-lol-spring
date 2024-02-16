@@ -1,5 +1,8 @@
 package com.nat.geeklolspring.lolapi.controller;
 
+import com.nat.geeklolspring.lolapi.dto.CurrentGameInfo;
+import com.nat.geeklolspring.lolapi.dto.response.AllChampionMasteryResponseDTO;
+import com.nat.geeklolspring.lolapi.dto.response.ChampionMasteryResponseDTO;
 import com.nat.geeklolspring.lolapi.services.LolApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +44,28 @@ public class LolApiCotroller {
                                                                      @PathVariable(name = "count") int count
     ) throws Exception {
         List<Map<String, Object>> recentGames = lolApiService.getRecentGames(start, count);
-        log.error("recentGames : {}", recentGames);
+        //log.error("recentGames : {}", recentGames);
         return ResponseEntity.ok().body(recentGames);
+    }
+
+    @GetMapping(path = "/championMastery")
+    public ResponseEntity<?> loadChampionMastery() {
+        log.info("load champion mastery get!!");
+        List<ChampionMasteryResponseDTO> championMastery = lolApiService.getChampionMastery();
+        return ResponseEntity.ok().body(championMastery);
+    }
+
+    @GetMapping("/all-champion-mastery")
+    public ResponseEntity<?> loadAllChampionMastery() {
+        log.info("load all champion mastery");
+        List<AllChampionMasteryResponseDTO> allChampionMasteryResponseDTOS = lolApiService.getAllChampionMastery();
+        return ResponseEntity.ok().body(allChampionMasteryResponseDTOS);
+    }
+
+    @GetMapping("/realtimeGame")
+    public ResponseEntity<?> loadRealtimeGame() {
+        log.info("load realtime game get!");
+        CurrentGameInfo realtimeGame = lolApiService.getRealtimeGame();
+        return ResponseEntity.ok().body(realtimeGame);
     }
 }

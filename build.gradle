@@ -63,6 +63,8 @@ dependencies {
 
     implementation 'io.netty:netty-all:4.1.52.Final'
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.52.Final:osx-x86_64'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

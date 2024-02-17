@@ -53,10 +53,10 @@ public class BoardApply {
     private User userId;
 
     // ApplyReply와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "applyId", orphanRemoval = true)
     private List<ApplyReply> applyReplies = new ArrayList<>();
 
     // Vote와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "voteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "voteId", orphanRemoval = true)
     private List<VoteApply> votes = new ArrayList<>();
 }

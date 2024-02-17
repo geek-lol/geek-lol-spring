@@ -146,6 +146,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public void delete(UserDeleteRequestDTO dto) {
 
         if (!userRepository.existsById(dto.getId())) {

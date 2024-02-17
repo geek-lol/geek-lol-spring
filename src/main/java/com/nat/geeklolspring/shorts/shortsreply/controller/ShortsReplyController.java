@@ -46,7 +46,7 @@ public class ShortsReplyController {
                 // 댓글 리스트가 비어있으면 실행되는 부분
                 // ShortsReplyListResponseDTO 안에 있는 error에 에러로그를 담는다.
                 return ResponseEntity
-                        .badRequest()
+                        .ok()
                         .body(ShortsReplyListResponseDTO
                                 .builder()
                                 .error("아직 댓글이 없습니다.")
@@ -125,22 +125,9 @@ public class ShortsReplyController {
 
         try {
             // replyId에 맞는 댓글을 삭제하는 서비스 실행
-            BoardShorts shortsId = shortsReplyService.deleteShortsReply(replyId, userInfo);
+            shortsReplyService.deleteShortsReply(replyId, userInfo);
 
-            ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId.getShortsId(), pageInfo);
-
-            if(replyList.getReply().isEmpty()) {
-                // 댓글 리스트가 비어있으면 실행되는 부분
-                // ShortsReplyListResponseDTO 안에 있는 error에 에러로그를 담는다.
-                return ResponseEntity
-                        .badRequest()
-                        .body(ShortsReplyListResponseDTO
-                                .builder()
-                                .error("아직 댓글이 없습니다.")
-                                .build());
-            }
-
-            return ResponseEntity.ok().body(replyList);
+            return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {
             log.warn("댓글 작성자만 삭제할 수 있습니다!");
             return ResponseEntity

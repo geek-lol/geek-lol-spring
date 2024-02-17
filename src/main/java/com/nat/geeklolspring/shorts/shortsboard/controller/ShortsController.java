@@ -52,7 +52,7 @@ public class ShortsController {
             // 가져온 shortsList가 비어있을 경우 아직 업로드된 동영상이 없다는 뜻
             if(shortsList.getShorts().isEmpty()) {
                 return ResponseEntity
-                        .badRequest()
+                        .ok()
                         .body(ShortsListResponseDTO
                                 .builder()
                                 .error("아직 업로드된 동영상이 없습니다!")
@@ -141,16 +141,6 @@ public class ShortsController {
             shortsService.deleteShorts(shortsId, userInfo);
 
             ShortsListResponseDTO shortsList = shortsService.retrieve();
-
-            // 가져온 shortsList가 비어있을 경우 아직 업로드된 동영상이 없다는 뜻
-            if(shortsList.getShorts().isEmpty()) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(ShortsListResponseDTO
-                                .builder()
-                                .error("아직 업로드된 동영상이 없습니다!")
-                                .build());
-            }
 
             return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {

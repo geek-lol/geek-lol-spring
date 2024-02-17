@@ -14,6 +14,8 @@ public interface ShortsReplyRepository extends JpaRepository<ShortsReply, Long> 
     // ShortsId에 달린 모든 댓글을 가져오는걸 JPA로 자동화해서 만든 코드
     Page<ShortsReply> findAllByShortsIdOrderByReplyDateDesc(BoardShorts shortsId, Pageable pageable);
 
+    List<ShortsReply> findAllByShortsId(BoardShorts shortsId);
+
     //특정 아이디가 쓴 댓글을 조회
     Page<ShortsReply> findAllByWriterId(User writerId, Pageable pageable);
     //내꺼 갯수 반환

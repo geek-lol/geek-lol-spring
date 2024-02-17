@@ -18,4 +18,6 @@ public interface RulingVoteRepository extends JpaRepository<RulingCheck,Long> {
 
     //특정 게시물에 유저가 있는지 확인하는 쿼리
     boolean existsByRulingVoterAndRulingId(User rulingVoter, BoardRuling rulingId);
+    //해당 작성자의 투표를 삭제
+    void deleteAllByRulingVoter(User writerId);
 }

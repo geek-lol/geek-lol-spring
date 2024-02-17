@@ -20,4 +20,7 @@ public interface ShortsReplyRepository extends JpaRepository<ShortsReply, Long> 
     Page<ShortsReply> findAllByWriterId(User writerId, Pageable pageable);
     //내꺼 갯수 반환
     int countByWriterId(User writerId);
+
+    //해당 작성자의 댓글을 삭제
+    void deleteAllByWriterId(User writerId);
 }

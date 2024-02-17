@@ -5,6 +5,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.nat.geeklolspring.entity.Role.COMMON;
 
@@ -49,27 +51,37 @@ public class User {
 
 //-----------------------------------------
 
-//    // board와의 OneToMany 관계 설정
-//    @OneToMany(mappedBy = "bulletinId", cascade = CascadeType.ALL, orphanRemoval = true)
+////    // board와의 OneToMany 관계 설정
+//    @OneToMany(mappedBy = "bulletinId", orphanRemoval = true)
 //    private List<BoardBulletin> bulletinList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "rulingId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "rulingId", orphanRemoval = true)
 //    private List<BoardRuling> rulingList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "applyId", orphanRemoval = true)
 //    private List<BoardApply> applyList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "shortsId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "shortsId", orphanRemoval = true)
 //    private List<BoardShorts> shotsList = new ArrayList<>();
 //
 //    // game rank와의 관계설정
-//    @OneToMany(mappedBy = "gameId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "gameId", orphanRemoval = true)
 //    private List<CsGameRank> csGameRanksList = new ArrayList<>();
 //
-//    @OneToMany(mappedBy = "gameId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "gameId", orphanRemoval = true)
 //    private List<ResGameRank> resGameRanksList = new ArrayList<>();
-
-
+//
+//    @OneToMany(mappedBy = "bulletinId", orphanRemoval = true)
+//    private List<BoardBulletin> bulletinReplyList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "rulingId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardRuling> rulingReplyList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "applyId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardApply> applyReplyList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "shortsId", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<BoardShorts> shotsReplyList = new ArrayList<>();
 
 
 }

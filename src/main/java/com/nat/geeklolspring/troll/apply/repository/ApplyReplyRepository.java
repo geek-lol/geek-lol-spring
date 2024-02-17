@@ -18,4 +18,7 @@ public interface ApplyReplyRepository extends JpaRepository<ApplyReply,Long> {
     int countByApplyId(BoardApply applyId);
     //내꺼 갯수 반환
     int countByUserId(User userId);
+
+    //해당 작성자의 댓글을 삭제
+    void deleteAllByUserId(User writerId);
 }

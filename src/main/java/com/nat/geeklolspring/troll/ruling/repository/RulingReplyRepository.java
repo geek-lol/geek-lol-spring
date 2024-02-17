@@ -19,5 +19,6 @@ public interface RulingReplyRepository extends JpaRepository<RulingReply,Long> {
     int countByRulingId(BoardRuling boardRuling);
     //내꺼 갯수 반환
     int countByRulingWriterId(User user);
-
+    //해당 작성자의 댓글을 삭제
+    void deleteAllByRulingWriterId(User writerId);
 }

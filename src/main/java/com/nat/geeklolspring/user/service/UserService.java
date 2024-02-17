@@ -2,14 +2,22 @@ package com.nat.geeklolspring.user.service;
 
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.board.boardBulletinReply.repository.BoardReplyRepository;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
+import com.nat.geeklolspring.board.vote.repository.BoardVoteCheckRepository;
 import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.game.repository.CsGameRankRepository;
 import com.nat.geeklolspring.game.repository.ResGameRankRepository;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
+import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
+import com.nat.geeklolspring.shorts.vote.repository.VoteCheckRepository;
+import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
+import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
+import com.nat.geeklolspring.troll.ruling.repository.RulingReplyRepository;
+import com.nat.geeklolspring.troll.ruling.repository.RulingVoteRepository;
 import com.nat.geeklolspring.user.dto.request.*;
 import com.nat.geeklolspring.user.dto.response.*;
 import com.nat.geeklolspring.user.repository.UserRepository;
@@ -57,6 +65,16 @@ public class UserService {
 
     private final CsGameRankRepository csGameRankRepository;
     private final ResGameRankRepository resGameRankRepository;
+
+    private final ApplyVoteCheckRepository applyVoteCheckRepository;
+    private final RulingVoteRepository rulingVoteRepository;
+    private final VoteCheckRepository shortsVoteRepository;
+    private final BoardVoteCheckRepository boardVoteCheckRepository;
+
+    private final RulingReplyRepository rulingReplyRepository;
+    private final ApplyReplyRepository applyReplyRepository;
+    private final BoardReplyRepository boardReplyRepository;
+    private final ShortsReplyRepository shortsReplyRepository;
 
 
     public UserResponseDTO findByUserInfo(TokenUserInfo userInfo) {
@@ -183,9 +201,22 @@ public class UserService {
     }
 
     void deleteChildren(User user) {
+
+        boardReplyRepository.deleteAllByWriterUser(user);
+        rulingReplyRepository.deleteAllByRulingWriterId(user);
+        applyReplyRepository.deleteAllByUserId(user);
+        shortsReplyRepository.deleteAllByWriterId(user);
+
+        rulingVoteRepository.deleteAllByRulingVoter(user);
+        boardVoteCheckRepository.deleteAllByUser(user);
+        applyVoteCheckRepository.deleteAllByReceiver(user);
+        shortsReplyRepository.deleteAllByWriterId(user);
+
         boardBulletinRepository.deleteAllByUser(user);
         rulingApplyRepository.deleteAllByUserId(user);
         shortsRepository.deleteAllByUploaderId(user);
+        boardRulingRepository.deleteAllByRulingPosterId(user);
+
         csGameRankRepository.deleteAllByUser(user);
         resGameRankRepository.deleteAllByUser(user);
     }

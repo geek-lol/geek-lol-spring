@@ -25,7 +25,7 @@ public class VoteApply {
 
     @Builder.Default
     @Column(name = "vote_up")
-    private int up = 0;
+    private int up = 1;
 
     //fk
     @ManyToOne(fetch = FetchType.LAZY)

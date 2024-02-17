@@ -27,7 +27,7 @@ public class ResGameRankService {
 
     // 랭킹 조회
     public GameRankListResponseDTO findRank() {
-        List<ResGameRank> rankList = resGameRankRepository.findAllByOrderByScore();
+        List<ResGameRank> rankList = resGameRankRepository.findTop10ByOrderByScore();
         List<GameRankResponseDTO> dtoList = rankList.stream()
                 .map(GameRankResponseDTO::new)
                 .collect(Collectors.toList());

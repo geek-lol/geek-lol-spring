@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CsGameRankRepository extends JpaRepository<CsGameRank,Long> {
-    List<CsGameRank> findAllByOrderByScoreDesc();
+    List<CsGameRank> findTop10ByOrderByScoreDesc();
     CsGameRank findByUserId(String id);
 
     void deleteAllByUser(User user);

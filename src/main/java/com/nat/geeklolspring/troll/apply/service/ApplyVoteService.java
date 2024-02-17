@@ -74,10 +74,10 @@ public class ApplyVoteService {
 
     @Transactional
     public ApplyVoteResponseDTO changeVote(VoteApply vote) {
-        BoardApply boardApply = rulingApplyRepository.findById(vote.getVoteId()).orElseThrow();
-        if (boardApply == null){
-            throw new RuntimeException("changeVote : 게시글을 찾을 수 없습니다!");
+        if (vote == null){
+            throw new RuntimeException("changeVote : 투표생성 해주새요!");
         }
+        BoardApply boardApply = rulingApplyRepository.findById(vote.getVoteId()).orElseThrow();
         // vote 값 수정
         if (vote.getUp() == 1) {
             rulingApplyRepository.plusUpCount(boardApply.getApplyId());

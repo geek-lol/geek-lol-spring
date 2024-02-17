@@ -160,18 +160,20 @@ public class BoardBulletinController {
 
     }
     @DeleteMapping()
-    public void boarddelete( // 삭제
+    public ResponseEntity<?> boarddelete( // 삭제
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @Validated @RequestBody BoardBulletinDeleteResponseDTO dto
     ){
         try {
-            boardBulletinService.delete(userInfo,dto);
+            BoardBulletinResponseDTO delete = boardBulletinService.delete(userInfo, dto);
             log.info("delete board : {}",dto.getTitle());
+            return ResponseEntity.ok().body(delete);
         }catch (RuntimeException e){
             log.warn(e.getMessage());
         }
-
+        return null;
     }
+
     @GetMapping("/my")
     public ResponseEntity<?> myBoardList(
             @PageableDefault(page = 1, size = 10) Pageable pageInfo

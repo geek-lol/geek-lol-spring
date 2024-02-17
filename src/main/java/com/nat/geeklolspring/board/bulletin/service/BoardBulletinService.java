@@ -75,7 +75,7 @@ public class BoardBulletinService {
 
     // 글 삭제
 
-    public void delete(TokenUserInfo userInfo, BoardBulletinDeleteResponseDTO dto) {
+    public BoardBulletinResponseDTO delete(TokenUserInfo userInfo, BoardBulletinDeleteResponseDTO dto) {
         if (!Objects.equals(dto.getPosterId(), userInfo.getUserId())) {
             log.warn("삭제할 권한이 없습니다!! - {}", dto.getPosterId());
             throw new RuntimeException("삭제 권한이 없습니다");
@@ -87,6 +87,8 @@ public class BoardBulletinService {
 //        boardBulletinRepository.deleteByBoardBulletinIdWithJPQL(dto.getBulletinId());
 
         boardBulletinRepository.deleteById(dto.getBulletinId());
+
+        return retrieve();
     }
 
     public void delete(BoardBulletinDeleteResponseDTO dto) {

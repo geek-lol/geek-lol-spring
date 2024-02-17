@@ -5,7 +5,7 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/geeklol
-#    url: jdbc:mariadb://localhost:3308/lol_search
+#    url: jdbc:mariadb://localhost:3306/geeklol
     username: root
     password: mariadb
   jpa:
@@ -22,7 +22,7 @@ spring:
       max-request-size: 1024MB
       enabled: true
   resources:
-    stati-locations: classpath:/public/
+    static-locations: classpath:/public/
 
 logging:
   level:

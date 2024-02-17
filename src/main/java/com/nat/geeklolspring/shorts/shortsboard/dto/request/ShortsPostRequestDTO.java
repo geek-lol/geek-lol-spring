@@ -19,7 +19,7 @@ public class ShortsPostRequestDTO {
     // 동영상 업로드할 때 필요한 정보들
     private String title;
     private String context;
-    private MultipartFile videoLink;
+    private String videoLink;
 
     public BoardShorts toEntity(String videoLink, User user) {
         return BoardShorts.builder()

@@ -1,13 +1,13 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.aws.S3Service;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
 import com.nat.geeklolspring.utils.files.Videos;
-import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -37,6 +36,7 @@ public class ShortsController {
     private String rootShortsPath;
 
     private final ShortsService shortsService;
+    private final S3Service s3Service;
 
     // shorts 리스트 가져오기
     @GetMapping()
@@ -89,7 +89,7 @@ public class ShortsController {
         log.warn("request parameter : {}", dto);
 
         // 따로 가져온 파일들을 dto안에 세팅하기
-        dto.setVideoLink(fileUrl);
+        //dto.setVideoLink(fileUrl);
 
         try {
             // 필요한 정보를 전달받지 못하면 커스텀 에러인 DTONotFoundException 발생
@@ -98,12 +98,17 @@ public class ShortsController {
 
             // 동영상과 섬네일 이미지를 가공해 로컬폴더에 저장하고 경로를 리턴받기
             // 동영상 가공
-            Map<String, String> videoMap = FileUtil.uploadFile(fileUrl, rootShortsPath);
-            String videoPath = videoMap.get("filePath");
+            //Map<String, String> videoMap = FileUtil.uploadFile(fileUrl, rootShortsPath);
+            //String videoPath = videoMap.get("filePath");
+            byte[] fileBytes = fileUrl.getBytes();
+            String filename = fileUrl.getOriginalFilename();
+            String videoUrl = s3Service.uploadUoS3Bucket(fileBytes, filename);
+
+            dto.setVideoLink(videoUrl);
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
-            shortsService.insertVideo(dto, videoPath, userInfo);
+            shortsService.insertVideo(dto, null, userInfo);
             
             return ResponseEntity.ok().body(null);
 

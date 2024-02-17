@@ -1,26 +1,20 @@
 package com.nat.geeklolspring.shorts.shortsreply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
-import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @Slf4j
@@ -125,9 +119,9 @@ public class ShortsReplyController {
 
         try {
             // replyId에 맞는 댓글을 삭제하는 서비스 실행
-            shortsReplyService.deleteShortsReply(replyId, userInfo);
+            ShortsReplyListResponseDTO shortsReplyListResponseDTO = shortsReplyService.deleteShortsReply(replyId, userInfo);
 
-            return ResponseEntity.ok().body(null);
+            return ResponseEntity.ok().body(shortsReplyListResponseDTO);
         } catch (NotEqualTokenException e) {
             log.warn("댓글 작성자만 삭제할 수 있습니다!");
             return ResponseEntity

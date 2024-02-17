@@ -136,7 +136,7 @@ public class ShortsController {
 
             ShortsListResponseDTO shortsList = shortsService.retrieve();
 
-            return ResponseEntity.ok().body(null);
+            return ResponseEntity.ok().body(shortsList);
         } catch (NotEqualTokenException e) {
           log.warn("작성자랑 일치하지 않는 사용자가 쇼츠 삭제를 시도했습니다!");
           return ResponseEntity

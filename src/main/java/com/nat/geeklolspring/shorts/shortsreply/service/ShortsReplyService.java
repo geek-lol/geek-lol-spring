@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.shorts.shortsreply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.entity.User;
@@ -9,12 +8,10 @@ import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsPostRequestDTO;
-import com.nat.geeklolspring.shorts.shortsreply.dto.request.ShortsUpdateRequestDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyMyPageResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyResponseDTO;
 import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
-import com.nat.geeklolspring.troll.apply.dto.response.ApplyReplyResponseDTO;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.nat.geeklolspring.utils.token.TokenUtil.EqualsId;
 
 @Service
 @Slf4j
@@ -93,7 +87,7 @@ public class ShortsReplyService {
 
     @Transactional
     // 쇼츠 댓글 삭제 서비스
-    public void deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
+    public ShortsReplyListResponseDTO deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기
         ShortsReply reply = shortsReplyRepository.findById(replyId).orElseThrow();
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
@@ -104,6 +98,8 @@ public class ShortsReplyService {
                 // 삭제하지 못하면 Exception 발생
                 shortsReplyRepository.deleteById(replyId);
                 shortsRepository.downReplyCount(reply.getShortsId().getShortsId());
+                return retrieve(reply.getShortsId().getShortsId(), Pageable.ofSize(5).withPage(1));
+
             }
             else
                 throw new NotEqualTokenException("댓글 작성자만 삭제할 수 있습니다!");

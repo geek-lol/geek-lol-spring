@@ -93,7 +93,7 @@ public class ShortsReplyService {
 
     @Transactional
     // 쇼츠 댓글 삭제 서비스
-    public void deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
+    public BoardShorts deleteShortsReply(Long replyId, TokenUserInfo userInfo) {
         // 전달받은 댓글Id의 모든 정보를 가져오기
         ShortsReply reply = shortsReplyRepository.findById(replyId).orElseThrow();
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
@@ -112,6 +112,8 @@ public class ShortsReplyService {
             log.error("삭제에 실패했습니다. - ID: {}, Error: {}", replyId, e.getMessage());
             throw new RuntimeException("해당 아이디를 가진 댓글이 없습니다!");
         }
+
+        return reply.getShortsId();
     }
 
     //내가 쓴 댓글 조회

@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.shorts.shortsreply.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.entity.BoardShorts;
 import com.nat.geeklolspring.exception.BadRequestException;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
@@ -11,6 +12,7 @@ import com.nat.geeklolspring.shorts.shortsreply.dto.response.ShortsReplyListResp
 import com.nat.geeklolspring.shorts.shortsreply.service.ShortsReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -107,7 +109,8 @@ public class ShortsReplyController {
     // 댓글Id에 해당하는 댓글을 삭제하는 컨트롤러
     @DeleteMapping("/{replyId}")
     public ResponseEntity<?> deleteReply(@PathVariable Long replyId,
-                                         @AuthenticationPrincipal TokenUserInfo userInfo) {
+                                         @AuthenticationPrincipal TokenUserInfo userInfo,
+                                         @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
         log.info("api/shorts/reply/{} : Delete!", replyId);
 
         // 데이터를 정상적으로 전달받았는지 확인
@@ -122,9 +125,22 @@ public class ShortsReplyController {
 
         try {
             // replyId에 맞는 댓글을 삭제하는 서비스 실행
-            shortsReplyService.deleteShortsReply(replyId, userInfo);
+            BoardShorts shortsId = shortsReplyService.deleteShortsReply(replyId, userInfo);
 
-            return ResponseEntity.ok().body(null);
+            ShortsReplyListResponseDTO replyList = shortsReplyService.retrieve(shortsId.getShortsId(), pageInfo);
+
+            if(replyList.getReply().isEmpty()) {
+                // 댓글 리스트가 비어있으면 실행되는 부분
+                // ShortsReplyListResponseDTO 안에 있는 error에 에러로그를 담는다.
+                return ResponseEntity
+                        .badRequest()
+                        .body(ShortsReplyListResponseDTO
+                                .builder()
+                                .error("아직 댓글이 없습니다.")
+                                .build());
+            }
+
+            return ResponseEntity.ok().body(replyList);
         } catch (NotEqualTokenException e) {
             log.warn("댓글 작성자만 삭제할 수 있습니다!");
             return ResponseEntity

@@ -1,6 +1,8 @@
 package com.nat.geeklolspring.entity;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 @Setter
@@ -29,10 +31,12 @@ public class RulingCheck {
 
 //    // fk가 필요한 곳
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "voter_id")
     private User rulingVoter;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ruling_id")
     private BoardRuling rulingId;
 }

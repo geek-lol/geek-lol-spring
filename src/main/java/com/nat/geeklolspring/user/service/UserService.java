@@ -176,12 +176,12 @@ public class UserService {
         if (dto.getIds() != null) {
             dto.getIds().forEach(id -> {
                 User user = userRepository.findById(id).orElseThrow();
-                deleteChildren(user);
+//                deleteChildren(user);
                 userRepository.delete(user);
             });
         } else {
             User user = userRepository.findById(dto.getId()).orElseThrow();
-            deleteChildren(user);
+//            deleteChildren(user);
             userRepository.delete(user);
         }
     }
@@ -194,7 +194,7 @@ public class UserService {
             assert ids != null;
             ids.forEach(id -> {
                 User user = userRepository.findById(id).orElseThrow();
-                deleteChildren(user);
+//                deleteChildren(user);
                 userRepository.delete(user);
             });
         } catch (NullPointerException e) {

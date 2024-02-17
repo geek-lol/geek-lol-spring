@@ -2,6 +2,8 @@ package com.nat.geeklolspring.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -49,14 +51,15 @@ public class BoardApply {
     // fk가 필요한 곳
     //작성자
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", updatable = false)
     private User userId;
 
     // ApplyReply와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "applyId", orphanRemoval = true)
+    @OneToMany(mappedBy = "applyId")
     private List<ApplyReply> applyReplies = new ArrayList<>();
 
     // Vote와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "voteId", orphanRemoval = true)
+    @OneToMany(mappedBy = "voteId")
     private List<VoteApply> votes = new ArrayList<>();
 }

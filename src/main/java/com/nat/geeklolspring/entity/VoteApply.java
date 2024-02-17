@@ -1,6 +1,8 @@
 package com.nat.geeklolspring.entity;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -29,11 +31,13 @@ public class VoteApply {
 
     //fk
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "apply_id", referencedColumnName = "apply_id")
     private BoardApply applyId;
 
     //작성자
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", updatable = false)
     private User receiver;
 }

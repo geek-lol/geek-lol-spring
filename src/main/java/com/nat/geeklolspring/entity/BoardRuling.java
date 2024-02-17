@@ -47,10 +47,10 @@ public class BoardRuling {
     private User rulingPosterId;
 
     // Reply와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "id", orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RulingReply> Replies = new ArrayList<>();
 
     // Vote와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "rulingVoteId", orphanRemoval = true)
+    @OneToMany(mappedBy = "rulingVoteId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RulingCheck> votes = new ArrayList<>();
 }

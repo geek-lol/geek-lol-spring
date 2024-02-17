@@ -2,6 +2,7 @@ package com.nat.geeklolspring.shorts.shortsboard.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
+import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
@@ -10,6 +11,7 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsDetailRespons
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsMyPageResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
+import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 public class ShortsService {
     private final ShortsRepository shortsRepository;
     private final UserRepository userRepository;
+    private final ShortsReplyRepository shortsReplyRepository;
 
     @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;
@@ -52,6 +55,15 @@ public class ShortsService {
         boolean flag = shorts.getUploaderId().equals(user);
         try {
             if(flag) {
+                // id값에 해당하는 동영상 가져오기
+                BoardShorts boardShorts = shortsRepository.findByShortsId(id);
+                // id값에 해당하는 동영상의 댓글들 삭제
+                List<ShortsReply> replyList = shortsReplyRepository.findAllByShortsId(boardShorts);
+                log.warn(replyList.toString());
+                for (ShortsReply reply : replyList) {
+                    shortsReplyRepository.deleteById(reply.getId());
+                }
+
                 // id값에 해당하는 동영상 삭제
                 shortsRepository.deleteById(id);
             } else throw new NotEqualTokenException("업로드 한 유저만 삭제할 수 있습니다!");

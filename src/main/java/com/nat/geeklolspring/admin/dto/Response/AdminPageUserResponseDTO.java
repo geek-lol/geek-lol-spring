@@ -32,7 +32,6 @@ public class AdminPageUserResponseDTO {
         this.profileImage = user.getProfileImage();
         this.userName = user.getUserName();
         this.joinDate = user.getJoinMembershipDate();
-        this.reportCount = user.getReportCount();
     }
 
 

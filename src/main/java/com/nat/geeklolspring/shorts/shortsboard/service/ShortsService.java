@@ -33,7 +33,6 @@ public class ShortsService {
     private final ShortsRepository shortsRepository;
     private final ShortsReplyRepository shortsReplyRepository;
     private final UserRepository userRepository;
-    private final ShortsReplyRepository shortsReplyRepository;
 
     @Value("D:/geek-lol/upload/shorts/video")
     private String rootShortsPath;

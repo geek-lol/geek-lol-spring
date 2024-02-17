@@ -11,18 +11,13 @@ import com.nat.geeklolspring.user.dto.response.UserSignUpResponseDTO;
 import com.nat.geeklolspring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
 
 @RestController
 @Slf4j
@@ -155,61 +150,60 @@ public class UserController {
         try {
             String profilePath = userService.getProfilePath(userInfo.getUserId());
 
-            File profileFile = new File(profilePath);
-
-            if (!profileFile.exists()) return ResponseEntity.notFound().build();
-
-            byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
-
-            HttpHeaders headers = new HttpHeaders();
-
-
-            MediaType mediaType = extractFileExtension(profilePath);
-            if (mediaType == null){
-                return ResponseEntity.internalServerError().body("이미지가 아닙니다");
-            }
-
-            headers.setContentType(mediaType);
+            //File profileFile = new File(profilePath);
+            //
+            //if (!profileFile.exists()) return ResponseEntity.notFound().build();
+            //
+            //byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
+            //
+            //HttpHeaders headers = new HttpHeaders();
+            //
+            //
+            //MediaType mediaType = extractFileExtension(profilePath);
+            //if (mediaType == null){
+            //    return ResponseEntity.internalServerError().body("이미지가 아닙니다");
+            //}
+            //
+            //headers.setContentType(mediaType);
 
             return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(fileData);
+                    .body(profilePath);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
 
     }
     //특정 유저의 이미지 파일 불러오기
-    @GetMapping("/profile")
+    @GetMapping("/profile/{userId}")
     public ResponseEntity<?> loadProfileByUserId(
-            @RequestParam String userId
+            @PathVariable String userId
     ){
         try {
             String profilePath = userService.getProfilePath(userId);
 
-            File profileFile = new File(profilePath);
-
-            if (!profileFile.exists()) return ResponseEntity.notFound().build();
-
-            byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
-
-            HttpHeaders headers = new HttpHeaders();
-
-
-            MediaType mediaType = extractFileExtension(profilePath);
-            if (mediaType == null){
-                return ResponseEntity.internalServerError().body("이미지가 아닙니다");
-            }
-
-            headers.setContentType(mediaType);
+            //File profileFile = new File(profilePath);
+            //
+            //if (!profileFile.exists()) return ResponseEntity.notFound().build();
+            //
+            //byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
+            //
+            //HttpHeaders headers = new HttpHeaders();
+            //
+            //
+            //MediaType mediaType = extractFileExtension(profilePath);
+            //if (mediaType == null){
+            //    return ResponseEntity.internalServerError().body("이미지가 아닙니다");
+            //}
+            //
+            //headers.setContentType(mediaType);
 
             return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(fileData);
+                    //.headers(headers)
+                    .body(profilePath);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

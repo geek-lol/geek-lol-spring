@@ -1,6 +1,7 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.aws.S3Service;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.Role;
@@ -31,12 +32,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,22 +86,23 @@ public class RulingApplyService {
 
     }
 
+    private final S3Service s3Service;
     //게시물 사진, 동영상 파일을 서버에 저장
     public String uploadBoardImage(MultipartFile originalFile) throws IOException {
 
         // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다.
-        File rootDir = new File(rootPath);
-        if (!rootDir.exists()) rootDir.mkdirs();
+        //File rootDir = new File(rootPath);
+        //if (!rootDir.exists()) rootDir.mkdirs();
 
         //파일명을 유니크하게 변경
         String uniqueFileName = UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
 
         //파일을 서버에 저장
-        File uploadFile = new File(rootPath + "/" + uniqueFileName);
-        originalFile.transferTo(uploadFile);
+        //File uploadFile = new File(rootPath + "/" + uniqueFileName);
+        //originalFile.transferTo(uploadFile);
 
 
-        return uniqueFileName;
+        return s3Service.uploadUoS3Bucket(originalFile.getBytes(), uniqueFileName);
     }
 
 
@@ -153,8 +153,7 @@ public class RulingApplyService {
     // 게시물 영상 주소
     public String getVideoPath(Long applyId){
         BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
-        String applyLink = boardApply.getApplyLink();
-        return rootPath+"/"+applyLink;
+        return boardApply.getApplyLink();
     }
 
     //조회수 증가
@@ -176,6 +175,7 @@ public class RulingApplyService {
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
     @Scheduled(initialDelay = 0, fixedDelay =  30 * 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+
     @Transactional
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");

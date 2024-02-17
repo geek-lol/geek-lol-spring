@@ -13,7 +13,6 @@ import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsMyPageRespons
 import com.nat.geeklolspring.shorts.shortsboard.repository.ShortsRepository;
 import com.nat.geeklolspring.shorts.shortsreply.repository.ShortsReplyRepository;
 import com.nat.geeklolspring.user.repository.UserRepository;
-import com.nat.geeklolspring.utils.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -158,9 +157,7 @@ public class ShortsService {
 
     public String getShortPath(Long shortsId){
         BoardShorts byShort = shortsRepository.findByShortsId(shortsId);
-        String videoLink = byShort.getVideoLink();
-        return rootShortsPath+"/"+videoLink;
-
+        return byShort.getVideoLink();
     }
 
     public ShortsListResponseDTO myUploadShort(TokenUserInfo userInfo, Pageable pageInfo){

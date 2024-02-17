@@ -36,7 +36,7 @@ public class UserModifyRequestDTO {
         return User.builder()
                 .id(id)
                 .profileImage(profileIamge)
-                .password(this.password)
+                .password(encoder.encode(this.password))
                 .userName(this.userName)
                 .role(role)
                 .build();

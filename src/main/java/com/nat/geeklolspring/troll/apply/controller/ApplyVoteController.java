@@ -17,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
@@ -114,6 +113,7 @@ public class ApplyVoteController {
         try {
             // 내 vote 정보 가져오는 서비스 실행
             VoteApply voteCheck = voteService.findVote(dto.getApplyId(), userInfo.getUserId());
+            log.warn("votevote : {}", voteCheck);
             // 내 vote 정보 수정하는 서비스 실행
             ApplyVoteResponseDTO vote = voteService.changeVote(voteCheck);
             

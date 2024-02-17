@@ -1,7 +1,6 @@
 package com.nat.geeklolspring.troll.apply.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.board.vote.dto.response.BoardVoteResponseDTO;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.entity.VoteApply;
@@ -11,9 +10,7 @@ import com.nat.geeklolspring.troll.apply.dto.request.ApplyVotePostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
-
 import com.nat.geeklolspring.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -80,30 +77,29 @@ public class ApplyVoteService {
         BoardApply boardApply = ap.orElseThrow(() -> new RuntimeException("voteId에 해당하는 BoardApply를 찾을 수 없습니다: " + vote.getApplyId().getApplyId()));
 
         // vote 값 수정
+
         if (vote.getUp() == 1) {
             rulingApplyRepository.plusUpCount(boardApply.getApplyId());
             vote.setUp(0);
-            // 수정한 vote 값 DB에 저장
-            VoteApply saved = voteCheckRepository.save(vote);
-
-            // 수정된 정보를 저장해서 Controller에 전달
-            return ApplyVoteResponseDTO.builder()
-                    .up(0)
-                    .total(boardApply.getUpCount()+1)
-                    .build();
-        }
-        else{
+        } else {
             rulingApplyRepository.downUpCount(boardApply.getApplyId());
             vote.setUp(1);
-            // 수정한 vote 값 DB에 저장
-            VoteApply saved = voteCheckRepository.save(vote);
-
-            // 수정된 정보를 저장해서 Controller에 전달
-            return ApplyVoteResponseDTO.builder()
-                    .up(1)
-                    .total(boardApply.getUpCount()-1)
-                    .build();
         }
+
+
+        // Save the modified vote value in DB
+        VoteApply saved = voteCheckRepository.save(vote);
+
+        // Calculate total count
+        int totalCount = vote.getUp() == 1 ? boardApply.getUpCount() + 1 : boardApply.getUpCount() - 1;
+
+        // Save the modified information and deliver it to the Controller
+        return ApplyVoteResponseDTO.builder()
+                .up(vote.getUp())
+                .total(totalCount)
+                .build();
+
+
     }
 
     public boolean VoteCheck(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {

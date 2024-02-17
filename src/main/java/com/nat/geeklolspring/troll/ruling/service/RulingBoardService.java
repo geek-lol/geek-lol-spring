@@ -1,11 +1,9 @@
 package com.nat.geeklolspring.troll.ruling.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.BoardRuling;
 import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;
-import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.request.RulingDeleteRequestDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.CurrentBoardListResponseDTO;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
@@ -71,8 +69,7 @@ public class RulingBoardService {
     // 게시물 영상 주소
     public String getVideoPath(Long rulingId){
         BoardRuling boardRuling = boardRulingRepository.findById(rulingId).orElseThrow();
-        String applyLink = boardRuling.getRulingLink();
-        return rootPath+"/"+applyLink;
+        return boardRuling.getRulingLink();
     }
 
 

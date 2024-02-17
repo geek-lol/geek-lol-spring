@@ -5,6 +5,7 @@ import com.nat.geeklolspring.board.vote.dto.response.BoardVoteResponseDTO;
 import com.nat.geeklolspring.entity.BoardApply;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.entity.VoteApply;
+import com.nat.geeklolspring.entity.VoteCheck;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.troll.apply.dto.request.ApplyVotePostRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.ApplyVoteResponseDTO;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -74,10 +76,9 @@ public class ApplyVoteService {
 
     @Transactional
     public ApplyVoteResponseDTO changeVote(VoteApply vote) {
-        if (vote == null){
-            throw new RuntimeException("changeVote : 투표생성 해주새요!");
-        }
-        BoardApply boardApply = rulingApplyRepository.findById(vote.getVoteId()).orElseThrow();
+        Optional<BoardApply> ap = rulingApplyRepository.findById(vote.getApplyId().getApplyId());
+        BoardApply boardApply = ap.orElseThrow(() -> new RuntimeException("voteId에 해당하는 BoardApply를 찾을 수 없습니다: " + vote.getApplyId().getApplyId()));
+
         // vote 값 수정
         if (vote.getUp() == 1) {
             rulingApplyRepository.plusUpCount(boardApply.getApplyId());
@@ -103,8 +104,6 @@ public class ApplyVoteService {
                     .total(boardApply.getUpCount()-1)
                     .build();
         }
-
-
     }
 
     public boolean VoteCheck(ApplyVotePostRequestDTO dto, TokenUserInfo userInfo) {
@@ -118,14 +117,13 @@ public class ApplyVoteService {
             return false;
     }
 
-    public VoteApply findVote(long applyId, String accountId) {
-        BoardApply boardApply = rulingApplyRepository.findById(applyId).orElseThrow();
-        User user = userRepository.findById(accountId).orElseThrow();
-
-        if (boardApply == null || user ==null){
-            throw new RuntimeException("user또는 게시글을 찾을 수 없습니다.");
-        }
+    public VoteApply findVote(Long applyId, String accountId) {
+        Optional<BoardApply> byId = rulingApplyRepository.findById(applyId);
+        BoardApply boardApply = byId.orElseThrow(() -> new RuntimeException("findvote에서 board null임:"));
+        Optional<User> byId1 = userRepository.findById(accountId);
+        User user = byId1.orElseThrow(() -> new RuntimeException("findvote에서 user null임:"));
         // 쇼츠 아이디와 계정명이 일치하는 vote정보를 리턴
         return voteCheckRepository.findByApplyIdAndReceiver(boardApply, user);
+
     }
 }

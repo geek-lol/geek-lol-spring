@@ -109,7 +109,7 @@ public class ApplyVoteController {
             HttpServletRequest request
     ) {
         log.info("/api/vote Request {}", request.getRequestURL());
-        log.debug("dto: {}", dto);
+        log.info("dto: {}", dto);
 
         try {
             // 내 vote 정보 가져오는 서비스 실행

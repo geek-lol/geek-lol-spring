@@ -22,6 +22,7 @@ public class RulingReplyResponseDTO {
     private LocalDateTime replyDate;
     private Long rulingId;
     private String title;
+    private String userName;
 
     public RulingReplyResponseDTO(RulingReply reply) {
         this.replyId = reply.getId();
@@ -29,6 +30,7 @@ public class RulingReplyResponseDTO {
         this.replyDate = reply.getReplyDate();
         this.rulingId = reply.getRulingId().getRulingId();
         this.userId = reply.getRulingWriterId().getId();
+        this.userName = reply.getRulingWriterId().getUserName();
 
 
     }

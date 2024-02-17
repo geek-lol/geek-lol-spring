@@ -16,4 +16,7 @@ public interface ApplyVoteCheckRepository extends JpaRepository<VoteApply, Long>
     // applyId가 같은 것의 열 갯수를 반환
     int countByApplyId(BoardApply applyId);
 
+    //해당 작성자의 좋아요를 삭제
+    void deleteAllByReceiver(User writerId);
+
 }

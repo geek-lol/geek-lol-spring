@@ -12,9 +12,11 @@ import com.nat.geeklolspring.troll.apply.dto.request.RulingApplyRequestDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyDetailResponseDTO;
 import com.nat.geeklolspring.troll.apply.dto.response.RulingApplyResponseDTO;
 import com.nat.geeklolspring.troll.apply.repository.ApplyReplyRepository;
+import com.nat.geeklolspring.troll.apply.repository.ApplyVoteCheckRepository;
 import com.nat.geeklolspring.troll.apply.repository.RulingApplyRepository;
 import com.nat.geeklolspring.troll.ruling.dto.response.RulingBoardDetailResponseDTO;
 import com.nat.geeklolspring.troll.ruling.repository.BoardRulingRepository;
+import com.nat.geeklolspring.troll.ruling.repository.RulingReplyRepository;
 import com.nat.geeklolspring.user.repository.UserRepository;
 import com.nat.geeklolspring.utils.files.Videos;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,8 @@ public class RulingApplyService {
     private final RulingApplyRepository rulingApplyRepository;
     private final BoardRulingRepository boardRulingRepository;
     private final ApplyReplyRepository applyReplyRepository;
+    private final ApplyVoteCheckRepository applyVoteCheckRepository;
+    private final RulingReplyRepository rulingReplyRepository;
     private final UserRepository userRepository;
 
     @Value("${upload.path}")
@@ -170,7 +174,8 @@ public class RulingApplyService {
 
     }
     // 기준일로 부터 3일 뒤 추천수 많은거 골라내서 board_ruling에 저장
-    @Scheduled(initialDelay = 0, fixedDelay = 60 * 1000 * 2) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+    @Scheduled(initialDelay = 0, fixedDelay =  30 * 60 * 1000) // 3일(밀리초 단위)3 * 24 * 60 * 60 * 1000
+
     @Transactional
     public void selectionOfTopic() {
         log.info("스케줄링 실행중!!");
@@ -193,11 +198,8 @@ public class RulingApplyService {
         User user = userRepository.findById(rulingDto.getApplyPosterId()).orElseThrow();
         BoardRuling save = boardRulingRepository.save(rulingDto.toEntity(user));
 
-//        //지원 게시글의 좋아요 정보들 다 삭제
-//        rulingApplyRepository.findAll()
-//                .forEach(board->{
-//                    board.getVotes().clear();
-//                });
+        applyVoteCheckRepository.deleteAll();
+        applyVoteCheckRepository.deleteAll();
         //지원 게시글은 다 지우기
         rulingApplyRepository.deleteAll();
 

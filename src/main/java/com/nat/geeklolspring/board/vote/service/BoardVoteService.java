@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -56,42 +58,42 @@ public class BoardVoteService {
 
         // 좋아요 등록
         BulletinCheck saved = voteCheckRepository.save(entity);
-        boardBulletinRepository.plusUpCount(bulletin.getBulletinId());
         log.info("좋아요 정보 저장 성공! 정보 : {}", saved);
 
         return BoardVoteResponseDTO.builder()
                 .up(entity.getGood())
-                .total(bulletin.getUpCount()+1)
+                .total(bulletin.getUpCount())
                 .build();
     }
 
     @Transactional
     public BoardVoteResponseDTO changeVote(BulletinCheck vote) {
-        BoardBulletin bulletin = boardBulletinRepository.findById(vote.getBulletin().getBulletinId()).orElseThrow();
-        // vote 값 수정
+        BoardBulletin bulletin = boardBulletinRepository.findById(vote.getBulletin().getBulletinId())
+                .orElseThrow((() -> new IllegalArgumentException("자유게시판 글을 찾을 수 업습다.")));// vote 값 수정
         if (vote.getGood() == 1) {
             vote.setGood(0);
-            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
-            boardBulletinRepository.plusUpCount(vote.getBulletin().getBulletinId());
-
-            BulletinCheck saved = voteCheckRepository.save(vote);
-
-            return BoardVoteResponseDTO.builder()
-                    .up(0)
-                    .total(bulletin.getUpCount()+1)
-                    .build();
-        }
-        else {
-            vote.setGood(1);
             // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 감소
             boardBulletinRepository.downUpCount(vote.getBulletin().getBulletinId());
 
             BulletinCheck saved = voteCheckRepository.save(vote);
 
             return BoardVoteResponseDTO.builder()
-                    .up(1)
+                    .up(0)
                     .total(bulletin.getUpCount()-1)
                     .build();
+        }
+        else {
+            vote.setGood(1);
+            // vote 값 수정에 따른 해당 쇼츠의 좋아요 수 증가
+            boardBulletinRepository.plusUpCount(vote.getBulletin().getBulletinId());
+
+            BulletinCheck saved = voteCheckRepository.save(vote);
+
+            return BoardVoteResponseDTO.builder()
+                    .up(1)
+                    .total(bulletin.getUpCount()+1)
+                    .build();
+
         }
     }
 

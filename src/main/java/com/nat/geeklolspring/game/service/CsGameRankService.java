@@ -27,7 +27,7 @@ public class CsGameRankService {
 
     // 랭킹 조회
     public GameRankListResponseDTO findRank(){
-        List<CsGameRank> rankList = csGameRankRepository.findAllByOrderByScoreDesc();
+        List<CsGameRank> rankList = csGameRankRepository.findTop10ByOrderByScoreDesc();
         List<GameRankResponseDTO> dtoList = rankList.stream()
                 .map(GameRankResponseDTO::new)
                 .collect(Collectors.toList());
@@ -37,6 +37,7 @@ public class CsGameRankService {
                 .build();
     }
     // 랭킹 저장
+    @Transactional
     public GameRankListResponseDTO addRank(GameRankRequestDTO dto, TokenUserInfo userInfo){
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // 근데 랭킹에 이미 있고, 원래 점수보다 높으면 수정해서 저장

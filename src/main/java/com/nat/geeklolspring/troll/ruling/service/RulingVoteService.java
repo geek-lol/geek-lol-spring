@@ -30,13 +30,11 @@ public class RulingVoteService {
 
         //현재 투표중인 보드
         BoardRuling board = boardRulingRepository.findTopByOrderByRulingDateDesc();
+        log.info("현재 투표중인 보드 : {} ",board);
+        //보드가 최신이고, 테이블에 투표한 이력이 있으면 return
+        boolean flag = rvr.existsByRulingVoterAndRulingId(user,board);
 
-        //저장된 정보가 있는지 여부 - 있으면 true / 없으면 false
-        boolean flag = rvr.existsByRulingVoter(user);
-        // 보드가 같으면 true / 다르면 false
-        boolean boardFlag = board.equals(boardRuling);
-
-         if (flag || !boardFlag) {
+         if (flag) {
              ProsAndConsDTO prosAndConsDTO = prosAndCons(boardRuling.getRulingId());
              prosAndConsDTO.setError("이미 투표한 회원이거나 지난 투표게시물입니다");
              return prosAndConsDTO;

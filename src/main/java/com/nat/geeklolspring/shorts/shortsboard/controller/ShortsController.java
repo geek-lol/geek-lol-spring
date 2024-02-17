@@ -46,7 +46,7 @@ public class ShortsController {
             // 가져온 shortsList가 비어있을 경우 아직 업로드된 동영상이 없다는 뜻
             if(shortsList.getShorts().isEmpty()) {
                 return ResponseEntity
-                        .badRequest()
+                        .ok()
                         .body(ShortsListResponseDTO
                                 .builder()
                                 .error("아직 업로드된 동영상이 없습니다!")
@@ -96,9 +96,11 @@ public class ShortsController {
             String videoPath = videoMap.get("filePath");
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행
-            // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
             shortsService.insertVideo(dto, videoPath, userInfo);
-            
+
+            // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
+            ShortsListResponseDTO shortsList = shortsService.retrieve();
+
             return ResponseEntity.ok().body(null);
 
         } catch (DTONotFoundException e) {
@@ -131,6 +133,8 @@ public class ShortsController {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
             shortsService.deleteShorts(shortsId, userInfo);
+
+            ShortsListResponseDTO shortsList = shortsService.retrieve();
 
             return ResponseEntity.ok().body(null);
         } catch (NotEqualTokenException e) {

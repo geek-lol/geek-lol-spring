@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
@@ -22,7 +24,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("회원가입을 하면 비밀번호가 인코딩되어 디비에 저장된다")
-    void saveTest() {
+    void saveTest() throws IOException {
         //given
         UserSignUpRequestDTO dto = UserSignUpRequestDTO.builder()
                 .id("abc123")

@@ -2,6 +2,7 @@ package com.nat.geeklolspring.user.service;
 
 import com.nat.geeklolspring.auth.TokenProvider;
 import com.nat.geeklolspring.auth.TokenUserInfo;
+import com.nat.geeklolspring.aws.S3Service;
 import com.nat.geeklolspring.board.bulletin.repository.BoardBulletinRepository;
 import com.nat.geeklolspring.entity.Role;
 import com.nat.geeklolspring.entity.User;
@@ -57,6 +58,8 @@ public class UserService {
 
     private final CsGameRankRepository csGameRankRepository;
     private final ResGameRankRepository resGameRankRepository;
+
+    private final S3Service s3Service;
 
 
     public UserResponseDTO findByUserInfo(TokenUserInfo userInfo) {
@@ -128,7 +131,7 @@ public class UserService {
         }
 
         User user = userRepository.findById(socialUserResponse.getId())
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+                .orElseThrow(ChangeSetPersister.NotFoundException::new);
 
         return LoginResponseDTO.builder()
                 .id(user.getId())
@@ -268,17 +271,17 @@ public class UserService {
     public String uploadProfileImage(MultipartFile originalFile) throws IOException {
 
         // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다
-        File rootDir = new File(rootPath);
-        if (!rootDir.exists()) rootDir.mkdirs();
+        //File rootDir = new File(rootPath);
+        //if (!rootDir.exists()) rootDir.mkdirs();
 
         // 파일명을 유니크하게 변경
         String uniqueFileName = UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
 
         // 파일을 서버에 저장
-        File uploadFile = new File(rootPath + "/" + uniqueFileName);
-        originalFile.transferTo(uploadFile);
+        //File uploadFile = new File(rootPath + "/" + uniqueFileName);
+        //originalFile.transferTo(uploadFile);
 
-        return uniqueFileName;
+        return s3Service.uploadUoS3Bucket(originalFile.getBytes(), uniqueFileName);
     }
 
     public String getProfilePath(String id) {

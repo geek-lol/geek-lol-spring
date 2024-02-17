@@ -1,4 +1,5 @@
 application-deploy.yaml
+application-local.yaml
 
 .gradle
 build/

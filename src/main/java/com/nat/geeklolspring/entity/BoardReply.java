@@ -2,6 +2,8 @@ package com.nat.geeklolspring.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,11 +33,13 @@ public class BoardReply {
 
     //fk
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "bulletin_id")
     private BoardBulletin bulletin; //댓글이 달릴 게시물 fk
 
     //작성자
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "reply_writer_id", updatable = false)
     private User writerUser;
 

@@ -52,11 +52,11 @@ public class BoardBulletin {
     private User user;
 
     // Reply와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "replyId", orphanRemoval = true)
+    @OneToMany(mappedBy = "replyId")
     private List<BoardReply> Replies = new ArrayList<>();
 
     // Vote와의 OneToMany 관계 설정
-    @OneToMany(mappedBy = "bulletinCheckId", orphanRemoval = true)
+    @OneToMany(mappedBy = "bulletinCheckId")
     private List<BulletinCheck> votes = new ArrayList<>();
 
 }

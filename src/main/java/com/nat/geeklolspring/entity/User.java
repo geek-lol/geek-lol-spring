@@ -36,10 +36,6 @@ public class User {
     @Column(updatable = false)
     private LocalDateTime joinMembershipDate;
 
-    @Builder.Default
-    @Column(name = "user_report_count")
-    private int reportCount = 0;
-
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = COMMON;

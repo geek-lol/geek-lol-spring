@@ -173,6 +173,7 @@ public class UserService {
             log.warn("삭제할 회원이 없습니다!!");
         }
         try {
+            assert ids != null;
             ids.forEach(id -> {
                 User user = userRepository.findById(id).orElseThrow();
                 deleteChildren(user);
@@ -240,6 +241,7 @@ public class UserService {
             throw new RuntimeException("수정된 회원정보가 없습니다!");
         }
 
+        assert dto != null;
         if (dto.getPassword() == null) {
             dto.setPassword(userInfo.getPassword());
         }
@@ -288,9 +290,8 @@ public class UserService {
 
         //DB에서 파일명 조회
         User user = userRepository.findById(id).orElseThrow();
-        String fileName = user.getProfileImage();
 
-        return rootPath + "/" + fileName;
+        return user.getProfileImage();
 
     }
 

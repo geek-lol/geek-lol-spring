@@ -1,29 +1,23 @@
 package com.nat.geeklolspring.shorts.shortsboard.controller;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.aws.S3Service;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
-import com.nat.geeklolspring.utils.files.Videos;
+import com.nat.geeklolspring.utils.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -32,11 +26,11 @@ import java.io.IOException;
 @RequestMapping("/api/shorts")
 public class ShortsController {
     // 업로드한 shorts를 저장할 로컬 위치
-    @Value("D:/geek-lol/upload/shorts/video")
-    private String rootShortsPath;
+    //@Value("D:/geek-lol/upload/shorts/video")
+    //private String rootShortsPath;
 
     private final ShortsService shortsService;
-    private final S3Service s3Service;
+    private final FileUtil fileUtil;
 
     // shorts 리스트 가져오기
     @GetMapping()
@@ -93,22 +87,17 @@ public class ShortsController {
 
         try {
             // 필요한 정보를 전달받지 못하면 커스텀 에러인 DTONotFoundException 발생
-            if (dto.getTitle().isEmpty() || dto.getVideoLink().isEmpty())
+            if (dto.getTitle().isEmpty() || fileUrl.isEmpty())
                 throw new DTONotFoundException("필요한 정보가 입력되지 않았습니다.");
 
             // 동영상과 섬네일 이미지를 가공해 로컬폴더에 저장하고 경로를 리턴받기
             // 동영상 가공
-            //Map<String, String> videoMap = FileUtil.uploadFile(fileUrl, rootShortsPath);
-            //String videoPath = videoMap.get("filePath");
-            byte[] fileBytes = fileUrl.getBytes();
-            String filename = fileUrl.getOriginalFilename();
-            String videoUrl = s3Service.uploadUoS3Bucket(fileBytes, filename);
-
-            dto.setVideoLink(videoUrl);
+            Map<String, String> videoMap = fileUtil.uploadFile(fileUrl);
+            String videoPath = videoMap.get("filePath");
             
             // dto와 파일경로를 DB에 저장하는 서비스 실행
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
-            shortsService.insertVideo(dto, null, userInfo);
+            shortsService.insertVideo(dto, videoPath, userInfo);
             
             return ResponseEntity.ok().body(null);
 
@@ -171,27 +160,27 @@ public class ShortsController {
         try {
             String shortPath = shortsService.getShortPath(shortsId);
 
-            File videoFile = new File(shortPath);
-
-            if (!videoFile.exists()) return ResponseEntity.notFound().build();
-
-            byte[] fileData = FileCopyUtils.copyToByteArray(videoFile);
-
-            HttpHeaders headers = new HttpHeaders();
-
-
-            MediaType mediaType = Videos.extractFileExtension(shortPath);
-            if (mediaType == null){
-                return ResponseEntity.internalServerError().body("비디오가 아닙니다");
-            }
-
-            headers.setContentType(mediaType);
+            //File videoFile = new File(shortPath);
+            //
+            //if (!videoFile.exists()) return ResponseEntity.notFound().build();
+            //
+            //byte[] fileData = FileCopyUtils.copyToByteArray(videoFile);
+            //
+            //HttpHeaders headers = new HttpHeaders();
+            //
+            //
+            //MediaType mediaType = Videos.extractFileExtension(shortPath);
+            //if (mediaType == null){
+            //    return ResponseEntity.internalServerError().body("비디오가 아닙니다");
+            //}
+            //
+            //headers.setContentType(mediaType);
 
             return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(fileData);
+                    //.headers(headers)
+                    .body(shortPath);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

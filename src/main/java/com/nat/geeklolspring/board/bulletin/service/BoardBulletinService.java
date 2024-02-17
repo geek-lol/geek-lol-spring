@@ -1,7 +1,7 @@
 package com.nat.geeklolspring.board.bulletin.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
-import com.nat.geeklolspring.board.boardBulletinReply.repository.BoardReplyRepository;
+import com.nat.geeklolspring.aws.S3Service;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinModifyRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinWriteRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDeleteResponseDTO;
@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +39,8 @@ public class BoardBulletinService {
 
     private final BoardBulletinRepository boardBulletinRepository;
     private final UserRepository userRepository;
+
+    private final S3Service s3Service;
     // 목록 불러오기
     public BoardBulletinResponseDTO retrieve() {
 
@@ -210,26 +211,25 @@ public class BoardBulletinService {
     public String uploadImage(MultipartFile originalFile) throws IOException {
 
         // 루트 디렉토리가 존재하는지 확인 후 존재하지 않으면 생성한다
-        File rootDir = new File(rootPath);
-        if (!rootDir.exists()) rootDir.mkdirs();
+        //File rootDir = new File(rootPath);
+        //if (!rootDir.exists()) rootDir.mkdirs();
 
         // 파일명을 유니크하게 변경
-        String uniqueFileName = UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
+        String uniqueFileName = "Board_" + UUID.randomUUID() + "_" + originalFile.getOriginalFilename();
 
         // 파일을 서버에 저장
-        File uploadFile = new File(rootPath + "/" + uniqueFileName);
-        originalFile.transferTo(uploadFile);
+        //File uploadFile = new File(rootPath + "/" + uniqueFileName);
+        //originalFile.transferTo(uploadFile);
 
-        return uniqueFileName;
+        return s3Service.uploadUoS3Bucket(originalFile.getBytes(), uniqueFileName);
     }
 
     public String getImagePath(Long id){
 
         //DB에서 파일명 조회
         BoardBulletin boardBulletin = boardBulletinRepository.findById(id).orElseThrow();
-        String fileName = boardBulletin.getBoardMedia();
 
-        return rootPath+"/"+fileName;
+        return boardBulletin.getBoardMedia();
 
     }
 

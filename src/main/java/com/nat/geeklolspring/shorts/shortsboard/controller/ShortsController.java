@@ -3,6 +3,7 @@ package com.nat.geeklolspring.shorts.shortsboard.controller;
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.exception.DTONotFoundException;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
+import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsPostRequestDTO;
 import com.nat.geeklolspring.shorts.shortsboard.dto.response.ShortsListResponseDTO;
 import com.nat.geeklolspring.shorts.shortsboard.service.ShortsService;
@@ -99,9 +100,7 @@ public class ShortsController {
             shortsService.insertVideo(dto, videoPath, userInfo);
 
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
-            ShortsListResponseDTO shortsList = shortsService.retrieve();
-
-            return ResponseEntity.ok().body(null);
+            return ResponseEntity.ok().body(DTO);
 
         } catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");
@@ -113,14 +112,16 @@ public class ShortsController {
     }
 
     // 쇼츠 삭제 요청
-    @DeleteMapping("/{shortsId}")
-    public ResponseEntity<?> deleteShorts(@PathVariable Long shortsId,
-                                          @AuthenticationPrincipal TokenUserInfo userInfo) {
+    @DeleteMapping
+    public ResponseEntity<?> deleteShorts(@RequestBody ShortsDeleteRequestDTO dto,
+                                          @AuthenticationPrincipal TokenUserInfo userInfo
+                                          ,@PageableDefault(page = 1, size = 10) Pageable pageInfo
+    ) {
 
-        log.info("/api/shorts/{} DELETE !!", shortsId);
+        log.info("/api/shorts/{} DELETE !!", dto);
 
         // 데이터를 전달받지 못했다면 실행
-        if(shortsId == null) {
+        if(dto == null) {
             return ResponseEntity
                     .badRequest()
                     .body(ShortsListResponseDTO
@@ -132,7 +133,7 @@ public class ShortsController {
         try {
             // id에 해당하는 동영상을 지우는 서비스 실행
             // return : id에 해당하는 동영상이 삭제된 DB에서 동영상 리스트 새로 가져오기
-            shortsService.deleteShorts(shortsId, userInfo);
+            ShortsListResponseDTO DTO = shortsService.deleteShorts(dto, userInfo, pageInfo);
 
             ShortsListResponseDTO shortsList = shortsService.retrieve();
 

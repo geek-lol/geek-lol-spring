@@ -2,7 +2,6 @@ package com.nat.geeklolspring.shorts.shortsboard.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.entity.BoardShorts;
-import com.nat.geeklolspring.entity.ShortsReply;
 import com.nat.geeklolspring.entity.User;
 import com.nat.geeklolspring.exception.NotEqualTokenException;
 import com.nat.geeklolspring.shorts.shortsboard.dto.request.ShortsDeleteRequestDTO;
@@ -46,31 +45,30 @@ public class ShortsService {
         shortsRepository.save(shorts);
     }
 
-    public void deleteShorts(Long id, TokenUserInfo userInfo) {
-        BoardShorts shorts = shortsRepository.findById(id).orElseThrow();
+    @Transactional
+    public ShortsListResponseDTO deleteShorts(ShortsDeleteRequestDTO dto, TokenUserInfo userInfo, Pageable pageInfo) {
+        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
-        boolean flag = shorts.getUploaderId().equals(user);
-        try {
-            if(flag) {
-                // id값에 해당하는 동영상 가져오기
-                BoardShorts boardShorts = shortsRepository.findByShortsId(id);
-                // id값에 해당하는 동영상의 댓글들 삭제
-                List<ShortsReply> replyList = shortsReplyRepository.findAllByShortsId(boardShorts);
-                log.warn(replyList.toString());
-                for (ShortsReply reply : replyList) {
-                    shortsReplyRepository.deleteById(reply.getId());
-                }
+//
+        dto.getIds().forEach(id -> {
+            BoardShorts shorts = shortsRepository.findById(id).orElseThrow();
+            boolean flag = shorts.getUploaderId().equals(user);
+            try {
+                if(flag) {
+                    // id값에 해당하는 동영상 삭제
+                    shortsRepository.deleteById(id);
+                } else throw new NotEqualTokenException("업로드 한 유저만 삭제할 수 있습니다!");
 
-                // id값에 해당하는 동영상 삭제
-                shortsRepository.deleteById(id);
-            } else throw new NotEqualTokenException("업로드 한 유저만 삭제할 수 있습니다!");
-        } catch (Exception e) {
-            // 보통 해당 아이디 값이 없을 때 발생
-            // 다만 다른 예외적인 오류가 있을 수 있으므로 취급주의
-            log.error("삭제에 실패했습니다. - ID: {}, error: {}",
-                    id, e.getMessage());
-            throw new RuntimeException("해당 아이디 값을 가진 쇼츠가 없습니다!");
-        }
+            } catch (Exception e) {
+                // 보통 해당 아이디 값이 없을 때 발생
+                // 다만 다른 예외적인 오류가 있을 수 있으므로 취급주의
+                log.error("삭제에 실패했습니다. - ID: {}, error: {}",
+                        id, e.getMessage());
+                throw new RuntimeException("해당 아이디 값을 가진 쇼츠가 없습니다!");
+            }
+        });
+        return myUploadShort(userInfo,pageInfo);
+
     }
 
     public void deleteShorts(ShortsDeleteRequestDTO dto) {

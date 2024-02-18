@@ -38,6 +38,7 @@ public class RulingReply {
     private User rulingWriterId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ruling_id")
     private BoardRuling rulingId;
 }

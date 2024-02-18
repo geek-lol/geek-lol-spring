@@ -264,34 +264,40 @@ public class UserService {
     }
 
 
+    @Transactional
     public LoginResponseDTO modify(TokenUserInfo userInfo, UserModifyRequestDTO dto, String profilePath) {
-
-        log.info("modifyDTO : {}", dto);
-
+        // dto : password , profileIamge, userName = 수정할 수 있음
+        // 하나씩 수정함
+        // 수정할 것 제외는 원래 값을 넣어줘야함
+        log.info("modifyDTO : {}, profilepath :{}", dto,profilePath);
         if (dto == null && profilePath == null) {
             throw new RuntimeException("수정된 회원정보가 없습니다!");
         }
+        User user = userRepository.findById(userInfo.getUserId()).orElseThrow(()-> new RuntimeException("유저 정보가 없습니단."));
+        UserModifyRequestDTO modifyRequestDTO = new UserModifyRequestDTO(user);
+
+        //비밀번호를 수정해야하는 지 체크하는 변수
+        boolean flag = false;
 
         assert dto != null;
-        if (dto.getPassword() == null) {
-            dto.setPassword(userInfo.getPassword());
+        if (dto.getPassword() != null) {
+            modifyRequestDTO.setPassword(dto.getPassword());
+            flag = true;
         }
-        if (dto.getProfileIamge() == null) {
-            dto.setProfileIamge(userInfo.getProfileImage());
+        if (profilePath != null) {
+            modifyRequestDTO.setProfileIamge(profilePath);
         }
-        if (dto.getUserName() == null) {
-            dto.setUserName(userInfo.getUserName());
+        if (dto.getUserName() != null) {
+            modifyRequestDTO.setUserName(dto.getUserName());
         }
+        log.info("수정된 user dto : {} ",modifyRequestDTO);
+        User saved = null;
 
-        String userId = userInfo.getUserId();
-
-        Optional<User> byId = userRepository.findById(userId);
-
-        log.info("{}", byId);
-
-//        delete(byId);
-
-        User saved = userRepository.save(dto.toEntity(userId, passwordEncoder, profilePath, userInfo.getRole()));
+        if (flag) { //비밀번호 수정할때
+            saved = userRepository.save(modifyRequestDTO.toEntity(passwordEncoder));
+        } else {
+            saved = userRepository.save(modifyRequestDTO.toEntity());
+        }
 
         String token = tokenProvider.createToken(saved);
 

@@ -22,7 +22,6 @@ public class UserModifyRequestDTO {
     @NotBlank
     private String id;
 
-    @Size(min = 8,max = 20)
     private String password;
 
     private String userName;
@@ -31,16 +30,31 @@ public class UserModifyRequestDTO {
 
     private Role role;
 
-
-    public User toEntity(String id,PasswordEncoder encoder,String profileIamge,Role role){
-        return User.builder()
-                .id(id)
-                .profileImage(profileIamge)
-                .password(encoder.encode(this.password))
-                .userName(this.userName)
-                .role(role)
-                .build();
+    public UserModifyRequestDTO(User user) {
+        this.id = user.getId();
+        this.password = user.getPassword();
+        this.userName = user.getUserName();
+        this.profileIamge = user.getProfileImage();
+        this.role = user.getRole();
     }
 
+    public User toEntity(PasswordEncoder encoder){
+        return User.builder()
+                .id(this.id)
+                .profileImage(this.profileIamge)
+                .password(encoder.encode(this.password))
+                .userName(this.userName)
+                .role(this.role)
+                .build();
+    }
+    public User toEntity(){
+        return User.builder()
+                .id(this.id)
+                .profileImage(this.profileIamge)
+                .password(this.password)
+                .userName(this.userName)
+                .role(this.role)
+                .build();
+    }
 
 }

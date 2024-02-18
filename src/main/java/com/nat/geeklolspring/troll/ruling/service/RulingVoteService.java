@@ -25,19 +25,24 @@ public class RulingVoteService {
     @Transactional()
     // 투표한 내용을 저장
     public ProsAndConsDTO rulingVoteSave(RulingVoteRequestDTO dto,TokenUserInfo userInfo){
+        //현재 접속한 게시물
         BoardRuling boardRuling = boardRulingRepository.findById(dto.getRulingId()).orElseThrow();
+        // 로그인 한 유저
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
 
         //현재 투표중인 보드
         BoardRuling board = boardRulingRepository.findTopByOrderByRulingDateDesc();
-        log.info("현재 투표중인 보드 : {} ",board);
-        //보드가 최신이고, 테이블에 투표한 이력이 있으면 return
-        boolean flag = rvr.existsByRulingVoterAndRulingId(user,board);
 
-         if (flag) {
-             ProsAndConsDTO prosAndConsDTO = prosAndCons(boardRuling.getRulingId());
-             prosAndConsDTO.setError("이미 투표한 회원이거나 지난 투표게시물입니다");
-             return prosAndConsDTO;
+        log.info("현재 투표중인 보드 : {} ",board);
+
+        if (!boardRuling.equals(board)){ //보드가 최신이 아니면 ㄱㄱ
+            ProsAndConsDTO prosAndConsDTO = prosAndCons(boardRuling.getRulingId());
+            prosAndConsDTO.setError("지난 투표게시물입니다.");
+            return prosAndConsDTO;
+        } else if (rvr.existsByRulingVoterAndRulingId(user,board)){ //최신 보드에 투표 이력이 있으면 ㄱㄱ
+            ProsAndConsDTO prosAndConsDTO = prosAndCons(boardRuling.getRulingId());
+            prosAndConsDTO.setError("이미 투표한 회원입니다.");
+            return prosAndConsDTO;
         }
 
         if (dto.getVote().equals("pros")){

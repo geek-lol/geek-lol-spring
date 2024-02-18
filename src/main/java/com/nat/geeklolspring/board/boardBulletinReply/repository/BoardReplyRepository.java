@@ -19,6 +19,9 @@ public interface BoardReplyRepository extends JpaRepository<BoardReply, Long> {
     //내꺼 갯수 반환
     int countByWriterUser(User writerUser);
 
+    //특정 게시물의 댓글 수 반환
+    int countByBulletin(BoardBulletin bulletin);
+
     //해당 작성자의 댓글을 삭제
     void deleteAllByWriterUser(User writerId);
 }

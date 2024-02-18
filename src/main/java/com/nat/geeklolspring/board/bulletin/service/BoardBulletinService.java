@@ -2,6 +2,7 @@ package com.nat.geeklolspring.board.bulletin.service;
 
 import com.nat.geeklolspring.auth.TokenUserInfo;
 import com.nat.geeklolspring.aws.S3Service;
+import com.nat.geeklolspring.board.boardBulletinReply.repository.BoardReplyRepository;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinModifyRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.request.BoardBulletinWriteRequestDTO;
 import com.nat.geeklolspring.board.bulletin.dto.response.BoardBulletinDeleteResponseDTO;
@@ -39,6 +40,7 @@ public class BoardBulletinService {
 
     private final BoardBulletinRepository boardBulletinRepository;
     private final UserRepository userRepository;
+    private final BoardReplyRepository boardReplyRepository;
 
     private final S3Service s3Service;
     // 목록 불러오기
@@ -47,7 +49,10 @@ public class BoardBulletinService {
         List<BoardBulletin> boardBulletinList = boardBulletinRepository.findAll();
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
-                .map(BoardBulletinDetailResponseDTO::new)
+                .map(board->{
+                    int replyCount = boardReplyRepository.countByBulletin(board);
+                    return new BoardBulletinDetailResponseDTO(board,replyCount);
+                })
                 .collect(Collectors.toList());
 
         return BoardBulletinResponseDTO.builder()
@@ -133,7 +138,10 @@ public class BoardBulletinService {
 
 
         List<BoardBulletinDetailResponseDTO> list = boardBulletinList.stream()
-                .map(BoardBulletinDetailResponseDTO::new)
+                .map(board->{
+                    int replyCount = boardReplyRepository.countByBulletin(board);
+                    return new BoardBulletinDetailResponseDTO(board,replyCount);
+                })
                 .collect(Collectors.toList());
 
         return BoardBulletinResponseDTO.builder()
@@ -147,7 +155,7 @@ public class BoardBulletinService {
     public BoardBulletinDetailResponseDTO detailRetrieve(String bulletinId) {
 
         BoardBulletin boardBulletin = boardBulletinRepository.findById(Long.valueOf(bulletinId)).get();
-
+        log.info("replise :{} ", boardBulletin.getReplies());
         log.info("{}",boardBulletin);
 
         boardBulletin.setViewCount(boardBulletin.getViewCount()+1);

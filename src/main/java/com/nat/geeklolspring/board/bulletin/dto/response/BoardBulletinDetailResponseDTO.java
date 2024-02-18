@@ -37,7 +37,18 @@ public class BoardBulletinDetailResponseDTO {
         this.viewCount = boardBulletin.getViewCount();
         this.localDateTime = boardBulletin.getBoardDate();
         this.upCount = boardBulletin.getUpCount();
-        this.totlaReply = boardBulletin.getReplies().size();
+    }
+    public BoardBulletinDetailResponseDTO(BoardBulletin boardBulletin,int totlaReply) {
+        this.bulletinId = boardBulletin.getBulletinId();
+        this.posterId = (boardBulletin.getUser().getId());
+        this.posterName = boardBulletin.getUser().getUserName();
+        this.title = boardBulletin.getTitle();
+        this.content = boardBulletin.getBoardContent();
+        this.boardMedia = boardBulletin.getBoardMedia();
+        this.viewCount = boardBulletin.getViewCount();
+        this.localDateTime = boardBulletin.getBoardDate();
+        this.upCount = boardBulletin.getUpCount();
+        this.totlaReply = totlaReply;
     }
 
 }

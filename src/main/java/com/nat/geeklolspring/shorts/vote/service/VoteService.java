@@ -46,8 +46,18 @@ public class VoteService {
         BoardShorts shorts = shortsRepository.findByShortsId(dto.getShortsId());
         User user = userRepository.findById(userInfo.getUserId()).orElseThrow();
         // 필요한 정보가 잘 입력되어 있는지 확인
-        if (shorts == null || user == null) {
-            throw new DTONotFoundException("shortsId or userInfo를 확인하세요 ");
+        if (shorts == null) {
+            log.warn("shortsId를 확인하세요 ");
+            return VoteResponseDTO.builder()
+                    .up(0)
+                    .total(0)
+                    .build();
+        }
+        if (voteCheckRepository.existsByShortsAndUser(shorts,user)){
+            return VoteResponseDTO.builder()
+                    .up(0)
+                    .total(0)
+                    .build();
         }
 
         VoteCheck entity = dto.toEntity(shorts,user);

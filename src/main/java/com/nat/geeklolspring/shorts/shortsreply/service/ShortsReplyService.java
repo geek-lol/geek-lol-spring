@@ -39,7 +39,7 @@ public class ShortsReplyService {
         log.warn("retrieve 페이징처리 실행! Id: {}, PageInfo: {}", shortsId, pageInfo);
         
         // 페이징 처리 시 첫번째 페이지는 0으로 시작하니 전달받은 페이지번호 - 1을 페이징 정보로 저장
-        Pageable pageable = PageRequest.of(pageInfo.getPageNumber() - 1, pageInfo.getPageSize());
+        Pageable pageable = PageRequest.of( 0, pageInfo.getPageSize() * pageInfo.getPageNumber());
         BoardShorts shorts = shortsRepository.findByShortsId(shortsId);
         // shortsId로 가져온 해당 쇼츠의 댓글 페이징 처리 정보를 저장
         Page<ShortsReply> replyList = shortsReplyRepository.findAllByShortsIdOrderByReplyDateDesc(shorts, pageable);

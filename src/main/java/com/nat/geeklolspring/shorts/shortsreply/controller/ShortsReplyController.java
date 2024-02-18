@@ -29,7 +29,7 @@ public class ShortsReplyController {
     public ResponseEntity<?> replyList(
             @PathVariable Long shortsId,
             // 값이 주어지지 않으면 디폴트로 1페이지와 5개씩 로드하도록 전달
-            @PageableDefault(page = 1, size = 5) Pageable pageInfo) {
+            @PageableDefault(page = 1, size = 10) Pageable pageInfo) {
         log.info("/api/shorts/reply/{} : Get!", shortsId);
 
         try {

@@ -35,7 +35,8 @@ public class ShortsController {
 
     // shorts 리스트 가져오기
     @GetMapping()
-    public ResponseEntity<?> shortsList() {
+    public ResponseEntity<?> shortsList(
+    ) {
         log.info("/api/shorts : Get!");
 
         try {
@@ -100,7 +101,7 @@ public class ShortsController {
             shortsService.insertVideo(dto, videoPath, userInfo);
 
             // return : 전달받은 파일들이 DB에 저장된 새 동영상 리스트들
-            return ResponseEntity.ok().body(DTO);
+            return ResponseEntity.ok().body(null);
 
         } catch (DTONotFoundException e) {
             log.warn("필요한 정보를 전달받지 못했습니다.");

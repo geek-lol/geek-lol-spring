@@ -136,7 +136,7 @@ public class ShortsService {
                 continue;
             else {
                 // 쇼츠 조회수 처리는 잘 모르겠으니까 그냥 불러오게 되면 전부 +1되도록 코드 작성
-                shortsRepository.plusUpCount(shorts.getShortsId());
+                shortsRepository.upViewCount(shorts.getShortsId());
                 randShortsList.add(shorts);
                 count++;
             }

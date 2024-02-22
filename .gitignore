@@ -1,3 +1,6 @@
+application-deploy.yaml
+application-local.yaml
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -34,3 +37,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### custom ###
+application.yaml
+

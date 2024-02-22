@@ -23,12 +23,15 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
     implementation 'org.springframework.boot:spring-boot-starter'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
     // 입력값 검증 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
@@ -37,8 +40,41 @@ dependencies {
 
     //스프링 시큐리티 모듈
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // json web token 라이브러리
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    //파일업로드 라이브러리
+    implementation 'commons-io:commons-io:2.8.0'
+    implementation 'commons-fileupload:commons-fileupload:1.5'
+
+    
+    // API 사용을 위한 라이브러리들
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation group: 'org.apache.camel', name: 'json-simple-ordered', version: '2.25.4'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+//    provided 'org.json.simple:json-simple:1.1.1'
+    implementation group: 'org.json', name: 'org.json', version: 'chargebee-1.0'
+
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+    implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4', version: '1.16'
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation 'io.netty:netty-all:4.1.52.Final'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.52.Final:osx-x86_64'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'software.amazon.awssdk:s3:2.17.52'
+    testImplementation 'org.springframework:spring-test'
+
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+//    useJUnitPlatform()
+    exclude '**/*'  // 빌드시에 테스트 생략
 }

@@ -1,0 +1,47 @@
+server:
+  port: 8686
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/geeklol
+#    url: jdbc:mariadb://localhost:3306/geeklol
+    username: root
+    password: mariadb
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+      database: mysql
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+      enabled: true
+  resources:
+    static-locations: classpath:/public/
+
+logging:
+  level:
+    root: info
+    org.hibernate.SQL: debug
+
+lol.app-key: RGAPI-32283c1a-5de7-4c98-b452-1d61924c0da8
+
+social:
+  client:
+    google:
+      rest-api-key: AIzaSyChY_zLZtk3Q57dikWsSt0X8H0llvWt9Tc
+      secret-key: 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
+      redirect-uri: http://localhost:3000/auth/google
+      grant_type: authorization_code
+
+jwt:
+  secret: Gt9jGFwmCAjnUG64pitfmWSm8v/0c1uNjYvTWxCUWpY8jNbUmgfXWk9h4CaA6UFC7kQtbjF4iqNtX2hkRaAe4w==
+
+upload:
+  path: D:\upload
+  # path: C:/upload

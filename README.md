@@ -31,4 +31,117 @@
 </center>
 
 ## 사용 엔드포인트 
--user 
+
+### USER 관련 
+| 기능                               | URL                     | Method |
+| ---------------------------------- | ----------------------- | ------ |
+| 로그인한 회원 조회                  | /user                   | GET    |
+| 회원가입 요청                       | /user/sign_up           | POST   |
+| 회원가입시 아이디 비동기 체크       | /user/check             | GET    |
+| 회원가입시 비밀번호 비동기 체크     | /user/pwcheck           | GET    |
+| 로그인                              | /user/signin            | POST   |
+| 회원 삭제                           | /user/delete            | POST   |
+| 회원 수정                           | /user/modify            | PUT    |
+| 로그인한 회원의 프로필 사진불러오기 | /user/load-profile      | GET    |
+| 특정회원의 프로필 사진불러오기      | /user/profile/{userId} | GET    |
+
+
+### 자유게시판 관련 
+
+| 기능                    | URL                             | Method |
+| ----------------------- | ------------------------------- | ------ |
+| 게시물 전체 조회(+검색)        | /board/bullentin                | GET    |
+| 특정 게시물 조회         | /board/bullentin/detail         | GET    |
+| 내가 쓴 게시물 조회      | /board/bullentin/my             | GET    |
+| 게시물의 사진 조회      | /board/bullentin/load-profile   | GET    |
+| 게시글 등록             | /board/bullentin                | POST   |
+| 게시글 수정             | /board/bullentin/modify         | POST   |
+| 게시글 삭제             | /board/bullentin                | DELETE |
+||||
+| 특정 게시물의 댓글을 조회     | /board/bulletin/detail/reply/{bullentinId} | GET    |
+| 내가 쓴 댓글 조회             | /board/bulletin/detail/reply/my            | GET    |
+| 특정 게시물에 댓글 등록       | /board/bulletin/detail/reply/{bullentinId} | POST   |
+| 댓글을 삭제                   | /board/bulletin/detail/reply/{replyId}     | DELETE |
+||||
+| 특정 게시물의 좋아요 정보 조회   | /board/vote    | GET          |
+| 특정 게시물에 좋아요 생성        | /board/vote    | POST         |
+| 특정 게시물에 내 좋아요 수정    | /board/vote    | PUT, PATCH   |
+
+### 쇼츠게시판 관련
+| 기능                       | URL                                    | Method |
+| -------------------------- | -------------------------------------- | ------ |
+| 게시물 전체 조회                  | /api/shorts                             | GET    |
+| 내가 쓴 게시물 조회        | /api/shorts/my                          | GET    |
+| 동영상 파일 불러오기       | /api/shorts/load-video/{shortsId}      | GET    |
+| 게시글 등록               | /api/shorts                             | POST   |
+| 게시글 삭제               | /api/shorts                             | DELETE |
+||||
+| 특정 게시물의 댓글을 조회     | /api/shorts/reply/{shortsId}          | GET    |
+| 내가 쓴 댓글 조회             | /api/shorts/reply/my                     | GET    |
+| 특정 게시물에 댓글 등록       | /api/shorts/reply/{shortsId}          | POST   |
+| 댓글을 삭제                   | /api/shorts/reply/{replyId}              | DELETE |
+||||
+| 특정 게시물의 좋아요 정보 조회   |  /api/vote     | GET          |
+| 특정 게시물에 좋아요 생성        |  /api/vote     | POST         |
+| 특정 게시물에 내 좋아요 수정    |  /api/vote     | PUT, PATCH   |
+
+### 투표지원게시판 관련 
+| 기능                       | URL                                      | Method |
+| -------------------------- | ---------------------------------------- | ------ |
+| 게시물 전체 조회           | /troll/apply                             | GET    |
+| 특정 게시물 조회           | /troll/detail/{applyId}                  | GET    |
+| 내가 쓴 게시물 조회        | /troll/apply/my                          | GET    |
+| 게시물 검색하기            | /troll/apply/search                      | GET    |
+| 동영상 파일 불러오기       | /troll/apply/load-video/{applyId}      | GET    |
+| 게시글 등록               | /troll/apply                             | POST   |
+| 게시글 삭제               | /troll/apply                             | DELETE |
+| 투표 갱신일 조회          | /troll/apply/endTime                     | GET    |
+||||
+| 특정 게시물의 댓글을 조회     | /troll/apply/reply/{applyId}            | GET          |
+| 내가 쓴 댓글 조회             | /troll/apply/reply/my                    | GET          |
+| 특정 게시물에 댓글 등록       | /troll/apply/reply/{applyId}             | POST         |
+| 댓글을 삭제                   | /troll/apply/reply/{replyId}              | DELETE       |
+||||
+| 특정 게시물의 좋아요 정보 조회   | /troll/apply/vote                        | GET          |
+| 특정 게시물에 좋아요 생성        | /troll/apply/vote                        | POST         |
+| 특정 게시물에 내 좋아요 수정    | /troll/apply/vote                        | PUT, PATCH   |
+
+### 투표게시판 관련 
+| 기능                     | URL                                              | Method |
+| ------------------------ | ------------------------------------------------ | ------ |
+| 최근 게시물 2개 조회      | /troll/ruling/board                             | GET    |
+| 전체 게시물 조회          | /troll/ruling/board/all                         | GET    |
+| 게시물 상세 조회          | /troll/ruling/board/{rulingId}                  | GET    |
+| 내 게시물 조회            | /troll/ruling/board/my                          | GET    |
+||||
+| 특정 게시물의 댓글을 조회     | /troll/ruling/reply/{rulingId}            | GET   |
+| 내가 쓴 댓글 조회             | /troll/ruling/reply/my                    | GET    |
+| 특정 게시물에 댓글 등록       | /troll/ruling/reply/{rulingId}            | POST  |
+| 댓글을 삭제                   | /troll/ruling/reply/{replyId}             | DELETE  |
+||||
+| 특정 게시물의 파일 불러오기 | /troll/ruling/board/load-video/{rulingId}      | GET    |
+| 특정 게시물의 투표정보 조회 | /troll/ruling/vote                              | GET    |
+| 특정 게시물에 투표내역 저장 | /troll/ruling/vote                              | POST   |
+
+### 관리자페이지 관련
+| 기능                           | URL                 | Method |
+| ------------------------------ | ------------------- | ------ |
+| 전체 유저 조회                | /admin/user         | POST   |
+| 유저 삭제 (List)               | /admin/user         | DELETE |
+| 유저 권한 수정                | /admin/change       | POST   |
+| 전체 자유게시판 조회           | /admin/board        | POST   |
+| 선택한 자유게시물 삭제 (List)   | /admin/board        | DELETE |
+| 전체 쇼츠게시판 조회           | /admin/shorts       | POST   |
+| 선택한 쇼츠게시물 삭제 (List)   | /admin/shorts       | DELETE |
+| 전체 투표게시판 조회           | /admin/ruling       | POST   |
+| 선택한 투표게시물 삭제 (List)   | /admin/ruling       | DELETE |
+| 전체 투표지원게시판 조회       | /admin/applys       | POST   |
+| 선택한 투표지원게시물 삭제 (List) | /admin/applys     | DELETE |
+
+### 게임랭킹 관련
+| 기능          | URL         | Method |
+| ------------- | ----------- | ------ |
+| 막타게임 랭킹 조회     | /game/cs    | GET    |
+| 막타게임 랭킹 등록     | /game/cs    | POST   |
+| 반응속도게임 랭킹 조회     | /game/res   | GET    |
+| 반응속도게임 랭킹 등록     | /game/res   | POST   |

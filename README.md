@@ -9,8 +9,24 @@
    - 자랑하고싶거나 공유하고싶은 하이라이트 영상을 올리면 쇼츠처럼 다른사람에게 보여줄 수 있습니다.
    - 심심할 때, 반응속도와 미니게임을 할 수 있습니다.
 
+<hr>
 
-## 🦁 팀원 소개 
+## 목차 
+1. [팀원 소개](#팀원-소개) <br>
+2. [DB 설계도](#db-설계도) <br>
+3. [엔드포인트](#사용-엔드포인트) <br>
+&nbsp;&nbsp;[ - riot api](#전적검색riot-api-endpoint) <br>
+&nbsp;&nbsp;[ - User](#user-endpoint) <br>
+&nbsp;&nbsp;[ - 자유게시판](#자유게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 쇼츠게시판](#쇼츠게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 투표지원게시판](#투표지원게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 투표게시판](#투표게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 관리자페이지](#관리자페이지-endpoint) <br>
+&nbsp;&nbsp;[ - 게임랭킹](#게임랭킹-endpoint) <br>
+
+<hr>
+
+## 팀원 소개 
 
 <center>
   
@@ -25,14 +41,25 @@
 
 <hr>
 
-## 😎DB 설계도 
+## DB 설계도 
 <center>
   <img src="https://github.com/geek-lol/geek-lol-spring/blob/master/READMEIMG/dbERD.png?raw=true" width="800">
 </center>
 
 ## 사용 엔드포인트 
 
-### USER 관련 
+### 전적검색(riot API) EndPoint
+| 기능                     | URL                               | Method |
+| ------------------------ | --------------------------------- | ------ |
+| 유저정보 조회            | /find/{name}/{tag}                | GET    |
+| 최근 플레이 기록         | /recentGames/{start}/{count}      | GET    |
+| 챔피언 숙련도 상위 3개    | /champion/Mastery                 | GET    |
+| 모든 챔피언 숙련도        | /all-champion-mastery             | GET    |
+| 플레이 중인 인게임 정보   | /realtimeGame                     | GET    |
+| 랭킹 조회                | /ranking/{tier}                   | GET    |
+
+
+### USER EndPoint
 | 기능                               | URL                     | Method |
 | ---------------------------------- | ----------------------- | ------ |
 | 로그인한 회원 조회                  | /user                   | GET    |
@@ -46,7 +73,7 @@
 | 특정회원의 프로필 사진불러오기      | /user/profile/{userId} | GET    |
 
 
-### 자유게시판 관련 
+### 자유게시판 EndPoint
 
 | 기능                    | URL                             | Method |
 | ----------------------- | ------------------------------- | ------ |
@@ -67,7 +94,7 @@
 | 특정 게시물에 좋아요 생성        | /board/vote    | POST         |
 | 특정 게시물에 내 좋아요 수정    | /board/vote    | PUT, PATCH   |
 
-### 쇼츠게시판 관련
+### 쇼츠게시판 EndPoint
 | 기능                       | URL                                    | Method |
 | -------------------------- | -------------------------------------- | ------ |
 | 게시물 전체 조회                  | /api/shorts                             | GET    |
@@ -85,7 +112,7 @@
 | 특정 게시물에 좋아요 생성        |  /api/vote     | POST         |
 | 특정 게시물에 내 좋아요 수정    |  /api/vote     | PUT, PATCH   |
 
-### 투표지원게시판 관련 
+### 투표지원게시판 EndPoint
 | 기능                       | URL                                      | Method |
 | -------------------------- | ---------------------------------------- | ------ |
 | 게시물 전체 조회           | /troll/apply                             | GET    |
@@ -106,7 +133,7 @@
 | 특정 게시물에 좋아요 생성        | /troll/apply/vote                        | POST         |
 | 특정 게시물에 내 좋아요 수정    | /troll/apply/vote                        | PUT, PATCH   |
 
-### 투표게시판 관련 
+### 투표게시판 EndPoint
 | 기능                     | URL                                              | Method |
 | ------------------------ | ------------------------------------------------ | ------ |
 | 최근 게시물 2개 조회      | /troll/ruling/board                             | GET    |
@@ -123,7 +150,7 @@
 | 특정 게시물의 투표정보 조회 | /troll/ruling/vote                              | GET    |
 | 특정 게시물에 투표내역 저장 | /troll/ruling/vote                              | POST   |
 
-### 관리자페이지 관련
+### 관리자페이지 EndPoint
 | 기능                           | URL                 | Method |
 | ------------------------------ | ------------------- | ------ |
 | 전체 유저 조회                | /admin/user         | POST   |
@@ -138,7 +165,7 @@
 | 전체 투표지원게시판 조회       | /admin/applys       | POST   |
 | 선택한 투표지원게시물 삭제 (List) | /admin/applys     | DELETE |
 
-### 게임랭킹 관련
+### 게임랭킹 EndPoint
 | 기능          | URL         | Method |
 | ------------- | ----------- | ------ |
 | 막타게임 랭킹 조회     | /game/cs    | GET    |

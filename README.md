@@ -15,14 +15,6 @@
 1. [팀원 소개](#팀원-소개) <br>
 2. [DB 설계도](#db-설계도) <br>
 3. [엔드포인트](#사용-엔드포인트) <br>
-&nbsp;&nbsp;[ - riot api](#전적검색riot-api-endpoint) <br>
-&nbsp;&nbsp;[ - User](#user-endpoint) <br>
-&nbsp;&nbsp;[ - 자유게시판](#자유게시판-endpoint) <br>
-&nbsp;&nbsp;[ - 쇼츠게시판](#쇼츠게시판-endpoint) <br>
-&nbsp;&nbsp;[ - 투표지원게시판](#투표지원게시판-endpoint) <br>
-&nbsp;&nbsp;[ - 투표게시판](#투표게시판-endpoint) <br>
-&nbsp;&nbsp;[ - 관리자페이지](#관리자페이지-endpoint) <br>
-&nbsp;&nbsp;[ - 게임랭킹](#게임랭킹-endpoint) <br>
 
 <hr>
 
@@ -47,6 +39,15 @@
 </center>
 
 ## 사용 엔드포인트 
+
+&nbsp;&nbsp;[ - riot api](#전적검색riot-api-endpoint) <br>
+&nbsp;&nbsp;[ - User](#user-endpoint) <br>
+&nbsp;&nbsp;[ - 자유게시판](#자유게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 쇼츠게시판](#쇼츠게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 투표지원게시판](#투표지원게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 투표게시판](#투표게시판-endpoint) <br>
+&nbsp;&nbsp;[ - 관리자페이지](#관리자페이지-endpoint) <br>
+&nbsp;&nbsp;[ - 게임랭킹](#게임랭킹-endpoint) <br>
 
 ### 전적검색(riot API) EndPoint
 | 기능                     | URL                               | Method |
